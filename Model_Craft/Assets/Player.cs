@@ -2,14 +2,16 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Player1 : MonoBehaviour
+public class Player : MonoBehaviour
 {
     private float speed = 4.0f;
+    private float buildSpeed = 25.0f;
     private float speedRot = 1.5f;
+    private float speedBuildRot = 3.0f;
     private float verRotLim = 60.0f;
     private Rigidbody rigidBody;
-    private Vector3 moveDirection;
-    private Vector3 rotateDirection;
+    public Vector3 moveDirection;
+    public Vector3 rotateDirection;
     public bool isBuildMode = false;
     public GameObject target;
 
@@ -19,16 +21,21 @@ public class Player1 : MonoBehaviour
         rigidBody = GetComponent<Rigidbody>();
     }
 
-    void Move()
+    void Rotate(float speed)
     {
-        rotateDirection.x -= speedRot * Input.GetAxis("Mouse Y");
-        rotateDirection.y += speedRot * Input.GetAxis("Mouse X");
+        GetComponent<MeshRenderer>().enabled = !isBuildMode;
+        rotateDirection.x -= speed * Input.GetAxis("Mouse Y");
+        rotateDirection.y += speed * Input.GetAxis("Mouse X");
+        rotateDirection.z = 0;
 
-        if(rotateDirection.x < -verRotLim)
-        rotateDirection.x = -verRotLim;
+        if(!isBuildMode)
+        {
+            if(rotateDirection.x < -verRotLim)
+            rotateDirection.x = -verRotLim;
 
-        if(rotateDirection.x > verRotLim)
-        rotateDirection.x = verRotLim;
+            if(rotateDirection.x > verRotLim)
+            rotateDirection.x = verRotLim;
+        }
 
         transform.rotation = Quaternion.Euler(rotateDirection);
     }
@@ -36,9 +43,7 @@ public class Player1 : MonoBehaviour
     void MoveBuildMode()
     {
         rigidBody.constraints = RigidbodyConstraints.FreezeRotationZ;
-        GetComponent<MeshRenderer>().enabled = false;
-        
-        moveDirection = transform.forward * Input.GetAxis("Mouse ScrollWheel") * 100;
+        moveDirection = transform.forward * Input.GetAxis("Mouse ScrollWheel") * 200;
             
         if(Input.GetMouseButton(2))
         {
@@ -46,14 +51,10 @@ public class Player1 : MonoBehaviour
             moveDirection = -transform.up * Input.GetAxis("Mouse Y") - transform.right * Input.GetAxis("Mouse X");
 
             else
-            Move();
-            /*{
-                transform.RotateAround(target.transform.position, Vector3.up, Input.GetAxis("Mouse X"));
-                transform.RotateAround(target.transform.position, Vector3.right, Input.GetAxis("Mouse Y"));
-            }*/
+            Rotate(speedBuildRot);
         }
 
-        rigidBody.MovePosition(rigidBody.position + moveDirection * speed * Time.deltaTime);
+        rigidBody.MovePosition(rigidBody.position + moveDirection * buildSpeed * Time.deltaTime);
     }
 
     // Update is called once per frame
@@ -62,9 +63,8 @@ public class Player1 : MonoBehaviour
         if(!isBuildMode)
         {
             rigidBody.constraints = RigidbodyConstraints.FreezePositionY;
-            GetComponent<MeshRenderer>().enabled = true;
 
-            Move();
+            Rotate(speedRot);
 
             moveDirection = transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal");
             rigidBody.MovePosition(rigidBody.position + moveDirection * speed * Time.deltaTime);
