@@ -14,7 +14,8 @@ public class Player : MonoBehaviour
     private float verRotLim = 60.0f;
     private Rigidbody rigidBody;
     private Vector3 targetOffset = Vector3.zero;
-    public Vector3 moveDirection;
+    private Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
+    private Vector3 moveDirection;
     public Vector3 rotateDirection;
     public bool isBuildMode = false;
 
@@ -48,31 +49,28 @@ public class Player : MonoBehaviour
     void MoveBuildMode()
     {
         rigidBody.constraints = RigidbodyConstraints.FreezeRotationZ;
-        moveDirection = transform.forward * Input.GetAxis("Mouse ScrollWheel") * 100;
         distance -= Input.GetAxis("Mouse ScrollWheel") * speed;
         distance = Mathf.Clamp(distance, minDistance, maxDistance);
             
         if(Input.GetMouseButton(2))
         {
             if(Input.GetKey(KeyCode.LeftShift))
-            moveDirection = -transform.up * Input.GetAxis("Mouse Y") - transform.right * Input.GetAxis("Mouse X");
+            targetPosition += (-transform.up * Input.GetAxis("Mouse Y") - transform.right * Input.GetAxis("Mouse X")) * Time.deltaTime * buildSpeed;
 
             else
             {
                 rotateDirection.x -= speedBuildRot * Input.GetAxis("Mouse Y");
                 rotateDirection.y += speedBuildRot * Input.GetAxis("Mouse X");
                 rotateDirection.z = 0;
-
-                Quaternion rotation = Quaternion.Euler(rotateDirection);
-                Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
-                Vector3 position = rotation * negDistance + new Vector3 (0.0f, 0.0f, 0.0f) + targetOffset;
-
-                transform.rotation = rotation;
-                transform.position = position;
             }
         }
 
-        rigidBody.MovePosition(rigidBody.position + moveDirection * buildSpeed * Time.deltaTime);
+        Quaternion rotation = Quaternion.Euler(rotateDirection);
+        Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
+        Vector3 position = rotation * negDistance + targetPosition + targetOffset;
+
+        transform.rotation = rotation;
+        transform.position = position;
     }
 
     // Update is called once per frame
