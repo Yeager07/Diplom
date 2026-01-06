@@ -5,15 +5,18 @@ using System.Collections.Generic;
 public class Player : MonoBehaviour
 {
     private float speed = 4.0f;
+    private float minDistance = 2f;
+    private float maxDistance = 10f;
+    private float distance = 0.0f;
     private float buildSpeed = 25.0f;
     private float speedRot = 1.5f;
     private float speedBuildRot = 3.0f;
     private float verRotLim = 60.0f;
     private Rigidbody rigidBody;
+    private Vector3 targetOffset = Vector3.zero;
     public Vector3 moveDirection;
     public Vector3 rotateDirection;
     public bool isBuildMode = false;
-    public GameObject target;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,29 +24,33 @@ public class Player : MonoBehaviour
         rigidBody = GetComponent<Rigidbody>();
     }
 
-    void Rotate(float speed)
+    void Move()
     {
         GetComponent<MeshRenderer>().enabled = !isBuildMode;
-        rotateDirection.x -= speed * Input.GetAxis("Mouse Y");
-        rotateDirection.y += speed * Input.GetAxis("Mouse X");
+        rigidBody.constraints = RigidbodyConstraints.FreezePositionY;
+
+        rotateDirection.x -= speedRot * Input.GetAxis("Mouse Y");
+        rotateDirection.y += speedRot * Input.GetAxis("Mouse X");
         rotateDirection.z = 0;
 
-        if(!isBuildMode)
-        {
-            if(rotateDirection.x < -verRotLim)
-            rotateDirection.x = -verRotLim;
+        if(rotateDirection.x < -verRotLim)
+        rotateDirection.x = -verRotLim;
 
-            if(rotateDirection.x > verRotLim)
-            rotateDirection.x = verRotLim;
-        }
+        if(rotateDirection.x > verRotLim)
+        rotateDirection.x = verRotLim;
 
+        moveDirection = transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal");
+
+        rigidBody.MovePosition(rigidBody.position + moveDirection * speed * Time.deltaTime);
         transform.rotation = Quaternion.Euler(rotateDirection);
     }
     
     void MoveBuildMode()
     {
         rigidBody.constraints = RigidbodyConstraints.FreezeRotationZ;
-        moveDirection = transform.forward * Input.GetAxis("Mouse ScrollWheel") * 200;
+        moveDirection = transform.forward * Input.GetAxis("Mouse ScrollWheel") * 100;
+        distance -= Input.GetAxis("Mouse ScrollWheel") * speed;
+        distance = Mathf.Clamp(distance, minDistance, maxDistance);
             
         if(Input.GetMouseButton(2))
         {
@@ -51,7 +58,18 @@ public class Player : MonoBehaviour
             moveDirection = -transform.up * Input.GetAxis("Mouse Y") - transform.right * Input.GetAxis("Mouse X");
 
             else
-            Rotate(speedBuildRot);
+            {
+                rotateDirection.x -= speedBuildRot * Input.GetAxis("Mouse Y");
+                rotateDirection.y += speedBuildRot * Input.GetAxis("Mouse X");
+                rotateDirection.z = 0;
+
+                Quaternion rotation = Quaternion.Euler(rotateDirection);
+                Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
+                Vector3 position = rotation * negDistance + new Vector3 (0.0f, 0.0f, 0.0f) + targetOffset;
+
+                transform.rotation = rotation;
+                transform.position = position;
+            }
         }
 
         rigidBody.MovePosition(rigidBody.position + moveDirection * buildSpeed * Time.deltaTime);
@@ -61,14 +79,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         if(!isBuildMode)
-        {
-            rigidBody.constraints = RigidbodyConstraints.FreezePositionY;
-
-            Rotate(speedRot);
-
-            moveDirection = transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal");
-            rigidBody.MovePosition(rigidBody.position + moveDirection * speed * Time.deltaTime);
-        }
+        Move();
 
         else
         MoveBuildMode();

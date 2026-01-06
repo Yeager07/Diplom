@@ -17,6 +17,7 @@ public class MainScript : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
+
         if (player != null)
         playerScript = player.GetComponent<Player>();
     }
@@ -44,6 +45,7 @@ public class MainScript : MonoBehaviour
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 LoadScene("TestScene", playerScript.isBuildMode, scenePos, zeroPos);
+                //playerScript.target = GameObject.FindGameObjectWithTag("Target");
             }
         }
     }
