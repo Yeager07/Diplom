@@ -7,7 +7,6 @@ public class Player : MonoBehaviour
     private float speed = 4.0f;
     private float minDistance = 2f;
     private float maxDistance = 10f;
-    private float distance = 0.0f;
     private float buildSpeed = 25.0f;
     private float speedRot = 1.5f;
     private float speedBuildRot = 3.0f;
@@ -18,6 +17,8 @@ public class Player : MonoBehaviour
     private Vector3 moveDirection;
     public Vector3 rotateDirection;
     public bool isBuildMode = false;
+    public float distance = 0.0f;
+    public Vector3 target;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -65,12 +66,15 @@ public class Player : MonoBehaviour
             }
         }
 
-        Quaternion rotation = Quaternion.Euler(rotateDirection);
         Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
-        Vector3 position = rotation * negDistance + targetPosition + targetOffset;
 
-        transform.rotation = rotation;
-        transform.position = position;
+        if(!Input.GetKeyDown(KeyCode.KeypadPeriod))
+        moveDirection = Quaternion.Euler(rotateDirection) * negDistance + targetPosition + targetOffset;
+        else
+        targetPosition = target;
+
+        transform.rotation = Quaternion.Euler(rotateDirection);
+        transform.position = moveDirection;
     }
 
     // Update is called once per frame

@@ -365,7 +365,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 924b26bb2cbbc4e439067c09a19f1f1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -483,9 +483,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e0cc5c51ff68fa46a07bd43abd64e32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveDirection: {x: 0, y: 0, z: 0}
   rotateDirection: {x: 0, y: 0, z: 0}
   isBuildMode: 0
+  distance: 0
   target: {fileID: 0}
 --- !u!136 &678448533
 CapsuleCollider:
@@ -910,7 +910,7 @@ GameObject:
   - component: {fileID: 1352949260}
   - component: {fileID: 1352949259}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
