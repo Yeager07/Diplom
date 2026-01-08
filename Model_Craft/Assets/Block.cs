@@ -9,6 +9,7 @@ public class Block : MonoBehaviour
     public List<Vector3> previousRotate = new List<Vector3>();
     private Vector3 rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 curPosition;
+    public bool isActive = false;
     public List<Vector3> positionHistory = new List<Vector3>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -40,25 +41,26 @@ public class Block : MonoBehaviour
     void OnMouseDrag()
     {
         if(playerScript.isBuildMode)
-        {
-            playerScript.target = gameObject.transform.position;
-            
-            if(Input.GetKey(KeyCode.R))
-            {
-                rotateDirection.x -= playerScript.speedBuildRot * Input.GetAxis("Mouse Y");
-                rotateDirection.y += playerScript.speedBuildRot * Input.GetAxis("Mouse X");
-                rotateDirection.z = 0;
-            }
-
-            else
+        {   
+            if(!Input.GetKey(KeyCode.R))
             {
                 Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance);
                 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
             }
 
             transform.position = curPosition;
-            transform.rotation = Quaternion.Euler(rotateDirection);
         }
+    }
+
+    void OnMouseEnter()
+    {
+        isActive = true;
+        playerScript.target = gameObject.transform.position;
+    }
+
+    void OnMouseExit()
+    {
+        isActive = false;
     }
 
     // Update is called once per frame
@@ -67,19 +69,38 @@ public class Block : MonoBehaviour
         if(Input.GetMouseButtonUp(0))
         SavePosition(transform.position);
 
+        if(Input.GetKey(KeyCode.R) && isActive)
+        {
+                
+            if(Input.GetKeyUp(KeyCode.UpArrow))
+            rotateDirection.x += 90.0f;
+
+            if(Input.GetKeyUp(KeyCode.DownArrow))
+            rotateDirection.x -= 90.0f;
+
+            if(Input.GetKeyUp(KeyCode.LeftArrow))
+            rotateDirection.y -= 90.0f;
+
+            if(Input.GetKeyUp(KeyCode.RightArrow))
+            rotateDirection.y += 90.0f;
+
+            rotateDirection.z = 0;
+            transform.rotation = Quaternion.Euler(rotateDirection);
+        }
+
         if(Input.GetKeyUp(KeyCode.R))
         {
 
             SavePosition(previousRotate[previousRotate.Count - 1]);
-            previousRotate.Add(rotateDirection);
+            previousRotate.Add(new Vector3(rotateDirection.x % 360, rotateDirection.y % 360, rotateDirection.z));
 
         }
 
         if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z))
         {
-            if(positionHistory.Count > 0)
+            if(positionHistory.Count >= 1)
             {
-                if(previousRotate.Count > 0 && previousRotate.Contains(positionHistory[positionHistory.Count-1]))
+                if(previousRotate.Count > 1 && previousRotate.Contains(positionHistory[positionHistory.Count-1]))
                 {
                     transform.rotation = Quaternion.Euler(positionHistory[positionHistory.Count - 1]);
                     rotateDirection = positionHistory[positionHistory.Count - 1];
