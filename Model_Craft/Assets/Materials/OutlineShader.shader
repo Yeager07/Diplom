@@ -6,6 +6,7 @@ Shader "Custom/OutlineShader"
         _Color ("Color", Color) = (1,1,1,1)
         _OutlineColor ("Outline Color", Color) = (1,0,0,1)
         _OutlineWidth ("Outline Width", Range(0, 0.1)) = 0.03
+        _BaseMap ("Base Map", 2D) = "white" {} // Для URP
     }
 
     SubShader
@@ -80,7 +81,9 @@ Shader "Custom/OutlineShader"
             };
             
             sampler2D _MainTex;
+            sampler2D _BaseMap;
             float4 _MainTex_ST;
+            float4 _BaseMap_ST;
             float4 _Color;
             
             v2f vert (appdata v)
@@ -94,6 +97,11 @@ Shader "Custom/OutlineShader"
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv) * _Color;
+                // Если MainTex не найден, пробуем BaseMap
+                if (col.a == 0) 
+                {
+                    col = tex2D(_BaseMap, i.uv) * _Color;
+                }
                 return col;
             }
             ENDCG

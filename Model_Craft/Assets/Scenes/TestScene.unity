@@ -422,6 +422,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde1ead9e0d071843ad2ee3c9d86dc3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  previousRotate: []
+  outlineWidth: 10
+  isActive: 0
+  positionHistory: []
 --- !u!1 &678448530
 GameObject:
   m_ObjectHideFlags: 0
@@ -486,7 +490,8 @@ MonoBehaviour:
   rotateDirection: {x: 0, y: 0, z: 0}
   isBuildMode: 0
   distance: 0
-  target: {fileID: 0}
+  speedBuildRot: 3
+  target: {x: 0, y: 0, z: 0}
 --- !u!136 &678448533
 CapsuleCollider:
   m_ObjectHideFlags: 0
