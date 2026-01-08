@@ -9,7 +9,6 @@ public class Player : MonoBehaviour
     private float maxDistance = 10f;
     private float buildSpeed = 25.0f;
     private float speedRot = 1.5f;
-    private float speedBuildRot = 3.0f;
     private float verRotLim = 60.0f;
     private Rigidbody rigidBody;
     private Vector3 targetOffset = Vector3.zero;
@@ -18,6 +17,7 @@ public class Player : MonoBehaviour
     public Vector3 rotateDirection;
     public bool isBuildMode = false;
     public float distance = 0.0f;
+    public float speedBuildRot = 3.0f;
     public Vector3 target;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
