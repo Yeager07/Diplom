@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 65041230}
   m_Layer: 0
   m_Name: Cube (1)
-  m_TagString: Untagged
+  m_TagString: Selectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -838,6 +838,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 1d3f47d850d42774cbb8df07c950540c, type: 3}
       propertyPath: m_Name
       value: EnemyType1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1d3f47d850d42774cbb8df07c950540c, type: 3}
+      propertyPath: m_TagString
+      value: Selectable
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

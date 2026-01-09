@@ -28,7 +28,7 @@ public class Block : MonoBehaviour
     {
         positionHistory.Add(position);
 
-        if(positionHistory.Count > 20)
+        if(positionHistory.Count > 100)
         positionHistory.RemoveAt(0);
     }
 
@@ -76,8 +76,7 @@ public class Block : MonoBehaviour
         SavePosition(transform.position);
 
         if(Input.GetKey(KeyCode.R) && isActive)
-        {
-                
+        {     
             if(Input.GetKeyUp(KeyCode.UpArrow))
             rotateDirection.x += 90.0f;
 
