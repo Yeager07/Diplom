@@ -289,7 +289,7 @@ GameObject:
   - component: {fileID: 267537151}
   m_Layer: 0
   m_Name: Cube (1)
-  m_TagString: Target
+  m_TagString: Selectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -423,7 +423,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   previousRotate: []
-  outlineWidth: 10
   isActive: 0
   positionHistory: []
 --- !u!1 &678448530
@@ -706,6 +705,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -797,6 +797,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1725e3ac5652fe648aa0a00ebbcec05b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e48d0e8c86fe956449e38d8f6fb158ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1312796645

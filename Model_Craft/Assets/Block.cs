@@ -9,12 +9,6 @@ public class Block : MonoBehaviour
     public List<Vector3> previousRotate = new List<Vector3>();
     private Vector3 rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 curPosition;
-    private Color outlineColor = Color.red;
-    public float outlineWidth = 0.03f;
-    private bool copyOriginalTexture = true;
-    private Material outlineMaterial;
-    private Material[] originalMaterials;
-    private Renderer objectRenderer;
     public bool isActive = false;
     public List<Vector3> positionHistory = new List<Vector3>();
 
@@ -28,65 +22,6 @@ public class Block : MonoBehaviour
 
         positionHistory.Add(transform.position);
         previousRotate.Add(rotateDirection);
-        //обводка
-        objectRenderer = GetComponent<Renderer>();
-        originalMaterials = objectRenderer.materials;
-        
-        outlineMaterial = new Material(Shader.Find("Custom/OutlineShader"));
-        outlineMaterial.SetColor("_OutlineColor", outlineColor);
-        outlineMaterial.SetFloat("_OutlineWidth", outlineWidth);
-
-        if(copyOriginalTexture && originalMaterials.Length > 0)
-        CopyMaterialProperties(originalMaterials[0], outlineMaterial);
-    }
-
-    void CopyMaterialProperties(Material source, Material destination)
-    {
-        if(source.HasProperty("_Color"))
-        destination.SetColor("_Color", source.GetColor("_Color"));
-
-        string[] possibleTextureProperties = { "_MainTex", "_BaseMap", "_BaseColorMap", "_Albedo" };
-        
-        foreach (string propName in possibleTextureProperties)
-        {
-            if (source.HasProperty(propName))
-            {
-                Texture texture = source.GetTexture(propName);
-                if (texture != null)
-                {
-                    destination.SetTexture("_MainTex", texture);
-                    
-                    // Копируем масштаб и смещение текстуры
-                    if (source.HasProperty(propName + "_ST"))
-                    {
-                        Vector4 st = source.GetVector(propName + "_ST");
-                        destination.SetVector("_MainTex_ST", st);
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    void ApplyOutline()
-    {
-        if (objectRenderer == null || outlineMaterial == null) return;
-        
-        // Заменяем все материалы на материал с обводкой
-        Material[] outlineMaterials = new Material[originalMaterials.Length];
-
-        for (int i = 0; i < outlineMaterials.Length; i++)
-        outlineMaterials[i] = outlineMaterial;
-
-        objectRenderer.materials = outlineMaterials;
-    }
-
-    void RemoveOutline()
-    {
-        if (objectRenderer == null)
-        return;
-        
-        objectRenderer.materials = originalMaterials;
     }
 
     void SavePosition(Vector3 position)
@@ -123,7 +58,6 @@ public class Block : MonoBehaviour
         {
             isActive = true;
             playerScript.target = gameObject.transform.position;
-            ApplyOutline();
         }
     }
 
@@ -132,7 +66,6 @@ public class Block : MonoBehaviour
         if(playerScript.isBuildMode)
         {
             isActive = false;
-            RemoveOutline();
         }
     }
 

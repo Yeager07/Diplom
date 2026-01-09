@@ -403,7 +403,9 @@
 "Assets/BuildSceneScript.cs"
 "Assets/MainManager.cs"
 "Assets/MainScript.cs"
+"Assets/OutlineSelection.cs"
 "Assets/Player.cs"
+"Assets/QuickOutline/Scripts/Outline.cs"
 -langversion:9.0
 /deterministic
 /optimize+
