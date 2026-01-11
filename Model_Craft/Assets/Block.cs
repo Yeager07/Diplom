@@ -11,6 +11,7 @@ public class Block : MonoBehaviour
     private Vector3 curPosition;
     public bool isActive = false;
     public List<Vector3> positionHistory = new List<Vector3>();
+    public bool isFree = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -57,6 +58,7 @@ public class Block : MonoBehaviour
         if(playerScript.isBuildMode)
         {
             isActive = true;
+            transform.Find("Pupirka").gameObject.SetActive(false);
             playerScript.target = gameObject.transform.position;
         }
     }
@@ -66,7 +68,16 @@ public class Block : MonoBehaviour
         if(playerScript.isBuildMode)
         {
             isActive = false;
+            transform.Find("Pupirka").gameObject.SetActive(true);
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.name == "Pupirka")
+        isFree = false;
+        else
+        isFree = true;
     }
 
     // Update is called once per frame
@@ -78,19 +89,16 @@ public class Block : MonoBehaviour
         if(Input.GetKey(KeyCode.R) && isActive)
         {     
             if(Input.GetKeyUp(KeyCode.UpArrow))
-            rotateDirection.x += 90.0f;
-
+            transform.Rotate(Vector3.right * 90.0f, Space.World);
+            
             if(Input.GetKeyUp(KeyCode.DownArrow))
-            rotateDirection.x -= 90.0f;
-
+            transform.Rotate(Vector3.right * (-90.0f), Space.World);
+            
             if(Input.GetKeyUp(KeyCode.LeftArrow))
-            rotateDirection.y -= 90.0f;
+            transform.Rotate(Vector3.up * (-90.0f), Space.World);
 
             if(Input.GetKeyUp(KeyCode.RightArrow))
-            rotateDirection.y += 90.0f;
-
-            rotateDirection.z = 0;
-            transform.rotation = Quaternion.Euler(rotateDirection);
+            transform.Rotate(Vector3.up * 90.0f, Space.World);
         }
 
         if(Input.GetKeyUp(KeyCode.R))

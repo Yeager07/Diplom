@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Target
   - Selectable
+  - Pupirka
   layers:
   - Default
   - TransparentFX
