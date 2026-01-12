@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using static System.Math;
 using System.Collections.Generic;
 
 public class Block : MonoBehaviour
@@ -33,6 +34,19 @@ public class Block : MonoBehaviour
         positionHistory.RemoveAt(0);
     }
 
+    private float CalculateDistance()
+    {
+        float result = (float)Sqrt(Pow((transform.position.x - playerScript.transform.position.x), 2) + Pow((transform.position.z - playerScript.transform.position.z), 2));
+        return result;
+    }
+
+    void Move(float distance)
+    {
+        Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
+        curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
+        transform.position = curPosition;
+    }
+
     void onMouseDown()
     {
         if(playerScript.isBuildMode)
@@ -45,12 +59,15 @@ public class Block : MonoBehaviour
         {   
             if(!Input.GetKey(KeyCode.R))
             {
-                Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance);
-                curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
+                Move(playerScript.distance);
             }
-
-            transform.position = curPosition;
         }
+
+        else if (CalculateDistance() < 4.0f)
+        Move(CalculateDistance());
+
+        else
+        return;
     }
 
     void OnMouseEnter()
@@ -74,7 +91,7 @@ public class Block : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.name == "Pupirka")
+        if(other.CompareTag("Selectable"))
         isFree = false;
         else
         isFree = true;
@@ -99,11 +116,12 @@ public class Block : MonoBehaviour
 
             if(Input.GetKeyUp(KeyCode.RightArrow))
             transform.Rotate(Vector3.up * 90.0f, Space.World);
+
+            rotateDirection = transform.rotation.eulerAngles;
         }
 
         if(Input.GetKeyUp(KeyCode.R))
         {
-
             SavePosition(previousRotate[previousRotate.Count - 1]);
             previousRotate.Add(new Vector3(rotateDirection.x % 360, rotateDirection.y % 360, rotateDirection.z));
 
