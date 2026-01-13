@@ -10,14 +10,18 @@ public class Player : MonoBehaviour
     private float buildSpeed = 25.0f;
     private float speedRot = 1.5f;
     private float verRotLim = 60.0f;
+    private float speedBuildRot = 3.0f;
     private Rigidbody rigidBody;
     private Vector3 targetOffset = Vector3.zero;
     private Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 moveDirection;
+    private int selectedItem;
+    public Dictionary<string, int> inventory = new Dictionary<string, int>();
+    public List<string> keys = new List<string>();
+    public List<int> values = new List<int>();
     public Vector3 rotateDirection;
     public bool isBuildMode = false;
     public float distance = 0.0f;
-    public float speedBuildRot = 3.0f;
     public Vector3 target;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -75,6 +79,16 @@ public class Player : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(rotateDirection);
         transform.position = moveDirection;
+    }
+
+    void RemoveBlockfromInventory()
+    {
+        if(inventory.Count != 0)
+        {
+            //keys.RemoveAt();
+        }
+        else
+        return;
     }
 
     // Update is called once per frame

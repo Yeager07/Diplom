@@ -47,6 +47,39 @@ public class Block : MonoBehaviour
         transform.position = curPosition;
     }
 
+    void AddToInventory()
+    {
+        if(playerScript.inventory.Count != 5 && !playerScript.inventory.ContainsKey(transform.name))
+        {
+            playerScript.keys.Clear();
+            playerScript.values.Clear();
+            playerScript.inventory.Add(transform.name, 1);
+            
+            foreach(var value in playerScript.inventory)
+            {
+                playerScript.keys.Add(value.Key);
+                playerScript.values.Add(value.Value);
+            }
+
+            Destroy(this.gameObject);
+        }
+        else if(playerScript.inventory.ContainsKey(transform.name))
+        {
+            playerScript.keys.Clear();
+            playerScript.values.Clear();
+            playerScript.inventory[transform.name] += 1;
+
+            foreach(var value in playerScript.inventory)
+            {
+                playerScript.keys.Add(value.Key);
+                playerScript.values.Add(value.Value);
+            }
+            Destroy(this.gameObject);
+        }
+        else
+        return;
+    }
+
     void onMouseDown()
     {
         if(playerScript.isBuildMode)
@@ -72,21 +105,19 @@ public class Block : MonoBehaviour
 
     void OnMouseEnter()
     {
+        isActive = true;
         if(playerScript.isBuildMode)
         {
-            isActive = true;
-            transform.Find("Pupirka").gameObject.SetActive(false);
+            //transform.Find("Pupirka").gameObject.SetActive(false);
             playerScript.target = gameObject.transform.position;
         }
     }
 
     void OnMouseExit()
     {
-        if(playerScript.isBuildMode)
-        {
-            isActive = false;
-            transform.Find("Pupirka").gameObject.SetActive(true);
-        }
+        isActive = false;
+        //if(playerScript.isBuildMode)
+        //transform.Find("Pupirka").gameObject.SetActive(true);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -102,6 +133,11 @@ public class Block : MonoBehaviour
     {
         if(Input.GetMouseButtonUp(0))
         SavePosition(transform.position);
+
+        if(isActive && Input.GetKeyUp(KeyCode.E))
+        {
+            AddToInventory();
+        }
 
         if(Input.GetKey(KeyCode.R) && isActive)
         {     
