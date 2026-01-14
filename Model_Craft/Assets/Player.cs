@@ -15,10 +15,10 @@ public class Player : MonoBehaviour
     private Vector3 targetOffset = Vector3.zero;
     private Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 moveDirection;
-    private int selectedItem;
+    public int selectedItem;
     public Dictionary<string, int> inventory = new Dictionary<string, int>();
-    public List<string> keys = new List<string>();
-    public List<int> values = new List<int>();
+    public string[] keys;
+    public int[] values;
     public Vector3 rotateDirection;
     public bool isBuildMode = false;
     public float distance = 0.0f;
@@ -85,15 +85,38 @@ public class Player : MonoBehaviour
     {
         if(inventory.Count != 0)
         {
-            //keys.RemoveAt();
+            inventory.Remove(keys[selectedItem-1]);
+            keys[selectedItem - 1] = "";
+            values[selectedItem - 1] = 0;
         }
         else
         return;
     }
 
+    void FixedUpdate()
+    {
+        if(Input.GetKey(KeyCode.Alpha1))
+        selectedItem = 1;
+        
+        if(Input.GetKey(KeyCode.Alpha2))
+        selectedItem = 2;
+            
+        if(Input.GetKey(KeyCode.Alpha3))
+        selectedItem = 3;
+            
+        if(Input.GetKey(KeyCode.Alpha4))
+        selectedItem = 4;
+
+        if(Input.GetKey(KeyCode.Alpha5))
+        selectedItem = 5;
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKey(KeyCode.Delete) && selectedItem != 0)
+        RemoveBlockfromInventory();
+
         if(!isBuildMode)
         Move();
 

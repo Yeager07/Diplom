@@ -47,35 +47,32 @@ public class Block : MonoBehaviour
         transform.position = curPosition;
     }
 
+    private void UpdateMassive()
+    {
+        int iterator = 0;
+        foreach(var value in playerScript.inventory)
+        {
+            playerScript.keys[iterator] = value.Key;
+            playerScript.values[iterator] = value.Value;
+            iterator += 1;
+        }
+        Destroy(this.gameObject);
+    }
+
     void AddToInventory()
     {
         if(playerScript.inventory.Count != 5 && !playerScript.inventory.ContainsKey(transform.name))
         {
-            playerScript.keys.Clear();
-            playerScript.values.Clear();
             playerScript.inventory.Add(transform.name, 1);
-            
-            foreach(var value in playerScript.inventory)
-            {
-                playerScript.keys.Add(value.Key);
-                playerScript.values.Add(value.Value);
-            }
-
-            Destroy(this.gameObject);
+            UpdateMassive();
         }
+
         else if(playerScript.inventory.ContainsKey(transform.name))
         {
-            playerScript.keys.Clear();
-            playerScript.values.Clear();
             playerScript.inventory[transform.name] += 1;
-
-            foreach(var value in playerScript.inventory)
-            {
-                playerScript.keys.Add(value.Key);
-                playerScript.values.Add(value.Value);
-            }
-            Destroy(this.gameObject);
+            UpdateMassive();
         }
+
         else
         return;
     }
@@ -136,6 +133,16 @@ public class Block : MonoBehaviour
 
         if(isActive && Input.GetKeyUp(KeyCode.E))
         {
+            if(playerScript.inventory.Count != 0)
+            {
+                foreach(var value in playerScript.inventory)
+                {
+                    if(value.Value == 0)
+                    playerScript.inventory.Remove(value.Key);
+                }
+                AddToInventory();
+            }
+            else
             AddToInventory();
         }
 
