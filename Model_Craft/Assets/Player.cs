@@ -18,7 +18,8 @@ public class Player : MonoBehaviour
     public int selectedItem;
     public Dictionary<string, int> inventory = new Dictionary<string, int>();
     public string[] keys;
-    public int[] values;
+    public string[] values;
+    public int lengthDictionary;
     public Vector3 rotateDirection;
     public bool isBuildMode = false;
     public float distance = 0.0f;
@@ -87,7 +88,8 @@ public class Player : MonoBehaviour
         {
             inventory.Remove(keys[selectedItem-1]);
             keys[selectedItem - 1] = "";
-            values[selectedItem - 1] = 0;
+            values[selectedItem - 1] = "";
+            transform.Find("UI").GetComponent<UI>().UpdateInventoryView();
         }
         else
         return;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class Block : MonoBehaviour
 {
     private Player playerScript;
+    private GameObject player;
     private Vector3 pointScreen;
     public List<Vector3> previousRotate = new List<Vector3>();
     private Vector3 rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
@@ -17,7 +18,7 @@ public class Block : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)
         playerScript = player.GetComponent<Player>();
@@ -53,9 +54,11 @@ public class Block : MonoBehaviour
         foreach(var value in playerScript.inventory)
         {
             playerScript.keys[iterator] = value.Key;
-            playerScript.values[iterator] = value.Value;
+            playerScript.values[iterator] = value.Value.ToString();
             iterator += 1;
         }
+
+        player.transform.Find("UI").GetComponent<UI>().UpdateInventoryView();
         Destroy(this.gameObject);
     }
 

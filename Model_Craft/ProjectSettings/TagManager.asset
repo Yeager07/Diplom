@@ -7,6 +7,7 @@ TagManager:
   - Target
   - Selectable
   - Pupirka
+  - Inventory
   layers:
   - Default
   - TransparentFX
