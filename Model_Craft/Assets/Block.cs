@@ -11,6 +11,8 @@ public class Block : MonoBehaviour
     public List<Vector3> previousRotate = new List<Vector3>();
     private Vector3 rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 curPosition;
+    public List<Vector3> hollowChildCoordinat = new List<Vector3>();
+    public List<Vector3> bulgeChildCoordinat = new List<Vector3>();
     public bool isActive = false;
     public List<Vector3> positionHistory = new List<Vector3>();
     public bool isFree = true;
@@ -25,6 +27,12 @@ public class Block : MonoBehaviour
 
         positionHistory.Add(transform.position);
         previousRotate.Add(rotateDirection);
+
+        foreach(Transform child in transform)
+        {
+            if(child.name == "Bulge")
+            bulgeChildCoordinat.Add(child.position);
+        }
     }
 
     void SavePosition(Vector3 position)
@@ -116,16 +124,23 @@ public class Block : MonoBehaviour
     void OnMouseExit()
     {
         isActive = false;
-        //if(playerScript.isBuildMode)
-        //transform.Find("Pupirka").gameObject.SetActive(true);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Selectable"))
-        isFree = false;
-        else
-        isFree = true;
+        if(isActive)
+        {
+            if(other.CompareTag("Selectable"))
+            {
+                hollowChildCoordinat.Clear();
+                foreach(Transform child in other.gameObject.transform)
+                {
+                    if(child.name == "Hollow")
+                    hollowChildCoordinat.Add(child.position);
+                }
+            }
+
+        }
     }
 
     // Update is called once per frame
