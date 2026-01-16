@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using static System.Math;
 using System.Collections.Generic;
@@ -11,11 +12,18 @@ public class Block : MonoBehaviour
     public List<Vector3> previousRotate = new List<Vector3>();
     private Vector3 rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 curPosition;
+    private float blockHeight = 0.064f;
+    private GameObject place;
+    private float bulgeWidth = 0.008f;
     public List<Vector3> hollowChildCoordinat = new List<Vector3>();
     public List<Vector3> bulgeChildCoordinat = new List<Vector3>();
+    public List<Vector3> hollowChildRotation = new List<Vector3>();
+    public List<Vector3> bulgeChildRotation = new List<Vector3>();
     public bool isActive = false;
     public List<Vector3> positionHistory = new List<Vector3>();
     public bool isFree = true;
+    public Vector3 height;
+    public float yCoord;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -30,8 +38,11 @@ public class Block : MonoBehaviour
 
         foreach(Transform child in transform)
         {
-            if(child.name == "Bulge")
-            bulgeChildCoordinat.Add(child.position);
+            if(child.name == "Hollow")
+            {
+                hollowChildCoordinat.Add(child.position);
+                hollowChildRotation.Add(child.rotation.eulerAngles);
+            }
         }
     }
 
@@ -51,9 +62,18 @@ public class Block : MonoBehaviour
 
     void Move(float distance)
     {
-        Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
-        curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
-        transform.position = curPosition;
+        if(isFree)
+        {
+            curPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
+            transform.position = Camera.main.ScreenToWorldPoint(curPosition);
+        }
+        else
+        {
+
+            curPosition = transform.right * Input.GetAxis("Mouse X") + transform.forward * Input.GetAxis("Mouse Y");
+            curPosition.y = blockHeight*int.Parse(place.name[place.name.Length - 1].ToString());
+            GetComponent<Rigidbody>().MovePosition(GetComponent<Rigidbody>().position + curPosition * Time.deltaTime * 100.0f);
+        }
     }
 
     private void UpdateMassive()
@@ -88,19 +108,17 @@ public class Block : MonoBehaviour
         return;
     }
 
-    void onMouseDown()
-    {
-        if(playerScript.isBuildMode)
-        pointScreen = Camera.main.WorldToScreenPoint(transform.position);
-    }
-
     void OnMouseDrag()
     {
         if(playerScript.isBuildMode)
         {   
             if(!Input.GetKey(KeyCode.R))
             {
+                if(isFree)
                 Move(playerScript.distance);
+
+                else
+                Move(0.0f);
             }
         }
 
@@ -132,20 +150,57 @@ public class Block : MonoBehaviour
         {
             if(other.CompareTag("Selectable"))
             {
-                hollowChildCoordinat.Clear();
+                place = other.gameObject;
+                bulgeChildCoordinat.Clear();
+                bulgeChildRotation.Clear();
+
                 foreach(Transform child in other.gameObject.transform)
                 {
-                    if(child.name == "Hollow")
-                    hollowChildCoordinat.Add(child.position);
+                    if(child.name == "Bulge")
+                    {
+                        bulgeChildCoordinat.Add(child.position);
+                        bulgeChildRotation.Add(child.rotation.eulerAngles);
+
+                    }
+                }
+
+                if(hollowChildRotation[0].x == bulgeChildRotation[0].x)
+                {
+                    isFree = false;
+                    transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
                 }
             }
-
+            
+            transform.position = place.transform.position;
         }
+    }
+
+    private void Rotate()
+    {
+        if(Input.GetKeyUp(KeyCode.UpArrow))
+        transform.Rotate(Vector3.right * 90.0f, Space.World);
+            
+        if(Input.GetKeyUp(KeyCode.DownArrow))
+        transform.Rotate(Vector3.right * (-90.0f), Space.World);
+            
+        if(Input.GetKeyUp(KeyCode.LeftArrow))
+        transform.Rotate(Vector3.up * (-90.0f), Space.World);
+
+        if(Input.GetKeyUp(KeyCode.RightArrow))
+        transform.Rotate(Vector3.up * 90.0f, Space.World);
+
+        rotateDirection = transform.rotation.eulerAngles;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKey(KeyCode.M))
+        {
+            isFree = true;
+            transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+        }
+
         if(Input.GetMouseButtonUp(0))
         SavePosition(transform.position);
 
@@ -165,21 +220,7 @@ public class Block : MonoBehaviour
         }
 
         if(Input.GetKey(KeyCode.R) && isActive)
-        {     
-            if(Input.GetKeyUp(KeyCode.UpArrow))
-            transform.Rotate(Vector3.right * 90.0f, Space.World);
-            
-            if(Input.GetKeyUp(KeyCode.DownArrow))
-            transform.Rotate(Vector3.right * (-90.0f), Space.World);
-            
-            if(Input.GetKeyUp(KeyCode.LeftArrow))
-            transform.Rotate(Vector3.up * (-90.0f), Space.World);
-
-            if(Input.GetKeyUp(KeyCode.RightArrow))
-            transform.Rotate(Vector3.up * 90.0f, Space.World);
-
-            rotateDirection = transform.rotation.eulerAngles;
-        }
+        Rotate();
 
         if(Input.GetKeyUp(KeyCode.R))
         {

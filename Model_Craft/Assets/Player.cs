@@ -95,7 +95,7 @@ public class Player : MonoBehaviour
         return;
     }
 
-    void FixedUpdate()
+    private void SelectItem()
     {
         if(Input.GetKey(KeyCode.Alpha1))
         selectedItem = 1;
@@ -111,6 +111,11 @@ public class Player : MonoBehaviour
 
         if(Input.GetKey(KeyCode.Alpha5))
         selectedItem = 5;
+    }
+
+    void FixedUpdate()
+    {
+        SelectItem();
     }
 
     // Update is called once per frame

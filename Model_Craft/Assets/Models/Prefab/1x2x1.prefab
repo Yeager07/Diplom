@@ -188,9 +188,9 @@ GameObject:
   - component: {fileID: 6464355419782603613}
   - component: {fileID: 6826406524742656786}
   - component: {fileID: 1650089791533276134}
+  - component: {fileID: 2421248577759509124}
   - component: {fileID: 5154546765014511812}
   - component: {fileID: 5242935834225156659}
-  - component: {fileID: 2421248577759509124}
   m_Layer: 0
   m_Name: 1x2x1
   m_TagString: Selectable
@@ -208,7 +208,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalScale: {x: 20, y: 20, z: 20}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3753133849478023677}
@@ -270,6 +270,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2421248577759509124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5189425500420487365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bde1ead9e0d071843ad2ee3c9d86dc3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  previousRotate: []
+  hollowChildCoordinat: []
+  bulgeChildCoordinat: []
+  hollowChildRotation: []
+  bulgeChildRotation: []
+  isActive: 0
+  positionHistory: []
+  isFree: 1
+  height: {x: 0, y: 0, z: 0}
+  yCoord: 0
 --- !u!54 &5154546765014511812
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -318,24 +340,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.016000003, y: 0.0049, z: 0.008}
   m_Center: {x: 0, y: -0.00075, z: 0}
---- !u!114 &2421248577759509124
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5189425500420487365}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bde1ead9e0d071843ad2ee3c9d86dc3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  previousRotate: []
-  hollowChildCoordinat: []
-  bulgeChildCoordinat: []
-  isActive: 0
-  positionHistory: []
-  isFree: 1
 --- !u!1 &8396948716871842314
 GameObject:
   m_ObjectHideFlags: 0
