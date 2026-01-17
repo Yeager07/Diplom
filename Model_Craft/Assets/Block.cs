@@ -11,10 +11,12 @@ public class Block : MonoBehaviour
     private Vector3 pointScreen;
     public List<Vector3> previousRotate = new List<Vector3>();
     private Vector3 rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
-    private Vector3 curPosition;
+    public Vector3 curPosition;
     private float blockHeight = 0.064f;
     private GameObject place;
-    private float bulgeWidth = 0.008f;
+    private float bulgeWidth = 0.08f;
+    public float xDistance = 0.0f;
+    public float zDistance = 0.0f;
     public List<Vector3> hollowChildCoordinat = new List<Vector3>();
     public List<Vector3> bulgeChildCoordinat = new List<Vector3>();
     public List<Vector3> hollowChildRotation = new List<Vector3>();
@@ -69,10 +71,24 @@ public class Block : MonoBehaviour
         }
         else
         {
+            //curPosition = new Vector3(0.0f, 0.0f, 0.0f);
 
-            curPosition = transform.right * Input.GetAxis("Mouse X") + transform.forward * Input.GetAxis("Mouse Y");
-            curPosition.y = blockHeight*int.Parse(place.name[place.name.Length - 1].ToString());
-            GetComponent<Rigidbody>().MovePosition(GetComponent<Rigidbody>().position + curPosition * Time.deltaTime * 100.0f);
+            xDistance += Input.GetAxis("Mouse X");
+            zDistance += Input.GetAxis("Mouse Y");
+
+            if(xDistance % (bulgeWidth*10) == 0)
+            {   
+                transform.position = new Vector3(transform.position.x + xDistance, transform.position.y, transform.position.z);
+                xDistance = 0.0f;
+            }
+
+            if(zDistance % (bulgeWidth*10) == 0)
+            {
+                transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + zDistance);
+                zDistance = 0.0f;
+            }
+            //curPosition = transform.right * Input.GetAxis("Mouse X") + transform.forward * Input.GetAxis("Mouse Y");
+            //GetComponent<Rigidbody>().MovePosition(GetComponent<Rigidbody>().position + curPosition * Time.deltaTime * 50.0f);
         }
     }
 
@@ -118,7 +134,11 @@ public class Block : MonoBehaviour
                 Move(playerScript.distance);
 
                 else
-                Move(0.0f);
+                {
+                    //curPosition = new Vector3(0.0f, 0.0f, 0.0f);
+                    transform.position = new Vector3(transform.position.x, place.transform.position.y + blockHeight * int.Parse(place.name[place.name.Length - 1].ToString()), transform.position.z);
+                    Move(0.0f);
+                }
             }
         }
 
@@ -165,13 +185,10 @@ public class Block : MonoBehaviour
                 }
 
                 if(hollowChildRotation[0].x == bulgeChildRotation[0].x)
-                {
-                    isFree = false;
-                    transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
-                }
+                isFree = false;
             }
             
-            transform.position = place.transform.position;
+            //transform.position = place.transform.position;
         }
     }
 
@@ -197,8 +214,14 @@ public class Block : MonoBehaviour
     {
         if(Input.GetKey(KeyCode.M))
         {
-            isFree = true;
-            transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            if(isActive)
+            {
+                isFree = true;
+                transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            }
+
+            else
+            return;
         }
 
         if(Input.GetMouseButtonUp(0))
