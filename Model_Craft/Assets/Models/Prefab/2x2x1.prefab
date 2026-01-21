@@ -335,11 +335,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   previousRotate: []
+  curPosition: {x: 0, y: 0, z: 0}
+  rendgenMaterial: {fileID: 2100000, guid: 53564e89632cff245bd1f138c26bf813, type: 2}
+  standartmaterial: {fileID: 2100000, guid: 924b26bb2cbbc4e439067c09a19f1f1d, type: 2}
+  isTrue: 0
+  xDistance: 0
+  zDistance: 0
   hollowChildCoordinat: []
   bulgeChildCoordinat: []
+  hollowChildRotation: []
+  bulgeChildRotation: []
   isActive: 0
   positionHistory: []
   isFree: 1
+  height: {x: 0, y: 0, z: 0}
+  yCoord: 0
 --- !u!1 &5481600658875598098
 GameObject:
   m_ObjectHideFlags: 0

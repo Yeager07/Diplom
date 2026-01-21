@@ -14,7 +14,9 @@ public class Block : MonoBehaviour
     public Vector3 curPosition;
     private float blockHeight = 0.064f;
     private GameObject place;
-    private float bulgeWidth = 0.08f;
+    private float bulgeWidth = 0.16f;
+    public Material rendgenMaterial;
+    public Material standartmaterial;
     public bool isTrue = false;
     public float xDistance = 0.0f;
     public float zDistance = 0.0f;
@@ -72,15 +74,13 @@ public class Block : MonoBehaviour
         }
         else
         {
-            //curPosition = new Vector3(0.0f, 0.0f, 0.0f);
-
-            if(xDistance >= 8.0f)
+            if(xDistance >= 3.2f)
             {   
                 isTrue = true;
                 transform.position = new Vector3(transform.position.x + bulgeWidth, transform.position.y, transform.position.z);
                 xDistance = 0.0f;
             }
-            else if(xDistance <= -8.0f)
+            else if(xDistance <= -3.2f)
             {
                 isTrue = true;
                 transform.position = new Vector3(transform.position.x - bulgeWidth, transform.position.y, transform.position.z);
@@ -92,13 +92,13 @@ public class Block : MonoBehaviour
                 xDistance += Input.GetAxis("Mouse X");
             }
 
-            if(zDistance >= 8.0f)
+            if(zDistance >= 3.2f)
             {
                 isTrue = true;
                 transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + bulgeWidth);
                 zDistance = 0.0f;
             }
-            else if(zDistance <= -8.0f)
+            else if(zDistance <= -3.2f)
             {
                 isTrue = true;
                 transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - bulgeWidth);
@@ -109,8 +109,6 @@ public class Block : MonoBehaviour
                 isTrue = false;
                 zDistance += Input.GetAxis("Mouse Y");
             }
-            //curPosition = transform.right * Input.GetAxis("Mouse X") + transform.forward * Input.GetAxis("Mouse Y");
-            //GetComponent<Rigidbody>().MovePosition(GetComponent<Rigidbody>().position + curPosition * Time.deltaTime * 50.0f);
         }
     }
 
@@ -157,8 +155,7 @@ public class Block : MonoBehaviour
 
                 else
                 {
-                    //curPosition = new Vector3(0.0f, 0.0f, 0.0f);
-                    transform.position = new Vector3(transform.position.x, place.transform.position.y + blockHeight * int.Parse(place.name[place.name.Length - 1].ToString()), transform.position.z);
+                    GetComponent<MeshRenderer>().material = rendgenMaterial;
                     Move(0.0f);
                 }
             }
@@ -176,7 +173,6 @@ public class Block : MonoBehaviour
         isActive = true;
         if(playerScript.isBuildMode)
         {
-            //transform.Find("Pupirka").gameObject.SetActive(false);
             playerScript.target = gameObject.transform.position;
         }
     }
@@ -202,16 +198,24 @@ public class Block : MonoBehaviour
                     {
                         bulgeChildCoordinat.Add(child.position);
                         bulgeChildRotation.Add(child.rotation.eulerAngles);
-
                     }
                 }
 
                 if(hollowChildRotation[0].x == bulgeChildRotation[0].x)
-                isFree = false;
+                {
+                    isFree = false;
+                    GetComponent<MeshRenderer>().material = rendgenMaterial;
+                    bulgeChildCoordinat[0] = new Vector3(bulgeChildCoordinat[0].x , place.transform.position.y + blockHeight * int.Parse(place.name[place.name.Length - 1].ToString()), bulgeChildCoordinat[0].z);
+                    transform.position = bulgeChildCoordinat[0];
+                }
             }
-            
-            //transform.position = place.transform.position;
         }
+    }
+
+    private void OnTriggerExit()
+    {
+        isFree = true;
+        GetComponent<MeshRenderer>().material = standartmaterial;
     }
 
     private void Rotate()
@@ -247,7 +251,10 @@ public class Block : MonoBehaviour
         }
 
         if(Input.GetMouseButtonUp(0))
-        SavePosition(transform.position);
+        {
+            GetComponent<MeshRenderer>().material = standartmaterial;
+            SavePosition(transform.position);
+        }
 
         if(isActive && Input.GetKeyUp(KeyCode.E))
         {
@@ -278,6 +285,8 @@ public class Block : MonoBehaviour
         {
             if(positionHistory.Count >= 1)
             {
+                isFree = true;
+
                 if(previousRotate.Count > 1 && previousRotate.Contains(positionHistory[positionHistory.Count-1]))
                 {
                     transform.rotation = Quaternion.Euler(positionHistory[positionHistory.Count - 1]);
