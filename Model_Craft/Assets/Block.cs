@@ -15,6 +15,7 @@ public class Block : MonoBehaviour
     private float blockHeight = 0.064f;
     private GameObject place;
     private float bulgeWidth = 0.08f;
+    public bool isTrue = false;
     public float xDistance = 0.0f;
     public float zDistance = 0.0f;
     public List<Vector3> hollowChildCoordinat = new List<Vector3>();
@@ -73,19 +74,40 @@ public class Block : MonoBehaviour
         {
             //curPosition = new Vector3(0.0f, 0.0f, 0.0f);
 
-            xDistance += Input.GetAxis("Mouse X");
-            zDistance += Input.GetAxis("Mouse Y");
-
-            if(xDistance % (bulgeWidth*10) == 0)
+            if(xDistance >= 8.0f)
             {   
-                transform.position = new Vector3(transform.position.x + xDistance, transform.position.y, transform.position.z);
+                isTrue = true;
+                transform.position = new Vector3(transform.position.x + bulgeWidth, transform.position.y, transform.position.z);
                 xDistance = 0.0f;
             }
-
-            if(zDistance % (bulgeWidth*10) == 0)
+            else if(xDistance <= -8.0f)
             {
-                transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + zDistance);
+                isTrue = true;
+                transform.position = new Vector3(transform.position.x - bulgeWidth, transform.position.y, transform.position.z);
+                xDistance = 0.0f;
+            }
+            else
+            {
+                isTrue = false;
+                xDistance += Input.GetAxis("Mouse X");
+            }
+
+            if(zDistance >= 8.0f)
+            {
+                isTrue = true;
+                transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + bulgeWidth);
                 zDistance = 0.0f;
+            }
+            else if(zDistance <= -8.0f)
+            {
+                isTrue = true;
+                transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - bulgeWidth);
+                zDistance = 0.0f;
+            }
+            else
+            {
+                isTrue = false;
+                zDistance += Input.GetAxis("Mouse Y");
             }
             //curPosition = transform.right * Input.GetAxis("Mouse X") + transform.forward * Input.GetAxis("Mouse Y");
             //GetComponent<Rigidbody>().MovePosition(GetComponent<Rigidbody>().position + curPosition * Time.deltaTime * 50.0f);
