@@ -11,10 +11,12 @@ public class Block : MonoBehaviour
     private Vector3 pointScreen;
     public List<Vector3> previousRotate = new List<Vector3>();
     private Vector3 rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
+    public Vector3 moveDirection;
     public Vector3 curPosition;
     private float blockHeight = 0.064f;
     private GameObject place;
     private float bulgeWidth = 0.16f;
+    private int coef = 1;
     public Material rendgenMaterial;
     public Material standartmaterial;
     public bool isTrue = false;
@@ -41,12 +43,20 @@ public class Block : MonoBehaviour
         positionHistory.Add(transform.position);
         previousRotate.Add(rotateDirection);
 
-        foreach(Transform child in transform)
+        FindChild("Hollow", hollowChildCoordinat, hollowChildRotation, transform);
+    }
+
+    private void FindChild(string childName, List<Vector3> childCoordinat, List<Vector3> childRotation, Transform objectTransform)
+    {
+        childCoordinat.Clear();
+        childRotation.Clear();
+
+        foreach(Transform child in objectTransform)
         {
-            if(child.name == "Hollow")
+            if(child.name == childName)
             {
-                hollowChildCoordinat.Add(child.position);
-                hollowChildRotation.Add(child.rotation.eulerAngles);
+                childCoordinat.Add(child.position);
+                childRotation.Add(child.rotation.eulerAngles);
             }
         }
     }
@@ -57,12 +67,6 @@ public class Block : MonoBehaviour
 
         if(positionHistory.Count > 100)
         positionHistory.RemoveAt(0);
-    }
-
-    private float CalculateDistance()
-    {
-        float result = (float)Sqrt(Pow((transform.position.x - playerScript.transform.position.x), 2) + Pow((transform.position.z - playerScript.transform.position.z), 2));
-        return result;
     }
 
     void Move(float distance)
@@ -150,6 +154,8 @@ public class Block : MonoBehaviour
         {   
             if(!Input.GetKey(KeyCode.R))
             {
+                FindChild("Hollow", hollowChildCoordinat, hollowChildRotation, transform);
+
                 if(isFree)
                 Move(playerScript.distance);
 
@@ -161,8 +167,8 @@ public class Block : MonoBehaviour
             }
         }
 
-        else if (CalculateDistance() < 4.0f)
-        Move(CalculateDistance());
+        /*else if (CalculateDistance() < 4.0f)
+        Move(CalculateDistance());*/
 
         else
         return;
@@ -182,6 +188,25 @@ public class Block : MonoBehaviour
         isActive = false;
     }
 
+    private void CalculateDistance(List<Vector3> hollows, List<Vector3> bulges)
+    {
+        float minDistance = 100.0f;
+
+        foreach(Vector3 hollow in hollows)
+        {
+            foreach(Vector3 bulge in bulges)
+            {
+                float distance = (float)Sqrt(Pow(hollow.x - bulge.x, 2) + Pow(hollow.y - bulge.y, 2) + Pow(hollow.z - bulge.z, 2));
+                
+                if(distance < minDistance)
+                {
+                    minDistance = distance;
+                    moveDirection = new Vector3(bulge.x, place.transform.position.y + coef * blockHeight * int.Parse(place.name[place.name.Length - 1].ToString()), bulge.z);
+                }
+            }
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if(isActive)
@@ -189,24 +214,14 @@ public class Block : MonoBehaviour
             if(other.CompareTag("Selectable"))
             {
                 place = other.gameObject;
-                bulgeChildCoordinat.Clear();
-                bulgeChildRotation.Clear();
 
-                foreach(Transform child in other.gameObject.transform)
-                {
-                    if(child.name == "Bulge")
-                    {
-                        bulgeChildCoordinat.Add(child.position);
-                        bulgeChildRotation.Add(child.rotation.eulerAngles);
-                    }
-                }
+                FindChild("Bulge", bulgeChildCoordinat, bulgeChildRotation, other.gameObject.transform);
 
                 if(hollowChildRotation[0].x == bulgeChildRotation[0].x)
                 {
                     isFree = false;
-                    GetComponent<MeshRenderer>().material = rendgenMaterial;
-                    bulgeChildCoordinat[0] = new Vector3(bulgeChildCoordinat[0].x , place.transform.position.y + blockHeight * int.Parse(place.name[place.name.Length - 1].ToString()), bulgeChildCoordinat[0].z);
-                    transform.position = bulgeChildCoordinat[0];
+                    CalculateDistance(hollowChildCoordinat, bulgeChildCoordinat);
+                    transform.position = moveDirection;
                 }
             }
         }
@@ -235,6 +250,30 @@ public class Block : MonoBehaviour
         rotateDirection = transform.rotation.eulerAngles;
     }
 
+    void FixedUpdate()
+    {
+        if(Input.GetKey(KeyCode.UpArrow))
+        coef = 1;
+
+        if(Input.GetKey(KeyCode.DownArrow))
+        coef = -1;
+
+        if(Input.GetMouseButtonUp(0))
+        {
+            GetComponent<MeshRenderer>().material = standartmaterial;
+            SavePosition(transform.position);
+        }
+
+        if(Input.GetKeyUp(KeyCode.R))
+        {
+            SavePosition(previousRotate[previousRotate.Count - 1]);
+            previousRotate.Add(new Vector3(rotateDirection.x % 360, rotateDirection.y % 360, rotateDirection.z));
+        }
+
+        if(Input.GetKey(KeyCode.R) && isActive)
+        Rotate();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -250,12 +289,6 @@ public class Block : MonoBehaviour
             return;
         }
 
-        if(Input.GetMouseButtonUp(0))
-        {
-            GetComponent<MeshRenderer>().material = standartmaterial;
-            SavePosition(transform.position);
-        }
-
         if(isActive && Input.GetKeyUp(KeyCode.E))
         {
             if(playerScript.inventory.Count != 0)
@@ -269,16 +302,6 @@ public class Block : MonoBehaviour
             }
             else
             AddToInventory();
-        }
-
-        if(Input.GetKey(KeyCode.R) && isActive)
-        Rotate();
-
-        if(Input.GetKeyUp(KeyCode.R))
-        {
-            SavePosition(previousRotate[previousRotate.Count - 1]);
-            previousRotate.Add(new Vector3(rotateDirection.x % 360, rotateDirection.y % 360, rotateDirection.z));
-
         }
 
         if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z))
