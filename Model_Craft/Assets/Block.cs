@@ -8,6 +8,7 @@ public class Block : MonoBehaviour
 {
     private Player playerScript;
     private GameObject player;
+    //public GameObject currentObject;
     private Vector3 pointScreen;
     public List<Vector3> previousRotate = new List<Vector3>();
     private Vector3 rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
@@ -29,6 +30,7 @@ public class Block : MonoBehaviour
     public bool isActive = false;
     public List<Vector3> positionHistory = new List<Vector3>();
     public bool isFree = true;
+    public bool isMagnetic = false;
     public Vector3 height;
     public float yCoord;
 
@@ -44,6 +46,16 @@ public class Block : MonoBehaviour
         previousRotate.Add(rotateDirection);
 
         FindChild("Hollow", hollowChildCoordinat, hollowChildRotation, transform);
+    }
+
+    private Transform FindMainParent(Transform currentObject)
+    {
+        while(currentObject.parent != null)
+        {
+            currentObject = currentObject.parent;
+        }
+        
+        return currentObject;
     }
 
     private void FindChild(string childName, List<Vector3> childCoordinat, List<Vector3> childRotation, Transform objectTransform)
@@ -69,89 +81,92 @@ public class Block : MonoBehaviour
         positionHistory.RemoveAt(0);
     }
 
-    void Move(float distance)
+    void Move(float distance, GameObject currentObject)
     {
-        if(isFree)
+        Transform movingObject = currentObject.transform;
+        Block blockScript = currentObject.GetComponent<Block>();
+
+        if(blockScript.isFree)
         {
             curPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
-            transform.position = Camera.main.ScreenToWorldPoint(curPosition);
+            movingObject.position = Camera.main.ScreenToWorldPoint(curPosition);
         }
         else
         {
             playerRotation = playerScript.transform.rotation.eulerAngles;
             
-            if(xDistance >= 1.6f)
+            if(blockScript.xDistance >= 1.6f)
             {   
                 if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
-                    transform.position = new Vector3(transform.position.x + bulgeWidth, transform.position.y, transform.position.z);
+                    movingObject.position = new Vector3(movingObject.position.x + bulgeWidth, movingObject.position.y, movingObject.position.z);
                 
                 else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z - bulgeWidth);
                 
                 else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
-                    transform.position = new Vector3(transform.position.x - bulgeWidth, transform.position.y, transform.position.z);
+                    movingObject.position = new Vector3(movingObject.position.x - bulgeWidth, movingObject.position.y, movingObject.position.z);
                 
                 else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z + bulgeWidth);
 
-                xDistance = 0.0f;
+                blockScript.xDistance = 0.0f;
             }
-            else if(xDistance <= -1.6f)
+            else if(blockScript.xDistance <= -1.6f)
             {
                 if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
-                    transform.position = new Vector3(transform.position.x - bulgeWidth, transform.position.y, transform.position.z);
+                    movingObject.position = new Vector3(movingObject.position.x - bulgeWidth, movingObject.position.y, movingObject.position.z);
                 
                 else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z + bulgeWidth);
                 
                 else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
-                    transform.position = new Vector3(transform.position.x + bulgeWidth, transform.position.y, transform.position.z);
+                    movingObject.position = new Vector3(movingObject.position.x + bulgeWidth, movingObject.position.y, movingObject.position.z);
                 
                 else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z - bulgeWidth);
 
-                xDistance = 0.0f;
+                blockScript.xDistance = 0.0f;
             }
             else
             {
-                xDistance += Input.GetAxis("Mouse X");
+                blockScript.xDistance += Input.GetAxis("Mouse X");
             }
 
-            if(zDistance >= 1.6f)
+            if(blockScript.zDistance >= 1.6f)
             {
                 if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z + bulgeWidth);
                 
                 else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
-                    transform.position = new Vector3(transform.position.x + bulgeWidth, transform.position.y, transform.position.z);
+                    movingObject.position = new Vector3(movingObject.position.x + bulgeWidth, movingObject.position.y, movingObject.position.z);
                 
                 else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z - bulgeWidth);
                 
                 else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
-                    transform.position = new Vector3(transform.position.x - bulgeWidth, transform.position.y, transform.position.z);
+                    movingObject.position = new Vector3(movingObject.position.x - bulgeWidth, movingObject.position.y, movingObject.position.z);
                 
-                zDistance = 0.0f;
+                blockScript.zDistance = 0.0f;
             }
-            else if(zDistance <= -1.6f)
+            else if(blockScript.zDistance <= -1.6f)
             {
                 if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z - bulgeWidth);
                 
                 else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
-                    transform.position = new Vector3(transform.position.x - bulgeWidth, transform.position.y, transform.position.z);
+                    movingObject.position = new Vector3(movingObject.position.x - bulgeWidth, movingObject.position.y, movingObject.position.z);
                 
                 else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z + bulgeWidth);
                 
                 else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
-                    transform.position = new Vector3(transform.position.x + bulgeWidth, transform.position.y, transform.position.z);
+                    movingObject.position = new Vector3(movingObject.position.x + bulgeWidth, movingObject.position.y, movingObject.position.z);
 
-                zDistance = 0.0f;
+                blockScript.zDistance = 0.0f;
             }
             else
             {
-                zDistance += Input.GetAxis("Mouse Y");
+                blockScript.zDistance += Input.GetAxis("Mouse Y");
             }
         }
     }
@@ -197,12 +212,14 @@ public class Block : MonoBehaviour
                 FindChild("Hollow", hollowChildCoordinat, hollowChildRotation, transform);
 
                 if(isFree)
-                Move(playerScript.distance);
+                Move(playerScript.distance, gameObject);
 
                 else
                 {
-                    GetComponent<MeshRenderer>().material = rendgenMaterial;
-                    Move(0.0f);
+                    if(!isMagnetic)
+                        GetComponent<MeshRenderer>().material = rendgenMaterial;
+
+                    Move(playerScript.distance, FindMainParent(transform).gameObject);
                 }
             }
         }
@@ -281,8 +298,12 @@ public class Block : MonoBehaviour
 
     private void OnTriggerExit()
     {
-        isFree = true;
-        GetComponent<MeshRenderer>().material = standartmaterial;
+        if(!isMagnetic)
+        {
+            transform.parent = null;
+            isFree = true;
+            GetComponent<MeshRenderer>().material = standartmaterial;
+        }
     }
 
     private void Rotate()
@@ -309,6 +330,43 @@ public class Block : MonoBehaviour
 
         if(isActive && Input.GetKey(KeyCode.DownArrow))
         coef = -1;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(Input.GetMouseButtonUp(0))
+        {
+            if(!isFree)
+            {
+                transform.SetParent(place.transform);
+                isMagnetic = true;
+            }
+
+            GetComponent<MeshRenderer>().material = standartmaterial;
+            SavePosition(transform.position);
+        }
+
+        if(Input.GetKeyUp(KeyCode.M))
+        {
+            if(isActive)
+            {
+                if(isMagnetic)
+                {
+                    isMagnetic = false;
+                    transform.parent = null;
+                }
+
+                else
+                {
+                    isFree = true;
+                    transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+                }
+            }
+
+            else
+            return;
+        }
 
         if(Input.GetKeyUp(KeyCode.R))
         {
@@ -318,28 +376,6 @@ public class Block : MonoBehaviour
 
         if(Input.GetKey(KeyCode.R) && isActive)
         Rotate();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(Input.GetMouseButtonUp(0))
-        {
-            GetComponent<MeshRenderer>().material = standartmaterial;
-            SavePosition(transform.position);
-        }
-
-        if(Input.GetKey(KeyCode.M))
-        {
-            if(isActive)
-            {
-                isFree = true;
-                transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-            }
-
-            else
-            return;
-        }
 
         if(isActive && Input.GetKeyUp(KeyCode.E))
         {

@@ -283,10 +283,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   previousRotate: []
+  moveDirection: {x: 0, y: 0, z: 0}
   curPosition: {x: 0, y: 0, z: 0}
+  coef: 1
   rendgenMaterial: {fileID: 2100000, guid: 53564e89632cff245bd1f138c26bf813, type: 2}
   standartmaterial: {fileID: 2100000, guid: 924b26bb2cbbc4e439067c09a19f1f1d, type: 2}
-  isTrue: 0
   xDistance: 0
   zDistance: 0
   hollowChildCoordinat: []
@@ -296,6 +297,7 @@ MonoBehaviour:
   isActive: 0
   positionHistory: []
   isFree: 1
+  isMagnetic: 0
   height: {x: 0, y: 0, z: 0}
   yCoord: 0
 --- !u!54 &5154546765014511812
@@ -344,7 +346,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.016000003, y: 0.0049, z: 0.008}
+  m_Size: {x: 0.01525, y: 0.0049, z: 0.0075}
   m_Center: {x: 0, y: -0.00075, z: 0}
 --- !u!1 &8396948716871842314
 GameObject:

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 public class OutlineSelection : MonoBehaviour
 {
     private Transform highlight;
-    private Transform selection;
     private RaycastHit raycastHit;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -28,7 +27,7 @@ public class OutlineSelection : MonoBehaviour
         if(!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out raycastHit))
         {
             highlight = raycastHit.transform;
-            if(highlight.CompareTag("Selectable") && highlight != selection)
+            if(highlight.CompareTag("Selectable"))
             {
                 if(highlight.gameObject.GetComponent<Outline>() != null)
                 highlight.gameObject.GetComponent<Outline>().enabled = true;
