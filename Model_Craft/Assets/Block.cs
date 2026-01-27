@@ -16,10 +16,10 @@ public class Block : MonoBehaviour
     private float blockHeight = 0.064f;
     private GameObject place;
     private float bulgeWidth = 0.16f;
-    private int coef = 1;
+    private Vector3 playerRotation;
+    public int coef = 1;
     public Material rendgenMaterial;
     public Material standartmaterial;
-    public bool isTrue = false;
     public float xDistance = 0.0f;
     public float zDistance = 0.0f;
     public List<Vector3> hollowChildCoordinat = new List<Vector3>();
@@ -78,39 +78,79 @@ public class Block : MonoBehaviour
         }
         else
         {
-            if(xDistance >= 3.2f)
+            playerRotation = playerScript.transform.rotation.eulerAngles;
+            
+            if(xDistance >= 1.6f)
             {   
-                isTrue = true;
-                transform.position = new Vector3(transform.position.x + bulgeWidth, transform.position.y, transform.position.z);
+                if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
+                    transform.position = new Vector3(transform.position.x + bulgeWidth, transform.position.y, transform.position.z);
+                
+                else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - bulgeWidth);
+                
+                else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
+                    transform.position = new Vector3(transform.position.x - bulgeWidth, transform.position.y, transform.position.z);
+                
+                else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + bulgeWidth);
+
                 xDistance = 0.0f;
             }
-            else if(xDistance <= -3.2f)
+            else if(xDistance <= -1.6f)
             {
-                isTrue = true;
-                transform.position = new Vector3(transform.position.x - bulgeWidth, transform.position.y, transform.position.z);
+                if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
+                    transform.position = new Vector3(transform.position.x - bulgeWidth, transform.position.y, transform.position.z);
+                
+                else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + bulgeWidth);
+                
+                else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
+                    transform.position = new Vector3(transform.position.x + bulgeWidth, transform.position.y, transform.position.z);
+                
+                else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - bulgeWidth);
+
                 xDistance = 0.0f;
             }
             else
             {
-                isTrue = false;
                 xDistance += Input.GetAxis("Mouse X");
             }
 
-            if(zDistance >= 3.2f)
+            if(zDistance >= 1.6f)
             {
-                isTrue = true;
-                transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + bulgeWidth);
+                if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + bulgeWidth);
+                
+                else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
+                    transform.position = new Vector3(transform.position.x + bulgeWidth, transform.position.y, transform.position.z);
+                
+                else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - bulgeWidth);
+                
+                else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
+                    transform.position = new Vector3(transform.position.x - bulgeWidth, transform.position.y, transform.position.z);
+                
                 zDistance = 0.0f;
             }
-            else if(zDistance <= -3.2f)
+            else if(zDistance <= -1.6f)
             {
-                isTrue = true;
-                transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - bulgeWidth);
+                if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - bulgeWidth);
+                
+                else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
+                    transform.position = new Vector3(transform.position.x - bulgeWidth, transform.position.y, transform.position.z);
+                
+                else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + bulgeWidth);
+                
+                else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
+                    transform.position = new Vector3(transform.position.x + bulgeWidth, transform.position.y, transform.position.z);
+
                 zDistance = 0.0f;
             }
             else
             {
-                isTrue = false;
                 zDistance += Input.GetAxis("Mouse Y");
             }
         }
@@ -191,6 +231,7 @@ public class Block : MonoBehaviour
     private void CalculateDistance(List<Vector3> hollows, List<Vector3> bulges)
     {
         float minDistance = 100.0f;
+        float yDistance = 0.0f;
 
         foreach(Vector3 hollow in hollows)
         {
@@ -200,8 +241,16 @@ public class Block : MonoBehaviour
                 
                 if(distance < minDistance)
                 {
+                    //transform.RotateAround(hollow);
                     minDistance = distance;
-                    moveDirection = new Vector3(bulge.x, place.transform.position.y + coef * blockHeight * int.Parse(place.name[place.name.Length - 1].ToString()), bulge.z);
+                    
+                    if(coef == -1)
+                        yDistance = place.transform.position.y + coef * blockHeight * int.Parse(place.name[place.name.Length - 1].ToString());
+                    
+                    else
+                        yDistance = place.transform.position.y + coef * blockHeight * int.Parse(transform.name[transform.name.Length - 1].ToString());
+
+                    moveDirection = new Vector3(bulge.x, yDistance, bulge.z);
                 }
             }
         }
@@ -217,11 +266,14 @@ public class Block : MonoBehaviour
 
                 FindChild("Bulge", bulgeChildCoordinat, bulgeChildRotation, other.gameObject.transform);
 
-                if(hollowChildRotation[0].x == bulgeChildRotation[0].x)
+                if(bulgeChildCoordinat.Count != 0)
                 {
-                    isFree = false;
-                    CalculateDistance(hollowChildCoordinat, bulgeChildCoordinat);
-                    transform.position = moveDirection;
+                    if(hollowChildRotation[0].x == bulgeChildRotation[0].x)
+                    {
+                        isFree = false;
+                        CalculateDistance(hollowChildCoordinat, bulgeChildCoordinat);
+                        transform.position = moveDirection;
+                    }
                 }
             }
         }
@@ -252,17 +304,11 @@ public class Block : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(Input.GetKey(KeyCode.UpArrow))
+        if(isActive && Input.GetKey(KeyCode.UpArrow))
         coef = 1;
 
-        if(Input.GetKey(KeyCode.DownArrow))
+        if(isActive && Input.GetKey(KeyCode.DownArrow))
         coef = -1;
-
-        if(Input.GetMouseButtonUp(0))
-        {
-            GetComponent<MeshRenderer>().material = standartmaterial;
-            SavePosition(transform.position);
-        }
 
         if(Input.GetKeyUp(KeyCode.R))
         {
@@ -277,6 +323,12 @@ public class Block : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetMouseButtonUp(0))
+        {
+            GetComponent<MeshRenderer>().material = standartmaterial;
+            SavePosition(transform.position);
+        }
+
         if(Input.GetKey(KeyCode.M))
         {
             if(isActive)
