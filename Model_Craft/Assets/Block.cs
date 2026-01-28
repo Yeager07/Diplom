@@ -258,7 +258,6 @@ public class Block : MonoBehaviour
                 
                 if(distance < minDistance)
                 {
-                    //transform.RotateAround(hollow);
                     minDistance = distance;
                     
                     if(coef == -1)

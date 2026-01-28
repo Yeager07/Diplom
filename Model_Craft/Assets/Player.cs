@@ -86,9 +86,19 @@ public class Player : MonoBehaviour
     {
         if(inventory.Count != 0)
         {
-            inventory.Remove(keys[selectedItem-1]);
-            keys[selectedItem - 1] = "";
-            values[selectedItem - 1] = "";
+            if(inventory[keys[selectedItem-1]] != 1)
+            {
+                inventory[keys[selectedItem-1]] -= 1;
+                values[selectedItem - 1] = (int.Parse(values[selectedItem - 1]) - 1).ToString();
+            }
+
+            else
+            {
+                inventory.Remove(keys[selectedItem-1]);
+                keys[selectedItem - 1] = "";
+                values[selectedItem - 1] = "";
+            }
+
             transform.Find("UI").GetComponent<UI>().UpdateInventoryView();
         }
         else
@@ -121,7 +131,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKey(KeyCode.Delete) && selectedItem != 0)
+        if(Input.GetKeyUp(KeyCode.Delete) && selectedItem != 0)
         RemoveBlockfromInventory();
 
         if(!isBuildMode)
