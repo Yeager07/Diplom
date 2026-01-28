@@ -306,30 +306,21 @@ public class Block : MonoBehaviour
         }
     }
 
-    private void Rotate()
+    private void Rotate(Transform currentObject)
     {
         if(Input.GetKeyUp(KeyCode.UpArrow))
-        transform.Rotate(Vector3.right * 90.0f, Space.World);
+        currentObject.Rotate(Vector3.right * 90.0f, Space.World);
             
         if(Input.GetKeyUp(KeyCode.DownArrow))
-        transform.Rotate(Vector3.right * (-90.0f), Space.World);
+        currentObject.Rotate(Vector3.right * (-90.0f), Space.World);
             
         if(Input.GetKeyUp(KeyCode.LeftArrow))
-        transform.Rotate(Vector3.up * (-90.0f), Space.World);
+        currentObject.Rotate(Vector3.up * (-90.0f), Space.World);
 
         if(Input.GetKeyUp(KeyCode.RightArrow))
-        transform.Rotate(Vector3.up * 90.0f, Space.World);
+        currentObject.Rotate(Vector3.up * 90.0f, Space.World);
 
-        rotateDirection = transform.rotation.eulerAngles;
-    }
-
-    void FixedUpdate()
-    {
-        if(isActive && Input.GetKey(KeyCode.UpArrow))
-        coef = 1;
-
-        if(isActive && Input.GetKey(KeyCode.DownArrow))
-        coef = -1;
+        rotateDirection = currentObject.rotation.eulerAngles;
     }
 
     // Update is called once per frame
@@ -375,7 +366,7 @@ public class Block : MonoBehaviour
         }
 
         if(Input.GetKey(KeyCode.R) && isActive)
-        Rotate();
+        Rotate(FindMainParent(transform));
 
         if(isActive && Input.GetKeyUp(KeyCode.E))
         {
