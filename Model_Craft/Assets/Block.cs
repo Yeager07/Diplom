@@ -23,6 +23,8 @@ public class Block : MonoBehaviour
     public Material standartmaterial;
     public float xDistance = 0.0f;
     public float zDistance = 0.0f;
+    public List<Transform> hollowChild;
+    public List<Transform> bulgeChild;
     public List<Vector3> hollowChildCoordinat = new List<Vector3>();
     public List<Vector3> bulgeChildCoordinat = new List<Vector3>();
     public List<Vector3> hollowChildRotation = new List<Vector3>();
@@ -45,7 +47,7 @@ public class Block : MonoBehaviour
         positionHistory.Add(transform.position);
         previousRotate.Add(rotateDirection);
 
-        FindChild("Hollow", hollowChildCoordinat, hollowChildRotation, transform);
+        FindChild("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
     }
 
     private Transform FindMainParent(Transform currentObject)
@@ -58,7 +60,7 @@ public class Block : MonoBehaviour
         return currentObject;
     }
 
-    private void FindChild(string childName, List<Vector3> childCoordinat, List<Vector3> childRotation, Transform objectTransform)
+    private void FindChild(string childName, List<Vector3> childCoordinat, List<Vector3> childRotation, Transform objectTransform, List<Transform> massiveChild)
     {
         childCoordinat.Clear();
         childRotation.Clear();
@@ -69,6 +71,7 @@ public class Block : MonoBehaviour
             {
                 childCoordinat.Add(child.position);
                 childRotation.Add(child.rotation.eulerAngles);
+                massiveChild.Add(child);
             }
         }
     }
@@ -209,7 +212,7 @@ public class Block : MonoBehaviour
         {   
             if(!Input.GetKey(KeyCode.R))
             {
-                FindChild("Hollow", hollowChildCoordinat, hollowChildRotation, transform);
+                FindChild("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
 
                 if(isFree)
                 Move(playerScript.distance, gameObject);
@@ -245,16 +248,16 @@ public class Block : MonoBehaviour
         isActive = false;
     }
 
-    private void CalculateDistance(List<Vector3> hollows, List<Vector3> bulges)
+    private void CalculateDistance(List<Transform> hollows, List<Transform> bulges)
     {
         float minDistance = 100.0f;
         float yDistance = 0.0f;
 
-        foreach(Vector3 hollow in hollows)
+        foreach(Transform hollow in hollows)
         {
-            foreach(Vector3 bulge in bulges)
+            foreach(Transform bulge in bulges)
             {
-                float distance = (float)Sqrt(Pow(hollow.x - bulge.x, 2) + Pow(hollow.y - bulge.y, 2) + Pow(hollow.z - bulge.z, 2));
+                float distance = (float)Sqrt(Pow(hollow.position.x - bulge.position.x, 2) + Pow(hollow.position.y - bulge.position.y, 2) + Pow(hollow.position.z - bulge.position.z, 2));
                 
                 if(distance < minDistance)
                 {
@@ -266,7 +269,7 @@ public class Block : MonoBehaviour
                     else
                         yDistance = place.transform.position.y + coef * blockHeight * int.Parse(transform.name[transform.name.Length - 1].ToString());
 
-                    moveDirection = new Vector3(bulge.x, yDistance, bulge.z);
+                    moveDirection = new Vector3(bulge.position.x - (hollow.position.x - transform.position.x), yDistance, bulge.position.z - (hollow.position.z - transform.position.z));
                 }
             }
         }
@@ -280,14 +283,14 @@ public class Block : MonoBehaviour
             {
                 place = other.gameObject;
 
-                FindChild("Bulge", bulgeChildCoordinat, bulgeChildRotation, other.gameObject.transform);
+                FindChild("Bulge", bulgeChildCoordinat, bulgeChildRotation, other.gameObject.transform, bulgeChild);
 
                 if(bulgeChildCoordinat.Count != 0)
                 {
                     if(hollowChildRotation[0].x == bulgeChildRotation[0].x)
                     {
                         isFree = false;
-                        CalculateDistance(hollowChildCoordinat, bulgeChildCoordinat);
+                        CalculateDistance(hollowChild, bulgeChild);
                         transform.position = moveDirection;
                     }
                 }
