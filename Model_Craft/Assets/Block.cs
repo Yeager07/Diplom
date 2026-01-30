@@ -8,13 +8,13 @@ public class Block : MonoBehaviour
 {
     private Player playerScript;
     private GameObject player;
-    //public GameObject currentObject;
     private Vector3 pointScreen;
     public List<Vector3> previousRotate = new List<Vector3>();
     private Vector3 rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
-    public Vector3 moveDirection;
+    public Vector3 bulgePosition;
+    public Vector3 localHollowPosition;
     public Vector3 curPosition;
-    private float blockHeight = 0.064f;
+    //private float blockHeight = 0.064f;
     private GameObject place;
     private float bulgeWidth = 0.16f;
     private Vector3 playerRotation;
@@ -64,6 +64,7 @@ public class Block : MonoBehaviour
     {
         childCoordinat.Clear();
         childRotation.Clear();
+        massiveChild.Clear();
 
         foreach(Transform child in objectTransform)
         {
@@ -84,6 +85,11 @@ public class Block : MonoBehaviour
         positionHistory.RemoveAt(0);
     }
 
+    private void CalculateMoveVector()
+    {
+        Vector3 movingVector;
+    }
+    
     void Move(float distance, GameObject currentObject)
     {
         Transform movingObject = currentObject.transform;
@@ -101,32 +107,32 @@ public class Block : MonoBehaviour
             if(blockScript.xDistance >= 1.6f)
             {   
                 if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
-                    movingObject.position = new Vector3(movingObject.position.x + bulgeWidth, movingObject.position.y, movingObject.position.z);
+                    movingObject.position = new Vector3(movingObject.localPosition.x + bulgeWidth, movingObject.localPosition.y, movingObject.localPosition.z);
                 
                 else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
-                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z - bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.localPosition.x, movingObject.localPosition.y, movingObject.localPosition.z - bulgeWidth);
                 
                 else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
-                    movingObject.position = new Vector3(movingObject.position.x - bulgeWidth, movingObject.position.y, movingObject.position.z);
+                    movingObject.position = new Vector3(movingObject.localPosition.x - bulgeWidth, movingObject.localPosition.y, movingObject.localPosition.z);
                 
                 else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
-                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z + bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.localPosition.x, movingObject.localPosition.y, movingObject.localPosition.z + bulgeWidth);
 
                 blockScript.xDistance = 0.0f;
             }
             else if(blockScript.xDistance <= -1.6f)
             {
                 if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
-                    movingObject.position = new Vector3(movingObject.position.x - bulgeWidth, movingObject.position.y, movingObject.position.z);
+                    movingObject.position = new Vector3(movingObject.localPosition.x - bulgeWidth, movingObject.localPosition.y, movingObject.localPosition.z);
                 
                 else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
-                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z + bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.localPosition.x, movingObject.localPosition.y, movingObject.localPosition.z + bulgeWidth);
                 
                 else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
-                    movingObject.position = new Vector3(movingObject.position.x + bulgeWidth, movingObject.position.y, movingObject.position.z);
+                    movingObject.position = new Vector3(movingObject.localPosition.x + bulgeWidth, movingObject.localPosition.y, movingObject.localPosition.z);
                 
                 else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
-                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z - bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.localPosition.x, movingObject.localPosition.y, movingObject.localPosition.z - bulgeWidth);
 
                 blockScript.xDistance = 0.0f;
             }
@@ -138,32 +144,32 @@ public class Block : MonoBehaviour
             if(blockScript.zDistance >= 1.6f)
             {
                 if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
-                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z + bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.localPosition.x, movingObject.localPosition.y, movingObject.localPosition.z + bulgeWidth);
                 
                 else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
-                    movingObject.position = new Vector3(movingObject.position.x + bulgeWidth, movingObject.position.y, movingObject.position.z);
+                    movingObject.position = new Vector3(movingObject.localPosition.x + bulgeWidth, movingObject.localPosition.y, movingObject.localPosition.z);
                 
                 else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
-                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z - bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.localPosition.x, movingObject.localPosition.y, movingObject.localPosition.z - bulgeWidth);
                 
                 else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
-                    movingObject.position = new Vector3(movingObject.position.x - bulgeWidth, movingObject.position.y, movingObject.position.z);
+                    movingObject.position = new Vector3(movingObject.localPosition.x - bulgeWidth, movingObject.localPosition.y, movingObject.localPosition.z);
                 
                 blockScript.zDistance = 0.0f;
             }
             else if(blockScript.zDistance <= -1.6f)
             {
                 if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
-                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z - bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.localPosition.x, movingObject.localPosition.y, movingObject.localPosition.z - bulgeWidth);
                 
                 else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
-                    movingObject.position = new Vector3(movingObject.position.x - bulgeWidth, movingObject.position.y, movingObject.position.z);
+                    movingObject.position = new Vector3(movingObject.localPosition.x - bulgeWidth, movingObject.localPosition.y, movingObject.localPosition.z);
                 
                 else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
-                    movingObject.position = new Vector3(movingObject.position.x, movingObject.position.y, movingObject.position.z + bulgeWidth);
+                    movingObject.position = new Vector3(movingObject.localPosition.x, movingObject.localPosition.y, movingObject.localPosition.z + bulgeWidth);
                 
                 else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
-                    movingObject.position = new Vector3(movingObject.position.x + bulgeWidth, movingObject.position.y, movingObject.position.z);
+                    movingObject.position = new Vector3(movingObject.localPosition.x + bulgeWidth, movingObject.localPosition.y, movingObject.localPosition.z);
 
                 blockScript.zDistance = 0.0f;
             }
@@ -219,16 +225,13 @@ public class Block : MonoBehaviour
 
                 else
                 {
-                    if(!isMagnetic)
-                        GetComponent<MeshRenderer>().material = rendgenMaterial;
+                    if(!FindMainParent(transform).gameObject.GetComponent<Block>().isFree)
+                        FindMainParent(transform).gameObject.GetComponent<MeshRenderer>().material = rendgenMaterial;
 
                     Move(playerScript.distance, FindMainParent(transform).gameObject);
                 }
             }
         }
-
-        /*else if (CalculateDistance() < 4.0f)
-        Move(CalculateDistance());*/
 
         else
         return;
@@ -251,7 +254,7 @@ public class Block : MonoBehaviour
     private void CalculateDistance(List<Transform> hollows, List<Transform> bulges)
     {
         float minDistance = 100.0f;
-        float yDistance = 0.0f;
+        //float yDistance = 0.0f;
 
         foreach(Transform hollow in hollows)
         {
@@ -263,13 +266,14 @@ public class Block : MonoBehaviour
                 {
                     minDistance = distance;
                     
-                    if(coef == -1)
-                        yDistance = place.transform.position.y + coef * blockHeight * int.Parse(place.name[place.name.Length - 1].ToString());
+                    /*if(coef == -1)
+                        yDistance = bulge.position.y + coef * blockHeight * int.Parse(place.name[place.name.Length - 1].ToString());
                     
                     else
-                        yDistance = place.transform.position.y + coef * blockHeight * int.Parse(transform.name[transform.name.Length - 1].ToString());
+                        yDistance = bulge.position.y + coef * blockHeight * int.Parse(transform.name[transform.name.Length - 1].ToString());*/
 
-                    moveDirection = new Vector3(bulge.position.x - (hollow.position.x - transform.position.x), yDistance, bulge.position.z - (hollow.position.z - transform.position.z));
+                    localHollowPosition = hollow.localPosition;
+                    bulgePosition = bulge.position;
                 }
             }
         }
@@ -291,7 +295,7 @@ public class Block : MonoBehaviour
                     {
                         isFree = false;
                         CalculateDistance(hollowChild, bulgeChild);
-                        transform.position = moveDirection;
+                        transform.position = bulgePosition - transform.TransformVector(localHollowPosition);
                     }
                 }
             }
