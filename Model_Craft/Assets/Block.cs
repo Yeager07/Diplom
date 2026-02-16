@@ -9,19 +9,19 @@ public class Block : MonoBehaviour
     private Player playerScript;
     private GameObject player;
     private Vector3 pointScreen;
-    public List<Vector3> previousRotate = new List<Vector3>();
+    private List<Vector3> previousRotate = new List<Vector3>();
     private Vector3 rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
-    public Vector3 bulgePosition;
-    public Vector3 localHollowPosition;
+    private Vector3 bulgePosition;
+    private Vector3 localHollowPosition;
     public Vector3 curPosition;
-    //private float blockHeight = 0.064f;
+    public Vector3 previousPosition;
     private GameObject place;
     private float bulgeWidth = 0.16f;
     private Vector3 moveX = new Vector3(0.16f, 0.0f, 0.0f);
     private Vector3 moveY = new Vector3(0.0f, 0.16f, 0.0f);
     private Vector3 moveZ = new Vector3(0.0f, 0.0f, 0.16f);
     private Vector3 playerRotation;
-    public int coef = 1;
+    //public int coef = 1;
     public Material rendgenMaterial;
     public Material standartmaterial;
     public float xDistance = 0.0f;
@@ -47,6 +47,7 @@ public class Block : MonoBehaviour
         if (player != null)
         playerScript = player.GetComponent<Player>();
 
+        previousPosition = transform.position;
         positionHistory.Add(transform.position);
         previousRotate.Add(rotateDirection);
 
@@ -82,6 +83,10 @@ public class Block : MonoBehaviour
 
     void SavePosition(Vector3 position)
     {
+        if(positionHistory[positionHistory.Count - 1] == position)
+        return;
+
+        else
         positionHistory.Add(position);
 
         if(positionHistory.Count > 100)
@@ -163,7 +168,6 @@ public class Block : MonoBehaviour
                 movingObject.gameObject.GetComponent<Block>().zDistance = 0.0f;
             }
         }
-        Vector3 movingVector;
     }
     
     void Move(float distance, GameObject currentObject)
@@ -180,14 +184,14 @@ public class Block : MonoBehaviour
         {
             playerRotation = playerScript.transform.rotation.eulerAngles;
             
-            if(blockScript.xDistance >= bulgeWidth*10)
+            if(blockScript.xDistance >= bulgeWidth*20)
             {   
                 if(movingObject.rotation.eulerAngles.x == 90.0f || movingObject.rotation.eulerAngles.x == 270.0f)
                     CalculateMoveVector(blockScript.xDistance, movingObject, moveX, moveY);
                 else
                     CalculateMoveVector(blockScript.xDistance, movingObject, moveX, moveZ);
             }
-            else if(blockScript.xDistance <= -bulgeWidth*10)
+            else if(blockScript.xDistance <= -bulgeWidth*20)
             {
                 if(movingObject.rotation.eulerAngles.x == 90.0f || movingObject.rotation.eulerAngles.x == 270.0f)
                     CalculateMoveVector(blockScript.xDistance, movingObject, moveX, moveY);
@@ -197,14 +201,14 @@ public class Block : MonoBehaviour
             else
                 blockScript.xDistance += Input.GetAxis("Mouse X");
 
-            if(blockScript.zDistance >= bulgeWidth*10)
+            if(blockScript.zDistance >= bulgeWidth*20)
             {
                 if(movingObject.rotation.eulerAngles.x == 90.0f || movingObject.rotation.eulerAngles.x == 270.0f)
                     CalculateMoveVector(blockScript.zDistance, movingObject, moveX, moveY);
                 else
                     CalculateMoveVector(blockScript.zDistance, movingObject, moveX, moveZ);
             }
-            else if(blockScript.zDistance <= -bulgeWidth*10)
+            else if(blockScript.zDistance <= -bulgeWidth*20)
             {
                 if(movingObject.rotation.eulerAngles.x == 90.0f || movingObject.rotation.eulerAngles.x == 270.0f)
                     CalculateMoveVector(blockScript.zDistance, movingObject, moveX, moveY);
@@ -301,13 +305,6 @@ public class Block : MonoBehaviour
                 if(distance < minDistance)
                 {
                     minDistance = distance;
-                    
-                    /*if(coef == -1)
-                        yDistance = bulge.position.y + coef * blockHeight * int.Parse(place.name[place.name.Length - 1].ToString());
-                    
-                    else
-                        yDistance = bulge.position.y + coef * blockHeight * int.Parse(transform.name[transform.name.Length - 1].ToString());*/
-
                     localHollowPosition = hollow.localPosition;
                     bulgePosition = bulge.position;
                 }
@@ -377,7 +374,12 @@ public class Block : MonoBehaviour
             }
 
             GetComponent<MeshRenderer>().material = standartmaterial;
-            SavePosition(transform.position);
+
+            if(transform.position != previousPosition)
+            {
+                SavePosition(previousPosition);                
+                previousPosition = transform.position;
+            }
         }
 
         if(Input.GetKeyUp(KeyCode.M))
@@ -425,7 +427,7 @@ public class Block : MonoBehaviour
             AddToInventory();
         }
 
-        if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z))
+        if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.Z))
         {
             if(positionHistory.Count >= 1)
             {
@@ -441,7 +443,11 @@ public class Block : MonoBehaviour
                 else
                 transform.position = positionHistory[positionHistory.Count - 1];
 
+                if(positionHistory.Count > 1)
                 positionHistory.RemoveAt(positionHistory.Count - 1);
+
+                previousPosition = positionHistory[positionHistory.Count-1];
+
                 return;
             }
         }
