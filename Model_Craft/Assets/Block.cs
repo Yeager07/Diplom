@@ -15,7 +15,7 @@ public class Block : MonoBehaviour
     private Vector3 localHollowPosition;
     public Vector3 curPosition;
     public Vector3 previousPosition;
-    private GameObject place;
+    public GameObject place;
     private float bulgeWidth = 0.16f;
     private Vector3 moveX = new Vector3(0.16f, 0.0f, 0.0f);
     private Vector3 moveY = new Vector3(0.0f, 0.16f, 0.0f);
@@ -23,7 +23,7 @@ public class Block : MonoBehaviour
     private Vector3 playerRotation;
     //public int coef = 1;
     public Material rendgenMaterial;
-    public Material standartmaterial;
+    public Material standartMaterial;
     public float xDistance = 0.0f;
     public float zDistance = 0.0f;
     public List<Transform> hollowChild;
@@ -32,6 +32,7 @@ public class Block : MonoBehaviour
     public List<Vector3> bulgeChildCoordinat = new List<Vector3>();
     public List<Vector3> hollowChildRotation = new List<Vector3>();
     public List<Vector3> bulgeChildRotation = new List<Vector3>();
+    public List<Transform> blockChild;
     public bool isActive = false;
     public List<Vector3> positionHistory = new List<Vector3>();
     public bool isFree = true;
@@ -51,7 +52,7 @@ public class Block : MonoBehaviour
         positionHistory.Add(transform.position);
         previousRotate.Add(rotateDirection);
 
-        FindChild("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
+        FindChildPoint("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
     }
 
     private Transform FindMainParent(Transform currentObject)
@@ -64,7 +65,7 @@ public class Block : MonoBehaviour
         return currentObject;
     }
 
-    private void FindChild(string childName, List<Vector3> childCoordinat, List<Vector3> childRotation, Transform objectTransform, List<Transform> massiveChild)
+    private void FindChildPoint(string childName, List<Vector3> childCoordinat, List<Vector3> childRotation, Transform objectTransform, List<Transform> massiveChild)
     {
         childCoordinat.Clear();
         childRotation.Clear();
@@ -83,10 +84,6 @@ public class Block : MonoBehaviour
 
     void SavePosition(Vector3 position)
     {
-        if(positionHistory[positionHistory.Count - 1] == position)
-        return;
-
-        else
         positionHistory.Add(position);
 
         if(positionHistory.Count > 100)
@@ -258,7 +255,7 @@ public class Block : MonoBehaviour
         {   
             if(!Input.GetKey(KeyCode.R))
             {
-                FindChild("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
+                FindChildPoint("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
 
                 if(isFree)
                 Move(playerScript.distance, gameObject);
@@ -266,7 +263,15 @@ public class Block : MonoBehaviour
                 else
                 {
                     if(!FindMainParent(transform).gameObject.GetComponent<Block>().isFree)
+                    {
                         FindMainParent(transform).gameObject.GetComponent<MeshRenderer>().material = rendgenMaterial;
+
+                        if(FindMainParent(transform).GetComponent<Block>().blockChild.Count == 0)
+                        Camera.main.GetComponent<MainScript>().FindAllChild(FindMainParent(transform), FindMainParent(transform).GetComponent<Block>().blockChild);
+
+                        foreach(Transform child in FindMainParent(transform).GetComponent<Block>().blockChild)
+                        child.GetComponent<MeshRenderer>().material = rendgenMaterial;
+                    }
 
                     Move(playerScript.distance, FindMainParent(transform).gameObject);
                 }
@@ -288,13 +293,15 @@ public class Block : MonoBehaviour
 
     void OnMouseExit()
     {
+        //if(Input.GetMouseButtonUp(0))
         isActive = false;
+
+        FindMainParent(transform).GetComponent<Block>().blockChild.Clear();
     }
 
     private void CalculateDistance(List<Transform> hollows, List<Transform> bulges)
     {
         float minDistance = 100.0f;
-        //float yDistance = 0.0f;
 
         foreach(Transform hollow in hollows)
         {
@@ -314,13 +321,13 @@ public class Block : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(isActive)
+        if(isActive && !isMagnetic)
         {
             if(other.CompareTag("Selectable"))
             {
                 place = other.gameObject;
 
-                FindChild("Bulge", bulgeChildCoordinat, bulgeChildRotation, other.gameObject.transform, bulgeChild);
+                FindChildPoint("Bulge", bulgeChildCoordinat, bulgeChildRotation, place.transform, bulgeChild);
 
                 if(bulgeChildCoordinat.Count != 0)
                 {
@@ -337,11 +344,11 @@ public class Block : MonoBehaviour
 
     private void OnTriggerExit()
     {
-        if(!isMagnetic)
+        if(!isMagnetic && transform.parent == null)
         {
-            transform.parent = null;
+            //transform.parent = null;
             isFree = true;
-            GetComponent<MeshRenderer>().material = standartmaterial;
+            GetComponent<MeshRenderer>().material = standartMaterial;
         }
     }
 
@@ -369,17 +376,19 @@ public class Block : MonoBehaviour
         {
             if(!isFree)
             {
-                transform.SetParent(place.transform);
                 isMagnetic = true;
+                transform.SetParent(place.transform);
             }
 
-            GetComponent<MeshRenderer>().material = standartmaterial;
+            GetComponent<MeshRenderer>().material = standartMaterial;
 
             if(transform.position != previousPosition)
             {
-                SavePosition(previousPosition);                
+                SavePosition(previousPosition);
                 previousPosition = transform.position;
             }
+            else
+            SavePosition(transform.position);
         }
 
         if(Input.GetKeyUp(KeyCode.M))
@@ -427,11 +436,11 @@ public class Block : MonoBehaviour
             AddToInventory();
         }
 
-        if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.Z))
+        if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.I))
         {
             if(positionHistory.Count >= 1)
             {
-                isFree = true;
+                //isFree = true;
 
                 if(previousRotate.Count > 1 && previousRotate.Contains(positionHistory[positionHistory.Count-1]))
                 {

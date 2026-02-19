@@ -31,6 +31,19 @@ public class MainScript : MonoBehaviour
         playerScript.transform.rotation = Quaternion.Euler(rotate);
     }
 
+    public void FindAllChild(Transform parentTransform, List<Transform> children)
+    {
+        foreach(Transform child in parentTransform)
+        {
+            if(child != null)
+            FindAllChild(child, children);
+
+            children.Add(child);
+        }
+
+        children.RemoveAll(child => child.CompareTag("Point"));
+    }
+
     // Update is called once per frame
     void Update()
     {

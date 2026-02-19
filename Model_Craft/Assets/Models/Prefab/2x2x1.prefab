@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2269232804320565423}
   m_Layer: 0
   m_Name: Hollow
-  m_TagString: Untagged
+  m_TagString: Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 3447563360575779944}
   m_Layer: 0
   m_Name: Hollow
-  m_TagString: Untagged
+  m_TagString: Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 3442846012592375660}
   m_Layer: 0
   m_Name: Bulge
-  m_TagString: Untagged
+  m_TagString: Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -334,14 +334,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde1ead9e0d071843ad2ee3c9d86dc3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  previousRotate: []
-  moveDirection: {x: 0, y: 0, z: 0}
   curPosition: {x: 0, y: 0, z: 0}
-  coef: 1
+  previousPosition: {x: 0, y: 0, z: 0}
+  place: {fileID: 0}
   rendgenMaterial: {fileID: 2100000, guid: 53564e89632cff245bd1f138c26bf813, type: 2}
-  standartmaterial: {fileID: 2100000, guid: 924b26bb2cbbc4e439067c09a19f1f1d, type: 2}
+  standartMaterial: {fileID: 2100000, guid: 924b26bb2cbbc4e439067c09a19f1f1d, type: 2}
   xDistance: 0
   zDistance: 0
+  hollowChild: []
+  bulgeChild: []
   hollowChildCoordinat: []
   bulgeChildCoordinat: []
   hollowChildRotation: []
@@ -364,7 +365,7 @@ GameObject:
   - component: {fileID: 1890778806468774466}
   m_Layer: 0
   m_Name: Hollow
-  m_TagString: Untagged
+  m_TagString: Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -423,7 +424,7 @@ GameObject:
   - component: {fileID: 2294257671536927760}
   m_Layer: 0
   m_Name: Hollow
-  m_TagString: Untagged
+  m_TagString: Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -482,7 +483,7 @@ GameObject:
   - component: {fileID: 3231028178906511486}
   m_Layer: 0
   m_Name: Bulge
-  m_TagString: Untagged
+  m_TagString: Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -541,7 +542,7 @@ GameObject:
   - component: {fileID: 6313186076196357499}
   m_Layer: 0
   m_Name: Bulge
-  m_TagString: Untagged
+  m_TagString: Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -600,7 +601,7 @@ GameObject:
   - component: {fileID: 680258024063142917}
   m_Layer: 0
   m_Name: Bulge
-  m_TagString: Untagged
+  m_TagString: Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

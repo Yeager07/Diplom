@@ -1033,13 +1033,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde1ead9e0d071843ad2ee3c9d86dc3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  previousRotate: []
   curPosition: {x: 0, y: 0, z: 0}
+  previousPosition: {x: 0, y: 0, z: 0}
+  place: {fileID: 0}
   rendgenMaterial: {fileID: 2100000, guid: 53564e89632cff245bd1f138c26bf813, type: 2}
-  standartmaterial: {fileID: 2100000, guid: 924b26bb2cbbc4e439067c09a19f1f1d, type: 2}
-  isTrue: 0
+  standartMaterial: {fileID: 2100000, guid: 924b26bb2cbbc4e439067c09a19f1f1d, type: 2}
   xDistance: 0
   zDistance: 0
+  hollowChild: []
+  bulgeChild: []
   hollowChildCoordinat: []
   bulgeChildCoordinat: []
   hollowChildRotation: []
@@ -1047,6 +1049,7 @@ MonoBehaviour:
   isActive: 0
   positionHistory: []
   isFree: 1
+  isMagnetic: 0
   height: {x: 0, y: 0, z: 0}
   yCoord: 0
 --- !u!1 &276154950
@@ -2333,6 +2336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e48d0e8c86fe956449e38d8f6fb158ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allChild: []
 --- !u!1 &1069347964
 GameObject:
   m_ObjectHideFlags: 0

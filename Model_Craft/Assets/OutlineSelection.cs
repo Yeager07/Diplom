@@ -5,8 +5,9 @@ using System.Collections.Generic;
 
 public class OutlineSelection : MonoBehaviour
 {
-    private Transform highlight;
+    public Transform highlight;
     private RaycastHit raycastHit;
+    public List<Transform> blockChild;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -14,11 +15,41 @@ public class OutlineSelection : MonoBehaviour
     }
 
     // Update is called once per frame
+    void SetOutline(Transform selectedObject)
+    {
+        if(selectedObject.gameObject.GetComponent<Outline>() != null)
+        selectedObject.gameObject.GetComponent<Outline>().enabled = true;
+
+        else
+        {
+            Outline outline = selectedObject.gameObject.AddComponent<Outline>();
+            outline.enabled = true;
+            selectedObject.gameObject.GetComponent<Outline>().OutlineColor = new Color(1.0f, 0.5193217f, 0.0f, 1.0f);
+            selectedObject.gameObject.GetComponent<Outline>().OutlineWidth = 7.0f;
+        }
+    }
+
+    void RemoveOutline(Transform selectedObject)
+    {
+        selectedObject.gameObject.GetComponent<Outline>().enabled = false;        
+    }
+
     void Update()
     {
         if(highlight != null)
         {
-            highlight.gameObject.GetComponent<Outline>().enabled = false;
+            RemoveOutline(highlight);
+            
+            foreach(Transform child in blockChild)
+            {
+                if(child.gameObject.GetComponent<Outline>() != null)
+                {
+                    RemoveOutline(child);
+                }
+            }
+            
+            blockChild.Clear();
+
             highlight = null;
         }
 
@@ -27,17 +58,18 @@ public class OutlineSelection : MonoBehaviour
         if(!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out raycastHit))
         {
             highlight = raycastHit.transform;
+
             if(highlight.CompareTag("Selectable"))
             {
-                if(highlight.gameObject.GetComponent<Outline>() != null)
-                highlight.gameObject.GetComponent<Outline>().enabled = true;
+                SetOutline(highlight);
+                
+                if(blockChild.Count == 0)
+                Camera.main.GetComponent<MainScript>().FindAllChild(highlight, blockChild);
 
-                else
+                foreach(Transform child in blockChild)
                 {
-                    Outline outline = highlight.gameObject.AddComponent<Outline>();
-                    outline.enabled = true;
-                    highlight.gameObject.GetComponent<Outline>().OutlineColor = new Color(1.0f, 0.5193217f, 0.0f, 1.0f);
-                    highlight.gameObject.GetComponent<Outline>().OutlineWidth = 7.0f;
+                    if(child != null && child.gameObject.GetComponent<Outline>() != null)
+                    SetOutline(child);
                 }
             }
 
