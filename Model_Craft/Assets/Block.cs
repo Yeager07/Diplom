@@ -287,7 +287,7 @@ public class Block : MonoBehaviour
         isActive = true;
         if(playerScript.isBuildMode)
         {
-            playerScript.target = gameObject.transform.position;
+            playerScript.target = transform.position + new Vector3(0.0f, -0.4f, 0.0f);
         }
     }
 
@@ -349,6 +349,12 @@ public class Block : MonoBehaviour
             //transform.parent = null;
             isFree = true;
             GetComponent<MeshRenderer>().material = standartMaterial;
+
+            if(FindMainParent(transform).GetComponent<Block>().blockChild.Count == 0)
+            Camera.main.GetComponent<MainScript>().FindAllChild(FindMainParent(transform), FindMainParent(transform).GetComponent<Block>().blockChild);
+
+            foreach(Transform child in FindMainParent(transform).GetComponent<Block>().blockChild)
+            child.GetComponent<MeshRenderer>().material = standartMaterial;
         }
     }
 

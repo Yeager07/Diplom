@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Player : MonoBehaviour
 {
     private float speed = 4.0f;
-    private float minDistance = 2f;
+    private float minDistance = 1.0f;
     private float maxDistance = 10f;
     private float buildSpeed = 25.0f;
     private float speedRot = 1.5f;
@@ -73,10 +73,13 @@ public class Player : MonoBehaviour
 
         Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
 
-        if(!Input.GetKeyDown(KeyCode.KeypadPeriod))
-        moveDirection = Quaternion.Euler(rotateDirection) * negDistance + targetPosition + targetOffset;
-        else
-        targetPosition = target;
+        if(Input.GetKeyDown(KeyCode.KeypadPeriod))
+        {
+            targetPosition = target;
+            distance = minDistance;
+        }
+        
+        moveDirection = Quaternion.Euler(rotateDirection) * negDistance + targetPosition;
 
         transform.rotation = Quaternion.Euler(rotateDirection);
         transform.position = moveDirection;

@@ -18,9 +18,6 @@ public class BuildSceneScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.KeypadPeriod))
-        {
-            playerScript.distance = 2.0f;
-        }
+
     }
 }
