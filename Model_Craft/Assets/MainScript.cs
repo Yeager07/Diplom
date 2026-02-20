@@ -52,6 +52,7 @@ public class MainScript : MonoBehaviour
             if(!playerScript.isBuildMode)
             {
                 Cursor.lockState = CursorLockMode.None;
+                playerScript.distance = playerScript.minDistance;
                 LoadScene("BuildScene", playerScript.isBuildMode, zeroPos, zeroPos);
             }
             else

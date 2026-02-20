@@ -1,11 +1,12 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
     private float speed = 4.0f;
-    private float minDistance = 1.0f;
+    public float minDistance = 1.0f;
     private float maxDistance = 10f;
     private float buildSpeed = 25.0f;
     private float speedRot = 1.5f;
@@ -16,6 +17,7 @@ public class Player : MonoBehaviour
     private Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 moveDirection;
     public int selectedItem;
+    public int previousSelectedItem;
     public Dictionary<string, int> inventory = new Dictionary<string, int>();
     public string[] keys;
     public string[] values;
@@ -108,32 +110,62 @@ public class Player : MonoBehaviour
         return;
     }
 
+    void OutlinedSelectedItem()
+    {
+        if(previousSelectedItem != 0)
+        transform.Find("UI").GetComponent<UI>().SelectItem(previousSelectedItem, selectedItem);        
+
+        else
+        transform.Find("UI").GetComponent<UI>().cell[selectedItem - 1].GetComponent<Image>().fillCenter = true;
+    }
+
     private void SelectItem()
     {
-        if(Input.GetKey(KeyCode.Alpha1))
-        selectedItem = 1;
+        if(Input.GetKeyUp(KeyCode.Alpha1))
+        {
+            previousSelectedItem = selectedItem;
+            selectedItem = 1;
+            OutlinedSelectedItem();
+        }
         
-        if(Input.GetKey(KeyCode.Alpha2))
-        selectedItem = 2;
+        if(Input.GetKeyUp(KeyCode.Alpha2))
+        {
+            previousSelectedItem = selectedItem;
+            selectedItem = 2;
+            OutlinedSelectedItem();
+        }
             
-        if(Input.GetKey(KeyCode.Alpha3))
-        selectedItem = 3;
+        if(Input.GetKeyUp(KeyCode.Alpha3))
+        {
+            previousSelectedItem = selectedItem;
+            selectedItem = 3;
+            OutlinedSelectedItem();
+        }
             
-        if(Input.GetKey(KeyCode.Alpha4))
-        selectedItem = 4;
+        if(Input.GetKeyUp(KeyCode.Alpha4))
+        {
+            previousSelectedItem = selectedItem;
+            selectedItem = 4;
+            OutlinedSelectedItem();
+        }
 
-        if(Input.GetKey(KeyCode.Alpha5))
-        selectedItem = 5;
+        if(Input.GetKeyUp(KeyCode.Alpha5))
+        {
+            previousSelectedItem = selectedItem;
+            selectedItem = 5;
+            OutlinedSelectedItem();
+        }
     }
 
-    void FixedUpdate()
+    /*void FixedUpdate()
     {
-        SelectItem();
-    }
+    }*/
 
     // Update is called once per frame
     void Update()
     {
+        SelectItem();
+
         if(Input.GetKeyUp(KeyCode.Delete) && selectedItem != 0)
         RemoveBlockfromInventory();
 

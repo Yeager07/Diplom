@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.UI;
 //using UnityEngine.UI;
 
 public class UI : MonoBehaviour
@@ -28,6 +29,12 @@ public class UI : MonoBehaviour
                 cell[i].transform.Find("Name").gameObject.SetActive(false);
             }
         }
+    }
+
+    public void SelectItem(int previousInventoryNumber, int currentInventoryNumber)
+    {
+        cell[previousInventoryNumber-1].GetComponent<Image>().fillCenter = false;
+        cell[currentInventoryNumber-1].GetComponent<Image>().fillCenter = true;
     }
 
     public void UpdateInventoryView()

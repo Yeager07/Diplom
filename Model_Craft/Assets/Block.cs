@@ -279,7 +279,7 @@ public class Block : MonoBehaviour
         }
 
         else
-        return;
+        Move(playerScript.minDistance, transform.gameObject);
     }
 
     void OnMouseEnter()
@@ -321,7 +321,7 @@ public class Block : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(isActive && !isMagnetic)
+        if(playerScript.isBuildMode && isActive && !isMagnetic)
         {
             if(other.CompareTag("Selectable"))
             {
