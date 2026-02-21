@@ -15,7 +15,7 @@ public class OutlineSelection : MonoBehaviour
     }
 
     // Update is called once per frame
-    void SetOutline(Transform selectedObject)
+    public void SetOutline(Transform selectedObject)
     {
         if(selectedObject.gameObject.GetComponent<Outline>() != null)
         selectedObject.gameObject.GetComponent<Outline>().enabled = true;
@@ -29,7 +29,7 @@ public class OutlineSelection : MonoBehaviour
         }
     }
 
-    void RemoveOutline(Transform selectedObject)
+    public void RemoveOutline(Transform selectedObject)
     {
         selectedObject.gameObject.GetComponent<Outline>().enabled = false;        
     }

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -116,7 +117,7 @@ public class Player : MonoBehaviour
         transform.Find("UI").GetComponent<UI>().SelectItem(previousSelectedItem, selectedItem);        
 
         else
-        transform.Find("UI").GetComponent<UI>().cell[selectedItem - 1].GetComponent<Image>().fillCenter = true;
+        transform.Find("UI").GetComponent<UI>().cell[selectedItem - 1].GetComponent<Image>().material = transform.Find("UI").GetComponent<UI>().outline;
     }
 
     private void SelectItem()

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
+using System.Numerics;
 //using UnityEngine.UI;
 
 public class UI : MonoBehaviour
@@ -10,6 +11,8 @@ public class UI : MonoBehaviour
     private Player playerScript;
     public GameObject[] cell;
     private GameObject cursor;
+    public Material outline;
+    public bool isHidden = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,10 +34,23 @@ public class UI : MonoBehaviour
         }
     }
 
+    public void MakeOutline(Transform marker)
+    {
+        foreach(GameObject image in cell)
+        image.GetComponent<Image>().material = null;
+        
+        marker.GetComponent<Image>().material = outline;
+    }
+
+    public void MakeNone(Transform marker)
+    {
+        marker.GetComponent<Image>().material = null;
+    }
+
     public void SelectItem(int previousInventoryNumber, int currentInventoryNumber)
     {
-        cell[previousInventoryNumber-1].GetComponent<Image>().fillCenter = false;
-        cell[currentInventoryNumber-1].GetComponent<Image>().fillCenter = true;
+        cell[previousInventoryNumber-1].GetComponent<Image>().material = null;
+        cell[currentInventoryNumber-1].GetComponent<Image>().material = outline;
     }
 
     public void UpdateInventoryView()
@@ -49,6 +65,11 @@ public class UI : MonoBehaviour
             name.GetComponent<TMP_Text>().text = playerScript.keys[i];
         }
     }
+
+    /*public SpawnBlock(Vector3 spawnPoint, GameObject blockPrefab)
+    {
+        GameObject newBlock = Instantiate(blockPrefab, spawnPoint);
+    }*/
 
     void FixedUpdate()
     {
