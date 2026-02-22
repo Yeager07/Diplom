@@ -245,9 +245,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 40dffeff
-      m_LastClickedID: -73920
-      m_ExpandedIDs: 40dffeff4ce9feff56f5feffb6fffeffe4a2ffff2afbfffff4ffffffac800000f8800000008100002881000046810000628100007c810000
+      m_SelectedIDs: 08810000
+      m_LastClickedID: 0
+      m_ExpandedIDs: 2afbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -291,8 +291,8 @@ MonoBehaviour:
     y: 0
     width: 441
     height: 648
-  m_MinSize: {x: 202, y: 226}
-  m_MaxSize: {x: 4002, y: 4026}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 8}
   m_Panes:
   - {fileID: 8}
@@ -1026,15 +1026,15 @@ MonoBehaviour:
     y: 0
     width: 705
     height: 648
-  m_MinSize: {x: 52, y: 76}
-  m_MaxSize: {x: 4002, y: 4026}
+  m_MinSize: {x: 50, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 2}
   m_Panes:
   - {fileID: 2}
   - {fileID: 10}
   - {fileID: 11}
   m_Selected: 0
-  m_LastSelected: 1
+  m_LastSelected: 2
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1073,7 +1073,7 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: -23836
+  m_LastSelectedObjectID: 33032
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1165,8 +1165,8 @@ MonoBehaviour:
     y: 648
     width: 1377
     height: 333
-  m_MinSize: {x: 101, y: 126}
-  m_MaxSize: {x: 4001, y: 4026}
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 14}
   m_Panes:
   - {fileID: 13}
@@ -1220,7 +1220,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Materials
+    - Assets
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -1230,16 +1230,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 70
   m_LastFolders:
-  - Assets/Materials
+  - Assets
   m_LastFoldersGridSize: 70
   m_LastProjectPath: C:\Diplom\Diplom\Model_Craft
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 64830000
-    m_LastClickedID: 33636
-    m_ExpandedIDs: 00000000f08200006683000000ca9a3b
+    m_SelectedIDs: 04830000
+    m_LastClickedID: 33540
+    m_ExpandedIDs: 000000000483000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1268,7 +1268,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000f082000000ca9a3b
+    m_ExpandedIDs: 0000000004830000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1294,8 +1294,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 
-    m_LastClickedInstanceID: 0
+    m_SelectedInstanceIDs: 08810000
+    m_LastClickedInstanceID: 33032
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c62300005065000000890000d8630000b05a0000be5a00004a5b0000645b00002a190100e0a70000000000006e800000a6830000
     m_RenameOverlay:

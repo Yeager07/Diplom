@@ -90,7 +90,7 @@ public class Player : MonoBehaviour
 
     void RemoveBlockfromInventory()
     {
-        if(inventory.Count != 0)
+        if(keys[selectedItem - 1] != "")
         {
             if(inventory[keys[selectedItem-1]] != 1)
             {
