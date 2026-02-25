@@ -11,10 +11,13 @@ public class MainScript : MonoBehaviour
     private Player playerScript;
     private Vector3 zeroPos = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 scenePos = new Vector3(-2.5f, 1.65f, -9.3f);
+    public GameObject[] blockPrefabs;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        blockPrefabs = Resources.LoadAll<GameObject>("Models/Prefab");
+
         Cursor.lockState = CursorLockMode.Locked;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
@@ -42,6 +45,20 @@ public class MainScript : MonoBehaviour
         }
 
         children.RemoveAll(child => child.CompareTag("Point"));
+    }
+
+    public void SpawnBlock(Vector3 spawnPoint, string prefabName, Material blockMaterial)
+    {
+        foreach(GameObject prefab in blockPrefabs)
+        {
+            if(prefab.name == prefabName)
+            {
+                GameObject newBlock = Instantiate(prefab, spawnPoint, prefab.transform.rotation);
+                newBlock.GetComponent<MeshRenderer>().material = blockMaterial;
+                newBlock.name = prefabName;
+                return;
+            }
+        }
     }
 
     // Update is called once per frame

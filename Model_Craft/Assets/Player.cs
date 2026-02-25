@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
     public Dictionary<string, int> inventory = new Dictionary<string, int>();
     public string[] keys;
     public string[] values;
+    public Material[] materials;
     public int lengthDictionary;
     public Vector3 rotateDirection;
     public bool isBuildMode = false;
@@ -88,7 +89,7 @@ public class Player : MonoBehaviour
         transform.position = moveDirection;
     }
 
-    void RemoveBlockfromInventory()
+    public void RemoveBlockfromInventory()
     {
         if(keys[selectedItem - 1] != "")
         {
@@ -103,6 +104,7 @@ public class Player : MonoBehaviour
                 inventory.Remove(keys[selectedItem-1]);
                 keys[selectedItem - 1] = "";
                 values[selectedItem - 1] = "";
+                materials[selectedItem - 1] = null;
             }
 
             transform.Find("UI").GetComponent<UI>().UpdateInventoryView();
@@ -122,35 +124,35 @@ public class Player : MonoBehaviour
 
     private void SelectItem()
     {
-        if(Input.GetKeyUp(KeyCode.Alpha1))
+        if(Input.GetKey(KeyCode.Alpha1))
         {
             previousSelectedItem = selectedItem;
             selectedItem = 1;
             OutlinedSelectedItem();
         }
         
-        if(Input.GetKeyUp(KeyCode.Alpha2))
+        if(Input.GetKey(KeyCode.Alpha2))
         {
             previousSelectedItem = selectedItem;
             selectedItem = 2;
             OutlinedSelectedItem();
         }
             
-        if(Input.GetKeyUp(KeyCode.Alpha3))
+        if(Input.GetKey(KeyCode.Alpha3))
         {
             previousSelectedItem = selectedItem;
             selectedItem = 3;
             OutlinedSelectedItem();
         }
             
-        if(Input.GetKeyUp(KeyCode.Alpha4))
+        if(Input.GetKey(KeyCode.Alpha4))
         {
             previousSelectedItem = selectedItem;
             selectedItem = 4;
             OutlinedSelectedItem();
         }
 
-        if(Input.GetKeyUp(KeyCode.Alpha5))
+        if(Input.GetKey(KeyCode.Alpha5))
         {
             previousSelectedItem = selectedItem;
             selectedItem = 5;

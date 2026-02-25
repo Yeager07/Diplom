@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
-using System.Numerics;
 //using UnityEngine.UI;
 
 public class UI : MonoBehaviour
@@ -66,10 +65,21 @@ public class UI : MonoBehaviour
         }
     }
 
-    /*public SpawnBlock(Vector3 spawnPoint, GameObject blockPrefab)
+    public void SpawnBlock()
     {
-        GameObject newBlock = Instantiate(blockPrefab, spawnPoint);
-    }*/
+        foreach(GameObject bucket in cell)
+        {
+            if(bucket.GetComponent<Image>().material == outline && bucket.transform.Find("Count").GetComponent<TMP_Text>().text != "")
+            {
+                Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.minDistance)),
+                bucket.transform.Find("Name").GetComponent<TMP_Text>().text,
+                playerScript.materials[int.Parse(bucket.transform.name[int.Parse(bucket.transform.name.Length.ToString()) - 1].ToString()) - 1]);
+                playerScript.selectedItem = int.Parse(bucket.transform.name[int.Parse(bucket.transform.name.Length.ToString()) - 1].ToString());
+                playerScript.RemoveBlockfromInventory();
+                return;
+            }
+        }
+    }
 
     void FixedUpdate()
     {

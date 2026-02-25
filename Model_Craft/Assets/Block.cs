@@ -13,6 +13,8 @@ public class Block : MonoBehaviour
     private Vector3 rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 bulgePosition;
     private Vector3 localHollowPosition;
+    private Vector3 localBulgePosition;
+    private Vector3 placeHollowPosition;
     public Vector3 curPosition;
     public Vector3 previousPosition;
     public GameObject place;
@@ -236,6 +238,7 @@ public class Block : MonoBehaviour
         if(playerScript.inventory.Count != 5 && !playerScript.inventory.ContainsKey(transform.name))
         {
             playerScript.inventory.Add(transform.name, 1);
+            playerScript.materials[playerScript.inventory.Count - 1] = gameObject.GetComponent<MeshRenderer>().material;
             UpdateMassive();
         }
 
@@ -302,20 +305,34 @@ public class Block : MonoBehaviour
     private void CalculateDistance(List<Transform> hollows, List<Transform> bulges)
     {
         float minDistance = 100.0f;
+        List<Transform> transformBulges = new List<Transform>();
+        
+        foreach(Transform child in transform)
+        transformBulges.Add(child);
 
-        foreach(Transform hollow in hollows)
+        int jterator = 0;
+        
+        while(jterator < hollows.Count)
         {
-            foreach(Transform bulge in bulges)
+            int iterator = 0;
+            
+            while(iterator < bulges.Count)
             {
-                float distance = (float)Sqrt(Pow(hollow.position.x - bulge.position.x, 2) + Pow(hollow.position.y - bulge.position.y, 2) + Pow(hollow.position.z - bulge.position.z, 2));
+                float distance = (float)Sqrt(Pow(hollows[jterator].position.x - bulges[iterator].position.x, 2) + Pow(hollows[jterator].position.y - bulges[iterator].position.y, 2) + Pow(hollows[jterator].position.z - bulges[iterator].position.z, 2));
                 
                 if(distance < minDistance)
                 {
                     minDistance = distance;
-                    localHollowPosition = hollow.localPosition;
-                    bulgePosition = bulge.position;
+                    localHollowPosition = hollows[jterator].localPosition;
+                    localBulgePosition = transformBulges[jterator].localPosition;
+                    bulgePosition = bulges[iterator].position;
+                    placeHollowPosition = place.transform.GetComponent<Block>().hollowChild[iterator].position;
                 }
+
+                iterator += 1;
             }
+
+            jterator += 1;
         }
     }
 
@@ -335,6 +352,10 @@ public class Block : MonoBehaviour
                     {
                         isFree = false;
                         CalculateDistance(hollowChild, bulgeChild);
+                        
+                        if(hollowChild[0].transform.position.y < bulgeChild[0].transform.position.y)
+                        transform.position = placeHollowPosition - transform.TransformVector(localBulgePosition);
+                        else
                         transform.position = bulgePosition - transform.TransformVector(localHollowPosition);
                     }
                 }
