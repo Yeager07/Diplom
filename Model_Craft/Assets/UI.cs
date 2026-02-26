@@ -9,6 +9,7 @@ public class UI : MonoBehaviour
 {
     private Player playerScript;
     public GameObject[] cell;
+    private GameObject inventoryIcon;
     private GameObject cursor;
     public Material outline;
     public bool isHidden = false;
@@ -22,6 +23,8 @@ public class UI : MonoBehaviour
 
         cell = GameObject.FindGameObjectsWithTag("Inventory");
         cursor = GameObject.Find("Cursor");
+
+        inventoryIcon = transform.Find("InventoryIcon").gameObject;
 
         if(playerScript.inventory.Count == 0)
         {
@@ -49,21 +52,32 @@ public class UI : MonoBehaviour
 
     public void SelectItem(int previousInventoryNumber, int currentInventoryNumber)
     {
+        if(previousInventoryNumber != 0)
         cell[previousInventoryNumber-1].GetComponent<Image>().material = null;
+
         cell[currentInventoryNumber-1].GetComponent<Image>().material = outline;
     }
 
     public void UpdateInventoryView()
     {
+        int countBlock = 0;
+        Transform allCount = inventoryIcon.transform.Find("Count");
+
         for(int i = 0; i <= 4; i++)
         {
             Transform count = cell[i].transform.Find("Count");
             Transform name = cell[i].transform.Find("Name");
+
             count.gameObject.SetActive(true);
             name.gameObject.SetActive(true);
             count.GetComponent<TMP_Text>().text = playerScript.values[i];
             name.GetComponent<TMP_Text>().text = playerScript.keys[i];
+            
+            if(playerScript.values[i] != "")
+            countBlock += int.Parse(playerScript.values[i]);
         }
+        
+        allCount.GetComponent<TMP_Text>().text = countBlock.ToString();
     }
 
     public void SpawnBlock()
@@ -88,6 +102,17 @@ public class UI : MonoBehaviour
         playerScript.keys[playerScript.selectedItem - 1],
         playerScript.materials[playerScript.selectedItem - 1]);
         playerScript.RemoveBlockfromInventory();
+    }
+
+    public void OpenCloseInventory()
+    {
+        for(int i = 0; i <= cell.Length - 1; i++)
+        {
+            if(cell[i].activeInHierarchy)
+            cell[i].SetActive(false);
+            else
+            cell[i].SetActive(true);
+        }
     }
 
     void FixedUpdate()

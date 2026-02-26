@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
+using System.Security.Cryptography;
 
 public class Player : MonoBehaviour
 {
@@ -110,18 +111,21 @@ public class Player : MonoBehaviour
             }
 
             transform.Find("UI").GetComponent<UI>().UpdateInventoryView();
+            
+            if(!isBuildMode)
+            OutlinedSelectedItem();
         }
         else
         return;
     }
 
-    void OutlinedSelectedItem()
+    public void OutlinedSelectedItem()
     {
-        if(previousSelectedItem != 0)
+        if(selectedItem != 0)
         transform.Find("UI").GetComponent<UI>().SelectItem(previousSelectedItem, selectedItem);
 
         else
-        transform.Find("UI").GetComponent<UI>().cell[selectedItem - 1].GetComponent<Image>().material = transform.Find("UI").GetComponent<UI>().outline;
+        transform.Find("UI").GetComponent<UI>().cell[previousSelectedItem - 1].GetComponent<Image>().material = null/*ransform.Find("UI").GetComponent<UI>().outline*/;
     }
 
     private void SelectItem()
@@ -171,7 +175,7 @@ public class Player : MonoBehaviour
     {
         SelectItem();
 
-        if(Input.GetKey(KeyCode.KeypadEnter) && selectedItem != 0)
+        if(Input.GetKey(KeyCode.KeypadEnter) && selectedItem != 0 && isBuildMode)
         {
             if(keys[selectedItem - 1] != "")
             transform.Find("UI").GetComponent<UI>().SpawnBlockButton();
@@ -181,6 +185,9 @@ public class Player : MonoBehaviour
 
         if(Input.GetKeyUp(KeyCode.Delete) && selectedItem != 0)
         RemoveBlockfromInventory();
+
+        if(Input.GetKeyUp(KeyCode.I))
+        transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
 
         if(!isBuildMode)
         Move();

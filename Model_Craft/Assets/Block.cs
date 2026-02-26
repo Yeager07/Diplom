@@ -398,7 +398,7 @@ public class Block : MonoBehaviour
         rotateDirection = currentObject.rotation.eulerAngles;
     }
 
-    private void MoveSpawn()
+    private void MoveSpawnedObject()
     {
         count = 0;
 
@@ -411,7 +411,10 @@ public class Block : MonoBehaviour
         if(count == 0)
         {
             if(Input.GetMouseButtonUp(0))
-            Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced = true;
+            {
+                Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced = true;
+                playerScript.OutlinedSelectedItem();
+            }
 
             else
             Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().Move(playerScript.distance, Camera.main.GetComponent<MainScript>().newBlock);
@@ -430,7 +433,7 @@ public class Block : MonoBehaviour
     void Update()
     {
         if(Camera.main.GetComponent<MainScript>().newBlock != null && !Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced)
-        MoveSpawn(); 
+        MoveSpawnedObject(); 
 
         else if(Input.GetMouseButtonUp(0))
         {
