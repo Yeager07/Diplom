@@ -44,6 +44,7 @@ public class UI : MonoBehaviour
     public void MakeNone(Transform marker)
     {
         marker.GetComponent<Image>().material = null;
+        playerScript.selectedItem = 0;
     }
 
     public void SelectItem(int previousInventoryNumber, int currentInventoryNumber)
@@ -66,12 +67,12 @@ public class UI : MonoBehaviour
     }
 
     public void SpawnBlock()
-    {
+    {   
         foreach(GameObject bucket in cell)
         {
             if(bucket.GetComponent<Image>().material == outline && bucket.transform.Find("Count").GetComponent<TMP_Text>().text != "")
             {
-                Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.minDistance)),
+                Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance)),
                 bucket.transform.Find("Name").GetComponent<TMP_Text>().text,
                 playerScript.materials[int.Parse(bucket.transform.name[int.Parse(bucket.transform.name.Length.ToString()) - 1].ToString()) - 1]);
                 playerScript.selectedItem = int.Parse(bucket.transform.name[int.Parse(bucket.transform.name.Length.ToString()) - 1].ToString());
@@ -79,6 +80,14 @@ public class UI : MonoBehaviour
                 return;
             }
         }
+    }
+
+    public void SpawnBlockButton()
+    {
+        Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance)),
+        playerScript.keys[playerScript.selectedItem - 1],
+        playerScript.materials[playerScript.selectedItem - 1]);
+        playerScript.RemoveBlockfromInventory();
     }
 
     void FixedUpdate()
@@ -91,6 +100,5 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
     }
 }

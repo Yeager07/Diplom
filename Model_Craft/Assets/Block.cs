@@ -3,9 +3,11 @@ using System;
 using System.Collections;
 using static System.Math;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Block : MonoBehaviour
 {
+    private int count;
     private Player playerScript;
     private GameObject player;
     private Vector3 pointScreen;
@@ -23,7 +25,6 @@ public class Block : MonoBehaviour
     private Vector3 moveY = new Vector3(0.0f, 0.16f, 0.0f);
     private Vector3 moveZ = new Vector3(0.0f, 0.0f, 0.16f);
     private Vector3 playerRotation;
-    //public int coef = 1;
     public Material rendgenMaterial;
     public Material standartMaterial;
     public float xDistance = 0.0f;
@@ -39,6 +40,7 @@ public class Block : MonoBehaviour
     public List<Vector3> positionHistory = new List<Vector3>();
     public bool isFree = true;
     public bool isMagnetic = false;
+    public bool isPlaced = false;
     public Vector3 height;
     public float yCoord;
 
@@ -169,7 +171,7 @@ public class Block : MonoBehaviour
         }
     }
     
-    void Move(float distance, GameObject currentObject)
+    public void Move(float distance, GameObject currentObject)
     {
         Transform movingObject = currentObject.transform;
         Block blockScript = currentObject.GetComponent<Block>();
@@ -396,10 +398,41 @@ public class Block : MonoBehaviour
         rotateDirection = currentObject.rotation.eulerAngles;
     }
 
+    private void MoveSpawn()
+    {
+        count = 0;
+
+        foreach(GameObject bucket in GameObject.FindGameObjectWithTag("UI").GetComponent<UI>().cell)
+        {
+            if(bucket.GetComponent<Image>().material == GameObject.FindGameObjectWithTag("UI").GetComponent<UI>().outline)
+            count += 1;
+        }
+
+        if(count == 0)
+        {
+            if(Input.GetMouseButtonUp(0))
+            Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced = true;
+
+            else
+            Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().Move(playerScript.distance, Camera.main.GetComponent<MainScript>().newBlock);
+
+        }
+
+        else
+        Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().Move(playerScript.distance, Camera.main.GetComponent<MainScript>().newBlock);
+    }
+
+    /*void FixedUpdate()
+    {   
+    }*/
+
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonUp(0))
+        if(Camera.main.GetComponent<MainScript>().newBlock != null && !Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced)
+        MoveSpawn(); 
+
+        else if(Input.GetMouseButtonUp(0))
         {
             if(!isFree)
             {
@@ -418,7 +451,7 @@ public class Block : MonoBehaviour
             SavePosition(transform.position);
         }
 
-        if(Input.GetKeyUp(KeyCode.M))
+        else if(Input.GetKeyUp(KeyCode.M))
         {
             if(isActive)
             {
@@ -439,16 +472,16 @@ public class Block : MonoBehaviour
             return;
         }
 
-        if(Input.GetKeyUp(KeyCode.R))
+        else if(Input.GetKeyUp(KeyCode.R))
         {
             SavePosition(previousRotate[previousRotate.Count - 1]);
             previousRotate.Add(new Vector3(rotateDirection.x % 360, rotateDirection.y % 360, rotateDirection.z));
         }
 
-        if(Input.GetKey(KeyCode.R) && isActive)
+        else if(Input.GetKey(KeyCode.R) && isActive)
         Rotate(FindMainParent(transform));
 
-        if(isActive && Input.GetKeyUp(KeyCode.E))
+        else if(isActive && Input.GetKeyUp(KeyCode.E))
         {
             if(playerScript.inventory.Count != 0)
             {
@@ -463,7 +496,7 @@ public class Block : MonoBehaviour
             AddToInventory();
         }
 
-        if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.I))
+        else if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.I))
         {
             if(positionHistory.Count >= 1)
             {

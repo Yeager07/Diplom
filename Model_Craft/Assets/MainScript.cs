@@ -12,6 +12,7 @@ public class MainScript : MonoBehaviour
     private Vector3 zeroPos = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 scenePos = new Vector3(-2.5f, 1.65f, -9.3f);
     public GameObject[] blockPrefabs;
+    public GameObject newBlock;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -53,7 +54,7 @@ public class MainScript : MonoBehaviour
         {
             if(prefab.name == prefabName)
             {
-                GameObject newBlock = Instantiate(prefab, spawnPoint, prefab.transform.rotation);
+                newBlock = Instantiate(prefab, spawnPoint, prefab.transform.rotation);
                 newBlock.GetComponent<MeshRenderer>().material = blockMaterial;
                 newBlock.name = prefabName;
                 return;

@@ -8,6 +8,7 @@ TagManager:
   - Selectable
   - Inventory
   - Point
+  - UI
   layers:
   - Default
   - TransparentFX

@@ -105,6 +105,8 @@ public class Player : MonoBehaviour
                 keys[selectedItem - 1] = "";
                 values[selectedItem - 1] = "";
                 materials[selectedItem - 1] = null;
+                previousSelectedItem = selectedItem;
+                selectedItem = 0;
             }
 
             transform.Find("UI").GetComponent<UI>().UpdateInventoryView();
@@ -116,7 +118,7 @@ public class Player : MonoBehaviour
     void OutlinedSelectedItem()
     {
         if(previousSelectedItem != 0)
-        transform.Find("UI").GetComponent<UI>().SelectItem(previousSelectedItem, selectedItem);        
+        transform.Find("UI").GetComponent<UI>().SelectItem(previousSelectedItem, selectedItem);
 
         else
         transform.Find("UI").GetComponent<UI>().cell[selectedItem - 1].GetComponent<Image>().material = transform.Find("UI").GetComponent<UI>().outline;
@@ -168,6 +170,14 @@ public class Player : MonoBehaviour
     void Update()
     {
         SelectItem();
+
+        if(Input.GetKey(KeyCode.KeypadEnter) && selectedItem != 0)
+        {
+            if(keys[selectedItem - 1] != "")
+            transform.Find("UI").GetComponent<UI>().SpawnBlockButton();
+
+            transform.Find("UI").GetComponent<UI>().MakeNone(transform.Find("UI").GetComponent<UI>().cell[previousSelectedItem - 1].transform);
+        }
 
         if(Input.GetKeyUp(KeyCode.Delete) && selectedItem != 0)
         RemoveBlockfromInventory();
