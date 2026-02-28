@@ -17,10 +17,12 @@ public class Block : MonoBehaviour
     private Vector3 localHollowPosition;
     private Vector3 localBulgePosition;
     private Vector3 placeHollowPosition;
+    private Vector3 moveVector = new Vector3(0.0f, 0.0f, 0.0f);
     public Vector3 curPosition;
     public Vector3 previousPosition;
     public GameObject place;
     private float bulgeWidth = 0.16f;
+    public float blockHeight = 0.064f;
     private Vector3 moveX = new Vector3(0.16f, 0.0f, 0.0f);
     private Vector3 moveY = new Vector3(0.0f, 0.16f, 0.0f);
     private Vector3 moveZ = new Vector3(0.0f, 0.0f, 0.16f);
@@ -41,8 +43,6 @@ public class Block : MonoBehaviour
     public bool isFree = true;
     public bool isMagnetic = false;
     public bool isPlaced = false;
-    public Vector3 height;
-    public float yCoord;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -92,6 +92,28 @@ public class Block : MonoBehaviour
 
         if(positionHistory.Count > 100)
         positionHistory.RemoveAt(0);
+    }
+
+    void PlaceObjectCorrectly(Transform movingObject)
+    {
+        List<Transform> transformHollows = new List<Transform>();
+
+        foreach(Transform child in movingObject)
+        {
+            if(child.name == "Hollow")
+            transformHollows.Add(child);
+        }
+
+        Vector3 hollowPosition = transformHollows[0].position;
+        
+        if(hollowPosition.x % bulgeWidth != 0)
+        moveVector.x = hollowPosition.x % bulgeWidth;
+
+        if(hollowPosition.y % blockHeight != 0)
+        moveVector.y = hollowPosition.y % (4 * bulgeWidth / 10);
+
+        if(hollowPosition.z % bulgeWidth != 0)
+        moveVector.z = hollowPosition.z % bulgeWidth;
     }
 
     private void CalculateMoveVector(float distance, Transform movingObject, Vector3 moveSide, Vector3 moveHeight)
@@ -180,7 +202,9 @@ public class Block : MonoBehaviour
         {
             curPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
             movingObject.position = Camera.main.ScreenToWorldPoint(curPosition);
+            PlaceObjectCorrectly(movingObject);
         }
+
         else
         {
             playerRotation = playerScript.transform.rotation.eulerAngles;
@@ -437,6 +461,12 @@ public class Block : MonoBehaviour
 
         else if(Input.GetMouseButtonUp(0))
         {
+            if(isFree)
+            {
+                transform.position -= moveVector;
+                moveVector = new Vector3(0.0f, 0.0f, 0.0f);
+            }
+
             if(!isFree)
             {
                 isMagnetic = true;
