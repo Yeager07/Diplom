@@ -165,6 +165,7 @@ MonoBehaviour:
   curPosition: {x: 0, y: 0, z: 0}
   previousPosition: {x: 0, y: 0, z: 0}
   place: {fileID: 0}
+  blockHeight: 0.064
   rendgenMaterial: {fileID: 2100000, guid: 53564e89632cff245bd1f138c26bf813, type: 2}
   standartMaterial: {fileID: 2100000, guid: 924b26bb2cbbc4e439067c09a19f1f1d, type: 2}
   xDistance: 0
@@ -180,8 +181,7 @@ MonoBehaviour:
   positionHistory: []
   isFree: 1
   isMagnetic: 0
-  height: {x: 0, y: 0, z: 0}
-  yCoord: 0
+  isPlaced: 0
 --- !u!65 &1537052883579586285
 BoxCollider:
   m_ObjectHideFlags: 0

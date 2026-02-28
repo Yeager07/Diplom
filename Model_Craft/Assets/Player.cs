@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     private Vector3 targetOffset = Vector3.zero;
     private Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 moveDirection;
+    public GameObject movedObject;
     public int selectedItem;
     public int previousSelectedItem;
     public Dictionary<string, int> inventory = new Dictionary<string, int>();

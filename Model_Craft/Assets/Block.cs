@@ -57,6 +57,7 @@ public class Block : MonoBehaviour
         previousRotate.Add(rotateDirection);
 
         FindChildPoint("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
+        FindChildPoint("Bulge", bulgeChildCoordinat, bulgeChildRotation, transform, bulgeChild);
     }
 
     private Transform FindMainParent(Transform currentObject)
@@ -280,7 +281,10 @@ public class Block : MonoBehaviour
 
     void OnMouseDrag()
     {
-        if(playerScript.isBuildMode)
+        if(playerScript.movedObject == null && Input.GetMouseButton(0))
+        playerScript.movedObject = gameObject;
+        
+        if(playerScript.isBuildMode && gameObject == playerScript.movedObject)
         {   
             if(!Input.GetKey(KeyCode.R))
             {
@@ -314,6 +318,7 @@ public class Block : MonoBehaviour
     void OnMouseEnter()
     {
         isActive = true;
+
         if(playerScript.isBuildMode)
         {
             playerScript.target = transform.position + new Vector3(0.0f, -0.4f, 0.0f);
@@ -362,46 +367,52 @@ public class Block : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void MakeConnection()
     {
-        if(playerScript.isBuildMode && isActive && !isMagnetic)
+        if(bulgeChildCoordinat.Count != 0)
         {
-            if(other.CompareTag("Selectable"))
+            if(hollowChildRotation[0].x == place.GetComponent<Block>().bulgeChildRotation[0].x)
             {
-                place = other.gameObject;
-
-                FindChildPoint("Bulge", bulgeChildCoordinat, bulgeChildRotation, place.transform, bulgeChild);
-
-                if(bulgeChildCoordinat.Count != 0)
-                {
-                    if(hollowChildRotation[0].x == bulgeChildRotation[0].x)
-                    {
-                        isFree = false;
-                        CalculateDistance(hollowChild, bulgeChild);
+                isFree = false;
+                CalculateDistance(hollowChild, place.GetComponent<Block>().bulgeChild);
                         
-                        if(hollowChild[0].transform.position.y < bulgeChild[0].transform.position.y)
-                        transform.position = placeHollowPosition - transform.TransformVector(localBulgePosition);
-                        else
-                        transform.position = bulgePosition - transform.TransformVector(localHollowPosition);
-                    }
-                }
+                if(bulgeChild[0].transform.position.y < place.GetComponent<Block>().bulgeChild[0].transform.position.y)
+                transform.position = placeHollowPosition - transform.TransformVector(localBulgePosition);
+                        
+                else
+                transform.position = bulgePosition - transform.TransformVector(localHollowPosition);
             }
         }
     }
 
-    private void OnTriggerExit()
+    private void OnTriggerEnter(Collider other)
+    {
+        if(playerScript.isBuildMode && !isMagnetic && gameObject == playerScript.movedObject)
+        {
+            if(other.CompareTag("Selectable"))
+            {
+                place = other.gameObject;
+                MakeConnection();
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
     {
         if(!isMagnetic && transform.parent == null)
         {
-            //transform.parent = null;
-            isFree = true;
-            GetComponent<MeshRenderer>().material = standartMaterial;
+            if(other.gameObject == place)
+            {
+                transform.parent = null;
+                isFree = true;
+                GetComponent<MeshRenderer>().material = standartMaterial;
 
-            if(FindMainParent(transform).GetComponent<Block>().blockChild.Count == 0)
-            Camera.main.GetComponent<MainScript>().FindAllChild(FindMainParent(transform), FindMainParent(transform).GetComponent<Block>().blockChild);
+                if(FindMainParent(transform).GetComponent<Block>().blockChild.Count == 0)
+                Camera.main.GetComponent<MainScript>().FindAllChild(FindMainParent(transform), FindMainParent(transform).GetComponent<Block>().blockChild);
 
-            foreach(Transform child in FindMainParent(transform).GetComponent<Block>().blockChild)
-            child.GetComponent<MeshRenderer>().material = standartMaterial;
+                foreach(Transform child in FindMainParent(transform).GetComponent<Block>().blockChild)
+                child.GetComponent<MeshRenderer>().material = standartMaterial;
+            }
         }
     }
 
@@ -474,6 +485,8 @@ public class Block : MonoBehaviour
             }
 
             GetComponent<MeshRenderer>().material = standartMaterial;
+
+            playerScript.movedObject = null;
 
             if(transform.position != previousPosition)
             {
