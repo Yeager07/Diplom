@@ -13,11 +13,17 @@ public class MainScript : MonoBehaviour
     private Vector3 scenePos = new Vector3(-2.5f, 1.65f, -9.3f);
     public GameObject[] blockPrefabs;
     public GameObject newBlock;
+    public Material rendgenMaterial;
+    public Material standartMaterial;
+    public Material outlineMaterial;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         blockPrefabs = Resources.LoadAll<GameObject>("Models/Prefab");
+        rendgenMaterial = Resources.Load<Material>("Materials/BlockRendgen");
+        standartMaterial = Resources.Load<Material>("Materials/BlockStandart");
+        outlineMaterial = Resources.Load<Material>("Materials/MaterialOutline");
 
         Cursor.lockState = CursorLockMode.Locked;
         GameObject player = GameObject.FindGameObjectWithTag("Player");

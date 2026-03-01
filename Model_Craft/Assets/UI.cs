@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
+using System.Runtime.CompilerServices;
 //using UnityEngine.UI;
 
 public class UI : MonoBehaviour
@@ -11,7 +12,7 @@ public class UI : MonoBehaviour
     public GameObject[] cell;
     private GameObject inventoryIcon;
     private GameObject cursor;
-    public Material outline;
+    //private Material outline;
     public bool isHidden = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -41,7 +42,7 @@ public class UI : MonoBehaviour
         foreach(GameObject image in cell)
         image.GetComponent<Image>().material = null;
         
-        marker.GetComponent<Image>().material = outline;
+        marker.GetComponent<Image>().material = Camera.main.GetComponent<MainScript>().outlineMaterial;
     }
 
     public void MakeNone(Transform marker)
@@ -55,7 +56,7 @@ public class UI : MonoBehaviour
         if(previousInventoryNumber != 0)
         cell[previousInventoryNumber-1].GetComponent<Image>().material = null;
 
-        cell[currentInventoryNumber-1].GetComponent<Image>().material = outline;
+        cell[currentInventoryNumber-1].GetComponent<Image>().material = Camera.main.GetComponent<MainScript>().outlineMaterial;
     }
 
     public void UpdateInventoryView()
@@ -84,7 +85,7 @@ public class UI : MonoBehaviour
     {   
         foreach(GameObject bucket in cell)
         {
-            if(bucket.GetComponent<Image>().material == outline && bucket.transform.Find("Count").GetComponent<TMP_Text>().text != "")
+            if(bucket.GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial && bucket.transform.Find("Count").GetComponent<TMP_Text>().text != "")
             {
                 Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance)),
                 bucket.transform.Find("Name").GetComponent<TMP_Text>().text,
