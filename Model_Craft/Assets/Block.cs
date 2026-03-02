@@ -18,7 +18,7 @@ public class Block : MonoBehaviour
     private Vector3 localHollowPosition;
     private Vector3 localBulgePosition;
     private Vector3 placeHollowPosition;
-    private Vector3 moveVector = new Vector3(0.0f, 0.0f, 0.0f);
+    public Vector3 moveVector = new Vector3(0.0f, 0.0f, 0.0f);
     public Vector3 curPosition;
     public Vector3 previousPosition;
     public GameObject place;
@@ -37,6 +37,7 @@ public class Block : MonoBehaviour
     public List<Vector3> hollowChildRotation = new List<Vector3>();
     public List<Vector3> bulgeChildRotation = new List<Vector3>();
     public List<Transform> blockChild;
+    public List<GameObject> previousBlock = new List<GameObject>();
     public bool isActive = false;
     public List<Vector3> positionHistory = new List<Vector3>();
     public bool isFree = true;
@@ -108,13 +109,13 @@ public class Block : MonoBehaviour
         Vector3 hollowPosition = transformHollows[0].position;
         
         if(hollowPosition.x % bulgeWidth != 0)
-        moveVector.x = hollowPosition.x % bulgeWidth;
+        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.x = hollowPosition.x % bulgeWidth;
 
         if(hollowPosition.y % blockHeight != 0)
-        moveVector.y = hollowPosition.y % (4 * bulgeWidth / 10);
+        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.y = hollowPosition.y % (4 * bulgeWidth / 10);
 
         if(hollowPosition.z % bulgeWidth != 0)
-        moveVector.z = hollowPosition.z % bulgeWidth;
+        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.z = hollowPosition.z % bulgeWidth;
     }
 
     private void CalculateMoveVector(float distance, Transform movingObject, Vector3 moveSide, Vector3 moveHeight)
@@ -281,10 +282,10 @@ public class Block : MonoBehaviour
 
     void OnMouseDrag()
     {
-        if(playerScript.movedObject == null && Input.GetMouseButton(0))
-        playerScript.movedObject = gameObject;
+        if(Input.GetMouseButton(0))
+        playerScript.movedObject = FindMainParent(transform).gameObject;
         
-        if(playerScript.isBuildMode && gameObject == playerScript.movedObject)
+        if(playerScript.isBuildMode)
         {   
             if(!Input.GetKey(KeyCode.R))
             {
@@ -320,9 +321,7 @@ public class Block : MonoBehaviour
         isActive = true;
 
         if(playerScript.isBuildMode)
-        {
-            playerScript.target = transform.position + new Vector3(0.0f, -0.4f, 0.0f);
-        }
+        playerScript.target = transform.position + new Vector3(0.0f, -0.4f, 0.0f);
     }
 
     void OnMouseExit()
@@ -392,18 +391,22 @@ public class Block : MonoBehaviour
             if(other.CompareTag("Selectable"))
             {
                 place = other.gameObject;
+                
+                if(!previousBlock.Contains(place))
+                previousBlock.Add(place);
+
                 MakeConnection();
             }
         }
+
+        else if(isFree && Input.GetMouseButtonUp(0))
+        MakeConnection();
     }
 
     private void OnTriggerExit(Collider other)
     {
         if(!isMagnetic && transform.parent == null)
         {   
-            transform.parent = null;   
-            isFree = true;
-            
             if(other.gameObject == place)
             {
                 GetComponent<MeshRenderer>().material = mainScript.standartMaterial;
@@ -413,16 +416,21 @@ public class Block : MonoBehaviour
 
                 foreach(Transform child in FindMainParent(transform).GetComponent<Block>().blockChild)
                 child.GetComponent<MeshRenderer>().material = mainScript.standartMaterial;
+                
+                isFree = true;
             }
         }
 
         else if(other.gameObject == place)
         {
-            transform.parent = null;   
+            transform.parent = null;
             isFree = true;
         }
 
         isMagnetic = false;
+        
+        if(previousBlock.Count != 0)
+        previousBlock.RemoveAt(0);
     }
 
     private void Rotate(Transform currentObject)
@@ -480,22 +488,15 @@ public class Block : MonoBehaviour
         MoveSpawnedObject(); 
 
         else if(Input.GetMouseButtonUp(0))
-        {
-            if(isFree && playerScript.movedObject == gameObject)
-            {
-                transform.position -= moveVector;
-                moveVector = new Vector3(0.0f, 0.0f, 0.0f);
-            }
-
-            if(!isFree)
-            {
-                isMagnetic = true;
-                transform.SetParent(place.transform);
-            }
-
+        {   
             GetComponent<MeshRenderer>().material = mainScript.standartMaterial;
 
-            playerScript.movedObject = null;
+            if(isFree && playerScript.movedObject == gameObject)
+            {
+                FindMainParent(transform).position -= FindMainParent(transform).gameObject.GetComponent<Block>().moveVector;
+                FindMainParent(transform).gameObject.GetComponent<Block>().moveVector = new Vector3(0.0f, 0.0f, 0.0f);
+                playerScript.movedObject = null;
+            }
 
             if(transform.position != previousPosition)
             {
@@ -515,6 +516,26 @@ public class Block : MonoBehaviour
 
                 else
                 SavePosition(transform.position);
+            }
+
+            if(!isFree)
+            {
+                isMagnetic = true;
+                transform.SetParent(place.transform);
+            }
+
+            if(previousBlock.Count != 1)
+            {
+                foreach(GameObject block in previousBlock)
+                {
+                    if(block != transform.parent)
+                    {
+                        block.transform.SetParent(transform);
+                        block.GetComponent<Block>().place = gameObject;
+                        previousBlock.Remove(block);
+                        return;
+                    }
+                }
             }
         }
 
@@ -576,7 +597,7 @@ public class Block : MonoBehaviour
 
                 else
                 {
-                    if(positionHistory[positionHistory.Count - 1].x < 1.0f)
+                    if(positionHistory[positionHistory.Count - 1].x < 0.1f)
                     transform.localPosition = positionHistory[positionHistory.Count - 1];
 
                     else
@@ -586,7 +607,7 @@ public class Block : MonoBehaviour
                 if(positionHistory.Count > 1)
                 positionHistory.RemoveAt(positionHistory.Count - 1);
 
-                previousPosition = positionHistory[positionHistory.Count-1];
+                previousPosition = transform.position;
 
                 return;
             }
