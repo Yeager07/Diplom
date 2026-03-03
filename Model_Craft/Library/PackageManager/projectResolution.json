@@ -9,6 +9,16 @@
     "C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.44f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\BuiltInPackagesCombined.sha1"
   ],
   "outputs": {
+    "com.muratoreware.unitypdfviewer@https://github.com/kdpkke/UnityPDFViewer.git?path=etc/UnityPackage": {
+      "name": "com.muratoreware.unitypdfviewer",
+      "displayName": "UnityPDFViewer",
+      "resolvedPath": "C:\\Diplom\\Diplom\\Model_Craft\\Library\\PackageCache\\com.muratoreware.unitypdfviewer@4c569dd62760",
+      "fingerprint": "4c569dd6276073930609c6588f4c399f1bb9bd3a",
+      "editorCompatibility": "2022.3.0a1",
+      "version": "1.0.3",
+      "source": "git",
+      "testable": false
+    },
     "com.unity.collab-proxy@2.7.1": {
       "name": "com.unity.collab-proxy",
       "displayName": "Version Control",
