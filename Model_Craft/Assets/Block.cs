@@ -498,6 +498,25 @@ public class Block : MonoBehaviour
                 playerScript.movedObject = null;
             }
 
+            if(!isFree)
+            {
+                isMagnetic = true;
+                transform.SetParent(place.transform);
+            }
+
+            if(previousBlock.Count != 1)
+            {
+                foreach(GameObject block in previousBlock)
+                {
+                    if(block != null && block != transform.parent)
+                    {
+                        block.transform.SetParent(transform);
+                        block.GetComponent<Block>().place = gameObject;
+                        previousPosition = transform.localPosition;
+                    }
+                }
+            }
+
             if(transform.position != previousPosition)
             {
                 SavePosition(previousPosition);
@@ -516,26 +535,6 @@ public class Block : MonoBehaviour
 
                 else
                 SavePosition(transform.position);
-            }
-
-            if(!isFree)
-            {
-                isMagnetic = true;
-                transform.SetParent(place.transform);
-            }
-
-            if(previousBlock.Count != 1)
-            {
-                foreach(GameObject block in previousBlock)
-                {
-                    if(block != transform.parent)
-                    {
-                        block.transform.SetParent(transform);
-                        block.GetComponent<Block>().place = gameObject;
-                        previousBlock.Remove(block);
-                        return;
-                    }
-                }
             }
         }
 
