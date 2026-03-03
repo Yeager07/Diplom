@@ -128,6 +128,10 @@
 -define:CSHARP_7_OR_LATER
 -define:CSHARP_7_3_OR_NEWER
 -define:UNITY_EDITOR_ONLY_COMPILATION
+-r:"Assets/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/PDFtoImage.dll"
+-r:"Assets/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/Plugins/System.Runtime.CompilerServices.Unsafe.dll"
+-r:"Assets/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/SkiaSharp.dll"
+-r:"Assets/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/UnityPDFViewer.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/Managed/UnityEditor.Graphs.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/Managed/UnityEngine/UnityEditor.AccessibilityModule.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/Managed/UnityEngine/UnityEditor.AdaptivePerformanceModule.dll"
@@ -374,10 +378,6 @@
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/System.Transactions.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/System.Xml.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/System.Xml.Linq.dll"
--r:"Library/PackageCache/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/PDFtoImage.dll"
--r:"Library/PackageCache/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/Plugins/System.Runtime.CompilerServices.Unsafe.dll"
--r:"Library/PackageCache/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/SkiaSharp.dll"
--r:"Library/PackageCache/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/UnityPDFViewer.dll"
 -r:"Library/PackageCache/com.unity.collab-proxy@50ac96531b63/Lib/Editor/log4netPlastic.dll"
 -r:"Library/PackageCache/com.unity.collab-proxy@50ac96531b63/Lib/Editor/Unity.Plastic.Antlr3.Runtime.dll"
 -r:"Library/PackageCache/com.unity.collab-proxy@50ac96531b63/Lib/Editor/Unity.Plastic.Newtonsoft.Json.dll"

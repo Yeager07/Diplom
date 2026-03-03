@@ -129,6 +129,10 @@
 -define:TEXTCORE_TEXT_ENGINE_1_5_OR_NEWER
 -define:CSHARP_7_OR_LATER
 -define:CSHARP_7_3_OR_NEWER
+-r:"Assets/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/PDFtoImage.dll"
+-r:"Assets/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/Plugins/System.Runtime.CompilerServices.Unsafe.dll"
+-r:"Assets/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/SkiaSharp.dll"
+-r:"Assets/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/UnityPDFViewer.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/Managed/UnityEngine/UnityEditor.AccessibilityModule.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/Managed/UnityEngine/UnityEditor.AdaptivePerformanceModule.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/Managed/UnityEngine/UnityEditor.BuildProfileModule.dll"
@@ -367,10 +371,6 @@
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Xml.XPath.XDocument.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/NetStandard/ref/2.1.0/netstandard.dll"
--r:"Library/PackageCache/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/PDFtoImage.dll"
--r:"Library/PackageCache/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/Plugins/System.Runtime.CompilerServices.Unsafe.dll"
--r:"Library/PackageCache/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/SkiaSharp.dll"
--r:"Library/PackageCache/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/UnityPDFViewer.dll"
 -r:"Library/PackageCache/com.unity.ext.nunit@031a54704bff/net40/unity-custom/nunit.framework.dll"
 -r:"Library/PackageCache/com.unity.testtools.codecoverage@205a02cbcb39/lib/ReportGenerator/ReportGeneratorMerged.dll"
 -r:"Library/PackageCache/com.unity.visualscripting@7dcdc439b230/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll"
@@ -408,6 +408,7 @@
 "Assets/MainManager.cs"
 "Assets/MainScript.cs"
 "Assets/OutlineSelection.cs"
+"Assets/PdfInstructionViewer.cs"
 "Assets/Player.cs"
 "Assets/QuickOutline/Scripts/Outline.cs"
 "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark01.cs"

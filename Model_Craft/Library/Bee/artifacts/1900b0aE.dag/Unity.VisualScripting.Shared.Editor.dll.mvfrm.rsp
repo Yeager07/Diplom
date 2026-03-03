@@ -8,6 +8,7 @@ Library\Bee\artifacts\mvdfrm\UnityEditor.TestRunner.ref.dll_193EC4CE382CBFB3.mvf
 Library\Bee\artifacts\mvdfrm\UnityEditor.UI.ref.dll_4C98D3F7040CD4F5.mvfrm
 Library\Bee\artifacts\mvdfrm\UnityEngine.TestRunner.ref.dll_E55D0F7C63F01D9E.mvfrm
 Library\Bee\artifacts\mvdfrm\UnityEngine.UI.ref.dll_08FEAA520A2EFD60.mvfrm
+Library\Bee\artifacts\mvdfrm\UnityPDFViewer.dll_9D83E7CEF0934C81.mvfrm
 Library\Bee\artifacts\mvdfrm\UnityEditor.Graphs.dll_5AE51B0ADC4C4F8E.mvfrm
 Library\Bee\artifacts\mvdfrm\UnityEditor.AccessibilityModule.dll_A46C2F4B055A7905.mvfrm
 Library\Bee\artifacts\mvdfrm\UnityEditor.AdaptivePerformanceModule.dll_4F926011332C5BB1.mvfrm
@@ -129,7 +130,6 @@ Library\Bee\artifacts\mvdfrm\UnityEngine.WindModule.dll_6D7539FE95720AF0.mvfrm
 Library\Bee\artifacts\mvdfrm\UnityEngine.XRModule.dll_ECAAF97A9EFB34B2.mvfrm
 Library\Bee\artifacts\mvdfrm\UnityEditor.WebGL.Extensions.dll_382CCEF36C131914.mvfrm
 Library\Bee\artifacts\mvdfrm\UnityEditor.WindowsStandalone.Extensions.dll_E313F2263B03E204.mvfrm
-Library\Bee\artifacts\mvdfrm\UnityPDFViewer.dll_1BDEA8CB903FD32E.mvfrm
 Library\Bee\artifacts\mvdfrm\Unity.Plastic.Antlr3.Runtime.dll_9790B5B5B9BAF4F9.mvfrm
 Library\Bee\artifacts\mvdfrm\Unity.Plastic.Newtonsoft.Json.dll_8BB13F70623D482C.mvfrm
 Library\Bee\artifacts\mvdfrm\Unity.VisualScripting.IonicZip.dll_0854A01FF08BC637.mvfrm
