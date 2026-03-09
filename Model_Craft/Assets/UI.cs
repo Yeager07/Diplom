@@ -10,6 +10,7 @@ public class UI : MonoBehaviour
 {
     private Player playerScript;
     public GameObject[] cell;
+    public GameObject instructionBlock;
     private GameObject inventoryIcon;
     private GameObject cursor;
     //private Material outline;
@@ -23,6 +24,7 @@ public class UI : MonoBehaviour
         playerScript = player.GetComponent<Player>();
 
         cell = GameObject.FindGameObjectsWithTag("Inventory");
+        instructionBlock = GameObject.FindGameObjectWithTag("Instruction");
         cursor = GameObject.Find("Cursor");
 
         inventoryIcon = transform.Find("InventoryIcon").gameObject;
@@ -114,6 +116,14 @@ public class UI : MonoBehaviour
             else
             cell[i].SetActive(true);
         }
+    }
+
+    public void OpenCloseInstruction()
+    {
+        if(instructionBlock.activeInHierarchy)
+        instructionBlock.SetActive(false);
+        else
+        instructionBlock.SetActive(true);
     }
 
     void FixedUpdate()

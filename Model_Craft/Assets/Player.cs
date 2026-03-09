@@ -188,7 +188,21 @@ public class Player : MonoBehaviour
         RemoveBlockfromInventory();
 
         if(Input.GetKeyUp(KeyCode.I))
-        transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
+        {
+            if(transform.Find("UI").GetComponent<UI>().cell[0].activeInHierarchy &&
+            !transform.Find("UI").GetComponent<UI>().instructionBlock.activeInHierarchy)
+            transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
+            
+            else if(transform.Find("UI").GetComponent<UI>().instructionBlock.activeInHierarchy &&
+            !transform.Find("UI").GetComponent<UI>().cell[0].activeInHierarchy)
+            transform.Find("UI").GetComponent<UI>().OpenCloseInstruction();
+
+            else
+            {
+                transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
+                transform.Find("UI").GetComponent<UI>().OpenCloseInstruction();
+            }
+        }
 
         if(!isBuildMode)
         Move();

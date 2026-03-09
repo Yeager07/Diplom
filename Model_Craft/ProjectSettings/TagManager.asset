@@ -9,6 +9,7 @@ TagManager:
   - Inventory
   - Point
   - UI
+  - Instruction
   layers:
   - Default
   - TransparentFX
