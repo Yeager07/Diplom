@@ -133,6 +133,8 @@
 -r:"Assets/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/Plugins/System.Runtime.CompilerServices.Unsafe.dll"
 -r:"Assets/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/SkiaSharp.dll"
 -r:"Assets/com.muratoreware.unitypdfviewer@4c569dd62760/Runtime/UnityPDFViewer.dll"
+-r:"Assets/StandaloneFileBrowser/Plugins/Ookii.Dialogs.dll"
+-r:"Assets/StandaloneFileBrowser/Plugins/System.Windows.Forms.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/Managed/UnityEditor.Graphs.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/Managed/UnityEngine/UnityEditor.AccessibilityModule.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/Managed/UnityEngine/UnityEditor.AdaptivePerformanceModule.dll"

@@ -5,6 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
+using SFB;
+using System.IO;
 
 public class PdfInstructionViewer : MonoBehaviour
 {
@@ -29,8 +31,80 @@ public class PdfInstructionViewer : MonoBehaviour
         StartCoroutine(LoadAndSetup());
     }
 
+    public void OpenFilePickerAndLoad()
+    {
+        // Настраиваем фильтры, чтобы показывать только PDF-файлы
+        var extensions = new [] {
+            new ExtensionFilter("PDF Files", "pdf"),
+            new ExtensionFilter("All Files", "*" ),
+        };
+
+        // Асинхронно открываем диалог выбора файла
+        StandaloneFileBrowser.OpenFilePanelAsync("Выберите файл инструкции", "", extensions, false, (string[] paths) => {
+            // Этот код выполнится после того, как пользователь выберет файл
+            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
+            {
+                string selectedPath = paths[0];
+                Debug.Log($"Пользователь выбрал файл: {selectedPath}");
+                StartCoroutine(CopyAndLoadExternalPdf(selectedPath));
+            }
+
+            else
+            Debug.Log("Пользователь отменил выбор файла.");
+        });
+    }
+
+    private IEnumerator CopyAndLoadExternalPdf(string filePath)
+    {
+        // Показываем сообщение о загрузке (опционально)
+        if (pageNumberText != null)
+            pageNumberText.text = "Загрузка...";
+
+        // Даём кадр, чтобы текст обновился
+        yield return null;
+
+        try
+        {
+            // 1. Определяем имя файла и путь в StreamingAssets
+            string fileName = Path.GetFileName(filePath);
+            string destinationPath = Path.Combine(Application.streamingAssetsPath, fileName);
+
+            // 2. Удаляем старый файл с таким же именем, если он есть
+            if (File.Exists(destinationPath))
+            {
+                File.Delete(destinationPath);
+                Debug.Log($"Старый файл {fileName} удалён.");
+            }
+
+            // 3. Копируем выбранный файл
+            File.Copy(filePath, destinationPath);
+            Debug.Log($"Файл скопирован в: {destinationPath}");
+
+            // 4. Обновляем имя файла для загрузки
+            pdfFileName = fileName;
+
+            // 5. Перезагружаем PDF через существующую логику
+            // Останавливаем старую корутину, если она ещё работает, и запускаем новую
+            StopAllCoroutines();
+            StartCoroutine(LoadAndSetup());
+
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Ошибка при копировании файла: {e.Message}");
+            if (pageNumberText != null)
+                pageNumberText.text = "Ошибка загрузки";
+        }
+    }
+
     IEnumerator LoadAndSetup()
     {
+        if(pdfViewer.pdfImage != null)
+        pdfViewer.pdfImage.texture = null;
+
+        if(pageNumberText != null)
+        pageNumberText.text = "Загрузка PDF...";
+
         pdfViewer.LoadPDF(pdfFileName);
         Debug.Log("Загружаем PDF, ожидаем инициализацию...");
 

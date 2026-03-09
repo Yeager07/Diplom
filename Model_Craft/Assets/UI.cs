@@ -24,7 +24,7 @@ public class UI : MonoBehaviour
         playerScript = player.GetComponent<Player>();
 
         cell = GameObject.FindGameObjectsWithTag("Inventory");
-        instructionBlock = GameObject.FindGameObjectWithTag("Instruction");
+        //instructionBlock = GameObject.FindGameObjectWithTag("Instruction");
         cursor = GameObject.Find("Cursor");
 
         inventoryIcon = transform.Find("InventoryIcon").gameObject;
