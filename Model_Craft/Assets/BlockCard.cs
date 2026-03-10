@@ -29,11 +29,12 @@ public class BlockCard : MonoBehaviour
         // Заполняем UI
         if(iconImage != null)
         iconImage.sprite = data.icon;
+        
         if(nameText != null)
         nameText.text = data.blockName;
     }
 
-    void OnMouseEnter()
+    void OnMouseDrag()
     {
         gameObject.GetComponent<Image>().material = Camera.main.GetComponent<MainScript>().outlineMaterial;
     }

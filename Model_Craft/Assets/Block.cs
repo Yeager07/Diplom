@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class Block : MonoBehaviour
 {
-    public int count;
+    private int count;
     private Player playerScript;
     private MainScript mainScript;
     private GameObject player;
@@ -452,7 +452,7 @@ public class Block : MonoBehaviour
 
     private void MoveSpawnedObject()
     {
-        //count = 0;
+        count = 0;
 
         foreach(GameObject bucket in GameObject.FindGameObjectWithTag("UI").GetComponent<UI>().cell)
         {
@@ -466,7 +466,6 @@ public class Block : MonoBehaviour
             {
                 Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced = true;
                 playerScript.OutlinedSelectedItem();
-                count = 0;
             }
 
             else
@@ -475,10 +474,7 @@ public class Block : MonoBehaviour
         }
 
         else
-        {
-            Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().Move(playerScript.distance, Camera.main.GetComponent<MainScript>().newBlock);
-            count = 0;
-        }
+        Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().Move(playerScript.distance, Camera.main.GetComponent<MainScript>().newBlock);
     }
 
     /*void FixedUpdate()

@@ -107,12 +107,9 @@ public class BlockCatalog : MonoBehaviour
             return;
         }
 
-    // Определяем позицию для спавна: перед камерой на расстоянии 5 единиц
+    // Определяем позицию для спавна: перед камерой на расстоянии player.distance 
 
-        Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance)),
+        Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance/*Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance))*/,
         selectedBlock.blockName, Camera.main.GetComponent<MainScript>().standartMaterial);
-        Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().count = 1;
-        /*Vector3 spawnPos = Camera.main.transform.position + Camera.main.transform.forward * 5f;
-        Instantiate(selectedBlock.prefab, spawnPos, Quaternion.identity);*/
     }
 }
