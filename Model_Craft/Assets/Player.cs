@@ -19,8 +19,8 @@ public class Player : MonoBehaviour
     private Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 moveDirection;
     public GameObject movedObject;
-    public int selectedItem;
-    public int previousSelectedItem;
+    public int selectedItem = 0;
+    public int previousSelectedItem = 0;
     public Dictionary<string, int> inventory = new Dictionary<string, int>();
     public string[] keys;
     public string[] values;
@@ -126,7 +126,7 @@ public class Player : MonoBehaviour
         transform.Find("UI").GetComponent<UI>().SelectItem(previousSelectedItem, selectedItem);
 
         else
-        transform.Find("UI").GetComponent<UI>().cell[previousSelectedItem - 1].GetComponent<Image>().material = null/*ransform.Find("UI").GetComponent<UI>().outline*/;
+        transform.Find("UI").GetComponent<UI>().cell[previousSelectedItem].GetComponent<Image>().material = null;
     }
 
     private void SelectItem()

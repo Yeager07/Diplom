@@ -63,6 +63,7 @@ public class MainScript : MonoBehaviour
                 newBlock = Instantiate(prefab, spawnPoint, prefab.transform.rotation);
                 newBlock.GetComponent<MeshRenderer>().material = blockMaterial;
                 newBlock.name = prefabName;
+                playerScript.movedObject = newBlock;
                 return;
             }
         }

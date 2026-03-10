@@ -3,18 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
-using System.Runtime.CompilerServices;
-//using UnityEngine.UI;
 
 public class UI : MonoBehaviour
 {
     private Player playerScript;
     public GameObject[] cell;
     public GameObject instructionBlock;
+    public GameObject blocksCatalog;
     private GameObject inventoryIcon;
     private GameObject cursor;
-    //private Material outline;
-    public bool isHidden = false;
+    public Button blockList;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -24,7 +22,6 @@ public class UI : MonoBehaviour
         playerScript = player.GetComponent<Player>();
 
         cell = GameObject.FindGameObjectsWithTag("Inventory");
-        //instructionBlock = GameObject.FindGameObjectWithTag("Instruction");
         cursor = GameObject.Find("Cursor");
 
         inventoryIcon = transform.Find("InventoryIcon").gameObject;
@@ -37,6 +34,9 @@ public class UI : MonoBehaviour
                 cell[i].transform.Find("Name").gameObject.SetActive(false);
             }
         }
+
+        if(playerScript.isBuildMode)
+        blockList.gameObject.SetActive(true);
     }
 
     public void MakeOutline(Transform marker)
@@ -126,6 +126,14 @@ public class UI : MonoBehaviour
         instructionBlock.SetActive(true);
     }
 
+    public void OpenCloseBlockList()
+    {
+        if(blocksCatalog.activeInHierarchy)
+        blocksCatalog.SetActive(false);
+        else
+        blocksCatalog.SetActive(true);
+    }
+
     void FixedUpdate()
     {
         if(playerScript.isBuildMode)
@@ -136,5 +144,13 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKey(KeyCode.B))
+        {
+            if(blockList.gameObject.activeInHierarchy)
+            blockList.gameObject.SetActive(false);
+            
+            else
+            blockList.gameObject.SetActive(true);
+        }
     }
 }
