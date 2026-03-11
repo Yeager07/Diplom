@@ -70,6 +70,7 @@ public class UI : MonoBehaviour
         {
             Transform count = cell[i].transform.Find("Count");
             Transform name = cell[i].transform.Find("Name");
+            Transform type = cell[i].transform.Find("Type");
 
             count.gameObject.SetActive(true);
             name.gameObject.SetActive(true);
@@ -89,10 +90,11 @@ public class UI : MonoBehaviour
         {
             if(bucket.GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial && bucket.transform.Find("Count").GetComponent<TMP_Text>().text != "")
             {
+                playerScript.selectedItem = int.Parse(bucket.transform.name[int.Parse(bucket.transform.name.Length.ToString()) - 1].ToString());
                 Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance)),
                 bucket.transform.Find("Name").GetComponent<TMP_Text>().text,
+                Camera.main.GetComponent<MainScript>().blockPrefabs[playerScript.keys[playerScript.selectedItem - 1].Split(" ")[0]],
                 playerScript.materials[int.Parse(bucket.transform.name[int.Parse(bucket.transform.name.Length.ToString()) - 1].ToString()) - 1]);
-                playerScript.selectedItem = int.Parse(bucket.transform.name[int.Parse(bucket.transform.name.Length.ToString()) - 1].ToString());
                 playerScript.RemoveBlockfromInventory();
                 return;
             }
@@ -103,6 +105,7 @@ public class UI : MonoBehaviour
     {
         Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance)),
         playerScript.keys[playerScript.selectedItem - 1],
+        Camera.main.GetComponent<MainScript>().blockPrefabs[playerScript.keys[playerScript.selectedItem - 1].Split(" ")[0]],
         playerScript.materials[playerScript.selectedItem - 1]);
         playerScript.RemoveBlockfromInventory();
     }

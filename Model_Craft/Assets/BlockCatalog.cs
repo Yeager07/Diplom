@@ -99,7 +99,7 @@ public class BlockCatalog : MonoBehaviour
     // Обработчик клика по карточке
     public void OnBlockSelected(BlockData selectedBlock)
     {
-        Debug.Log($"Выбран блок: {selectedBlock.blockName}");
+        Debug.Log($"Выбран блок: {selectedBlock.type.ToString()} {selectedBlock.blockName}");
         
         if (selectedBlock.prefab == null)
         {
@@ -110,6 +110,6 @@ public class BlockCatalog : MonoBehaviour
     // Определяем позицию для спавна: перед камерой на расстоянии player.distance 
 
         Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance/*Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance))*/,
-        selectedBlock.blockName, Camera.main.GetComponent<MainScript>().standartMaterial);
+        selectedBlock.type + " " + selectedBlock.blockName, Camera.main.GetComponent<MainScript>().blockPrefabs[selectedBlock.type.ToString()], Camera.main.GetComponent<MainScript>().standartMaterial);
     }
 }

@@ -43,6 +43,7 @@ public class Block : MonoBehaviour
     public bool isFree = true;
     public bool isMagnetic = false;
     public bool isPlaced = false;
+    public string blockType;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -272,6 +273,7 @@ public class Block : MonoBehaviour
 
         else if(playerScript.inventory.ContainsKey(transform.name))
         {
+
             playerScript.inventory[transform.name] += 1;
             UpdateMassive();
         }

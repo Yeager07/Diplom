@@ -11,7 +11,7 @@ public class MainScript : MonoBehaviour
     private Player playerScript;
     private Vector3 zeroPos = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 scenePos = new Vector3(-2.5f, 1.65f, -9.3f);
-    public GameObject[] blockPrefabs;
+    public Dictionary<string, BlockData[]> blockPrefabs = new Dictionary<string, BlockData[]>();
     public GameObject newBlock;
     public Material rendgenMaterial;
     public Material standartMaterial;
@@ -20,7 +20,7 @@ public class MainScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        blockPrefabs = Resources.LoadAll<GameObject>("Models/Prefab");
+        FindAllBlockPrefab();
         rendgenMaterial = Resources.Load<Material>("Materials/BlockRendgen");
         standartMaterial = Resources.Load<Material>("Materials/BlockStandart");
         outlineMaterial = Resources.Load<Material>("Materials/MaterialOutline");
@@ -30,6 +30,19 @@ public class MainScript : MonoBehaviour
 
         if (player != null)
         playerScript = player.GetComponent<Player>();
+    }
+
+    void FindAllBlockPrefab()
+    {
+        blockPrefabs["Brick"] = Resources.LoadAll<BlockData>("Models/Blocks/Brick");
+        blockPrefabs["Plate"] = Resources.LoadAll<BlockData>("Models/Blocks/Plate");
+        blockPrefabs["Tile"] = Resources.LoadAll<BlockData>("Models/Blocks/Tile");
+        blockPrefabs["Slice"] = Resources.LoadAll<BlockData>("Models/Blocks/Slice");
+        blockPrefabs["Special"] = Resources.LoadAll<BlockData>("Models/Blocks/Special");
+        blockPrefabs["Arch"] = Resources.LoadAll<BlockData>("Models/Blocks/Arch");
+        blockPrefabs["Panel"] = Resources.LoadAll<BlockData>("Models/Blocks/Panel");
+        blockPrefabs["Cylinders"] = Resources.LoadAll<BlockData>("Models/Blocks/Cylinders");
+        blockPrefabs["RoundPlate"] = Resources.LoadAll<BlockData>("Models/Blocks/RoundPlate");
     }
 
     void LoadScene(string sceneName, bool isBuildMode, Vector3 pos, Vector3 rotate)
@@ -54,18 +67,27 @@ public class MainScript : MonoBehaviour
         children.RemoveAll(child => child.CompareTag("Point"));
     }
 
-    public void SpawnBlock(Vector3 spawnPoint, string prefabName, Material blockMaterial)
+    public void SpawnBlock(Vector3 spawnPoint, string prefabName, BlockData[] prefabs, Material blockMaterial)
     {
-        foreach(GameObject prefab in blockPrefabs)
+        if(prefabs.Length == 0)
+        {
+            Debug.Log($"Пустой массив префабов");
+            return;
+        }
+
+
+        foreach(BlockData prefab in prefabs)
         {
             if(prefab.name == prefabName)
             {
-                newBlock = Instantiate(prefab, spawnPoint, prefab.transform.rotation);
+                newBlock = Instantiate(prefab.prefab, spawnPoint, prefab.prefab.transform.rotation);
                 newBlock.GetComponent<MeshRenderer>().material = blockMaterial;
                 newBlock.name = prefabName;
                 playerScript.movedObject = newBlock;
                 return;
             }
+            else
+            Debug.Log($"Имена префабов не совпадают");
         }
     }
 
