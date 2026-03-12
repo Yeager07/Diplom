@@ -45,6 +45,7 @@ public class Block : MonoBehaviour
     public bool isMagnetic = false;
     public bool isPlaced = false;
     public string blockType;
+    private Material mainBlockMaterial;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -61,6 +62,8 @@ public class Block : MonoBehaviour
 
         FindChildPoint("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
         FindChildPoint("Bulge", bulgeChildCoordinat, bulgeChildRotation, transform, bulgeChild);
+
+        mainBlockMaterial = gameObject.GetComponent<Renderer>().material;
     }
 
     private Transform FindMainParent(Transform currentObject)
@@ -418,13 +421,13 @@ public class Block : MonoBehaviour
         {   
             if(other.gameObject == place)
             {
-                GetComponent<MeshRenderer>().material = mainScript.standartMaterial;
+                GetComponent<MeshRenderer>().material = mainBlockMaterial;
 
                 if(FindMainParent(transform).GetComponent<Block>().blockChild.Count == 0)
                 mainScript.FindAllChild(FindMainParent(transform), FindMainParent(transform).GetComponent<Block>().blockChild);
 
                 foreach(Transform child in FindMainParent(transform).GetComponent<Block>().blockChild)
-                child.GetComponent<MeshRenderer>().material = mainScript.standartMaterial;
+                child.GetComponent<MeshRenderer>().material = child.GetComponent<Block>().mainBlockMaterial;
                 
                 isFree = true;
             }
@@ -498,7 +501,7 @@ public class Block : MonoBehaviour
 
         else if(Input.GetMouseButtonUp(0))
         {   
-            GetComponent<MeshRenderer>().material = mainScript.standartMaterial;
+            GetComponent<MeshRenderer>().material = mainBlockMaterial;
 
             if(isFree && playerScript.movedObject == gameObject)
             {
