@@ -2,6 +2,12 @@ Shader "Custom/OutlineShader"
 {
     Properties
     {
+        _StencilComp ("Stencil Comparison", Float) = 8
+        _Stencil ("Stencil ID", Float) = 0
+        _StencilOp ("Stencil Operation", Float) = 0
+        _StencilWriteMask ("Stencil Write Mask", Float) = 255
+        _StencilReadMask ("Stencil Read Mask", Float) = 255
+
         _MainTex ("Texture", 2D) = "white" {}
         _Color ("Color", Color) = (1,1,1,1)
         _OutlineColor ("Outline Color", Color) = (1,0,0,1)
@@ -12,6 +18,15 @@ Shader "Custom/OutlineShader"
     SubShader
     {
         Tags { "RenderType"="Opaque" }
+
+        Stencil
+        {
+            Ref [_Stencil]
+            Comp [_StencilComp]
+            Pass [_StencilOp]
+            ReadMask [_StencilReadMask]
+            WriteMask [_StencilWriteMask]
+        }
 
         // Первый проход: рисуем обводку
         Pass

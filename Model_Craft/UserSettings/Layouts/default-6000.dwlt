@@ -245,8 +245,8 @@ MonoBehaviour:
     y: 0
     width: 723
     height: 562
-  m_MinSize: {x: 52, y: 76}
-  m_MaxSize: {x: 4002, y: 4026}
+  m_MinSize: {x: 50, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 13}
   m_Panes:
   - {fileID: 13}
@@ -449,7 +449,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: caa6ffff2afbfffff4ffffff728100000c820000bc820000c6820000
+      m_ExpandedIDs: 7677fffff277ffff1078ffffce7effff327fffff507fffff90b9ffff76caffffbacaffffc4cbffff2afbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1095,9 +1095,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -1.394, y: 1.8924999, z: -7.52}
+    m_Target: {x: -0.05549932, y: -0.047981467, z: 0.10133869}
     speed: 2
-    m_Value: {x: -1.394, y: 1.8924999, z: -7.52}
+    m_Value: {x: -0.05549932, y: -0.047981467, z: 0.10133869}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1143,13 +1143,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.11427716, y: 0.20266165, z: -0.023820225, w: 0.97226655}
+    m_Target: {x: 0.1516064, y: 0.21606165, z: -0.03398176, w: 0.96393925}
     speed: 2
-    m_Value: {x: 0.114277124, y: 0.20266157, z: -0.023820216, w: 0.9722662}
+    m_Value: {x: 0.15160634, y: 0.21606158, z: -0.033981748, w: 0.9639389}
   m_Size:
-    m_Target: 0.8997026
+    m_Target: 0.82427764
     speed: 2
-    m_Value: 0.8997026
+    m_Value: 0.82427764
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -1221,7 +1221,7 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 33292
+  m_LastSelectedObjectID: -34892
 --- !u!114 &17
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1341,7 +1341,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Resources/Models/Blocks/Plate
+    - Assets
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -1351,16 +1351,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 70
   m_LastFolders:
-  - Assets/Resources/Models/Blocks/Plate
+  - Assets
   m_LastFoldersGridSize: 70
   m_LastProjectPath: C:\Diplom\Diplom\Model_Craft
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 64}
-    m_SelectedIDs: 02860000
-    m_LastClickedID: 34306
-    m_ExpandedIDs: 000000006485000066850000688500006a8500006c850000dc8500000486000000ca9a3bffffff7f
+    m_SelectedIDs: 6a850000
+    m_LastClickedID: 34154
+    m_ExpandedIDs: 000000006a8500006c8500006e8500007085000072850000e485000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1389,7 +1389,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000006485000066850000688500006a8500006c850000
+    m_ExpandedIDs: 000000006a8500006c8500006e8500007085000072850000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1415,8 +1415,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 
-    m_LastClickedInstanceID: 0
+    m_SelectedInstanceIDs: f2390000
+    m_LastClickedInstanceID: 14834
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c62300005065000000890000d8630000b05a0000be5a00004a5b0000645b00002a190100e0a70000000000006e800000a68300007c850000d89f0000
     m_RenameOverlay:

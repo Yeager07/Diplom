@@ -36,6 +36,7 @@ public class Block : MonoBehaviour
     public List<Vector3> bulgeChildCoordinat = new List<Vector3>();
     public List<Vector3> hollowChildRotation = new List<Vector3>();
     public List<Vector3> bulgeChildRotation = new List<Vector3>();
+    public Vector3 nearestBulgeRotation = new Vector3(0.0f, 0.0f, 0.0f);
     public List<Transform> blockChild;
     public List<GameObject> previousBlock = new List<GameObject>();
     public bool isActive = false;
@@ -334,12 +335,12 @@ public class Block : MonoBehaviour
         FindMainParent(transform).GetComponent<Block>().blockChild.Clear();
     }
 
-    private void CalculateDistance(List<Transform> hollows, List<Transform> bulges)
+    private void CalculateDistance(GameObject currentBlock, GameObject place, List<Transform> hollows, List<Transform> bulges)
     {
         float minDistance = 100.0f;
         List<Transform> transformBulges = new List<Transform>();
         
-        foreach(Transform child in transform)
+        foreach(Transform child in currentBlock.transform)
         transformBulges.Add(child);
 
         int jterator = 0;
@@ -355,10 +356,11 @@ public class Block : MonoBehaviour
                 if(distance < minDistance)
                 {
                     minDistance = distance;
-                    localHollowPosition = hollows[jterator].localPosition;
-                    localBulgePosition = transformBulges[jterator].localPosition;
-                    bulgePosition = bulges[iterator].position;
-                    placeHollowPosition = place.transform.GetComponent<Block>().hollowChild[iterator].position;
+                    currentBlock.GetComponent<Block>().localHollowPosition = hollows[jterator].localPosition;
+                    currentBlock.GetComponent<Block>().localBulgePosition = transformBulges[jterator].localPosition;
+                    currentBlock.GetComponent<Block>().bulgePosition = bulges[iterator].position;
+                    currentBlock.GetComponent<Block>().nearestBulgeRotation = bulges[iterator].rotation.eulerAngles;
+                    currentBlock.GetComponent<Block>().placeHollowPosition = place.transform.GetComponent<Block>().hollowChild[iterator].position;
                 }
 
                 iterator += 1;
@@ -368,26 +370,27 @@ public class Block : MonoBehaviour
         }
     }
 
-    private void MakeConnection()
+    private void MakeConnection(GameObject currentBlock, GameObject place)
     {
-        if(bulgeChildCoordinat.Count != 0)
+        if(currentBlock.GetComponent<Block>().bulgeChildCoordinat.Count != 0)
         {
-            if(hollowChildRotation[0].x == place.GetComponent<Block>().bulgeChildRotation[0].x)
+            CalculateDistance(currentBlock, place, currentBlock.GetComponent<Block>().hollowChild, place.GetComponent<Block>().bulgeChild);
+            
+            if(currentBlock.GetComponent<Block>().hollowChildRotation[0].x == currentBlock.GetComponent<Block>().nearestBulgeRotation.x)
             {
-                isFree = false;
-                CalculateDistance(hollowChild, place.GetComponent<Block>().bulgeChild);
+                currentBlock.GetComponent<Block>().isFree = false;
                         
-                if(bulgeChild[0].transform.position.y < place.GetComponent<Block>().bulgeChild[0].transform.position.y)
-                transform.position = placeHollowPosition - transform.TransformVector(localBulgePosition);
+                if(currentBlock.GetComponent<Block>().bulgeChild[0].transform.position.y < place.GetComponent<Block>().bulgeChild[0].transform.position.y)
+                currentBlock.transform.position = currentBlock.GetComponent<Block>().placeHollowPosition - currentBlock.transform.TransformVector(currentBlock.GetComponent<Block>().localBulgePosition);
                         
                 else
-                transform.position = bulgePosition - transform.TransformVector(localHollowPosition);
+                currentBlock.transform.position = currentBlock.GetComponent<Block>().bulgePosition - currentBlock.transform.TransformVector(localHollowPosition);
             }
         }
     }
 
     private void OnTriggerEnter(Collider other)
-    {
+    {        
         if(playerScript.isBuildMode && !isMagnetic && gameObject == playerScript.movedObject)
         {
             if(other.CompareTag("Selectable"))
@@ -397,12 +400,16 @@ public class Block : MonoBehaviour
                 if(!previousBlock.Contains(place))
                 previousBlock.Add(place);
 
-                MakeConnection();
+                if(FindMainParent(transform) != null)
+                MakeConnection(FindMainParent(transform).gameObject, place);
+            
+                else
+                MakeConnection(gameObject, place);
             }
         }
 
         else if(isFree && Input.GetMouseButtonUp(0))
-        MakeConnection();
+        MakeConnection(gameObject, other.gameObject);
     }
 
     private void OnTriggerExit(Collider other)

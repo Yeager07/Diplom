@@ -34,12 +34,12 @@ public class BlockCard : MonoBehaviour
         nameText.text = data.blockName;
     }
 
-    void OnMouseDrag()
+    public void OnMouseEnter()
     {
         gameObject.GetComponent<Image>().material = Camera.main.GetComponent<MainScript>().outlineMaterial;
     }
 
-    void OnMouseExit()
+    public void OnMouseExit()
     {
         gameObject.GetComponent<Image>().material = null;
     }

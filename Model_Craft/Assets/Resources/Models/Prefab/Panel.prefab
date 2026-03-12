@@ -88,7 +88,6 @@ GameObject:
   - component: {fileID: 2625844588370343968}
   - component: {fileID: 9035059905021298729}
   - component: {fileID: 8239366104985630481}
-  - component: {fileID: -5932483106761192061}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -213,51 +212,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 6740824195983692800}
   nameText: {fileID: 1090388070597875377}
---- !u!114 &-5932483106761192061
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4148992058142152239}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 0
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 2073210787194722608, guid: e1540417152c74f46ba37a247592d9d1, type: 3}
-          m_TargetAssemblyTypeName: UI, Assembly-CSharp
-          m_MethodName: MakeOutline
-          m_Mode: 2
-          m_Arguments:
-            m_ObjectArgument: {fileID: 6680870431906128757}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-  - eventID: 1
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 2073210787194722608, guid: e1540417152c74f46ba37a247592d9d1, type: 3}
-          m_TargetAssemblyTypeName: UI, Assembly-CSharp
-          m_MethodName: MakeNone
-          m_Mode: 2
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!1 &6720950049344326021
 GameObject:
   m_ObjectHideFlags: 0
