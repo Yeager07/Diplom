@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dfdffd64279cbb4bb566f3340f095ba, type: 3}
+  m_Name: Brick 2x3x3
+  m_EditorClassIdentifier: 
+  blockName: 2x3x3
+  icon: {fileID: 21300000, guid: 500d34e6ca049b744ab863fa2658ca19, type: 3}
+  prefab: {fileID: 4085768385373024601, guid: 033ad60dafee8ae4f8a7b2ee0657a4d2, type: 3}
+  type: 0

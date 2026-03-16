@@ -28,6 +28,7 @@ public class Block : MonoBehaviour
     private Vector3 moveY = new Vector3(0.0f, 0.16f, 0.0f);
     private Vector3 moveZ = new Vector3(0.0f, 0.0f, 0.16f);
     private Vector3 playerRotation;
+    public Vector3 spaceBetweenBlockCursor;
     public float xDistance = 0.0f;
     public float zDistance = 0.0f;
     public List<Transform> hollowChild;
@@ -120,7 +121,7 @@ public class Block : MonoBehaviour
         FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.y = hollowPosition.y % (4 * bulgeWidth / 10);
 
         if(hollowPosition.z % bulgeWidth != 0)
-        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.z = hollowPosition.z % bulgeWidth;
+        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.z = hollowPosition.z % bulgeWidth;    
     }
 
     private void CalculateMoveVector(float distance, Transform movingObject, Vector3 moveSide, Vector3 moveHeight)
@@ -297,11 +298,11 @@ public class Block : MonoBehaviour
             {
                 FindChildPoint("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
 
-                if(isFree)
+                if(FindMainParent(transform) == null)
                 Move(playerScript.distance, gameObject);
 
                 else
-                {
+                {   
                     if(!FindMainParent(transform).gameObject.GetComponent<Block>().isFree)
                     {
                         FindMainParent(transform).gameObject.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
@@ -319,7 +320,7 @@ public class Block : MonoBehaviour
         }
 
         else
-        Move(playerScript.minDistance, transform.gameObject);
+        Move(playerScript.minDistance, gameObject);
     }
 
     void OnMouseEnter()
@@ -430,6 +431,7 @@ public class Block : MonoBehaviour
                 child.GetComponent<MeshRenderer>().material = child.GetComponent<Block>().mainBlockMaterial;
                 
                 isFree = true;
+                place = null;
             }
         }
 
@@ -524,6 +526,7 @@ public class Block : MonoBehaviour
                     {
                         block.transform.SetParent(transform);
                         block.GetComponent<Block>().place = gameObject;
+                        block.GetComponent<Block>().isMagnetic = true;
                         previousPosition = transform.localPosition;
                     }
                 }
