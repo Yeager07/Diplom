@@ -24,7 +24,8 @@ public class Player : MonoBehaviour
     public Dictionary<string, int> inventory = new Dictionary<string, int>();
     public string[] keys;
     public string[] values;
-    public Material[] materials;
+    public Dictionary<string, List<Material>> materials = new Dictionary<string, List<Material>>();
+    public List<Material> materials2 = new List<Material>();
     public int lengthDictionary;
     public Vector3 rotateDirection;
     public bool isBuildMode = false;
@@ -98,22 +99,22 @@ public class Player : MonoBehaviour
             if(inventory[keys[selectedItem-1]] != 1)
             {
                 inventory[keys[selectedItem-1]] -= 1;
+                materials[keys[selectedItem - 1]].RemoveAt(materials.Count - 1);
                 values[selectedItem - 1] = (int.Parse(values[selectedItem - 1]) - 1).ToString();
             }
 
             else
             {
                 inventory.Remove(keys[selectedItem-1]);
+                materials.Remove(keys[selectedItem - 1]);
                 keys[selectedItem - 1] = "";
                 values[selectedItem - 1] = "";
-                materials[selectedItem - 1] = null;
                 previousSelectedItem = selectedItem;
                 selectedItem = 0;
+                transform.Find("UI").GetComponent<UI>().MakeNone(transform.Find("UI").GetComponent<UI>().cell[previousSelectedItem - 1].transform);
             }
 
             transform.Find("UI").GetComponent<UI>().UpdateInventoryView();
-            
-            if(!isBuildMode)
             OutlinedSelectedItem();
         }
         else
@@ -126,7 +127,13 @@ public class Player : MonoBehaviour
         transform.Find("UI").GetComponent<UI>().SelectItem(previousSelectedItem, selectedItem);
 
         else
-        transform.Find("UI").GetComponent<UI>().cell[previousSelectedItem].GetComponent<Image>().material = null;
+        {
+            if(previousSelectedItem != 0)
+            transform.Find("UI").GetComponent<UI>().cell[previousSelectedItem - 1].GetComponent<Image>().material = null;
+
+            else
+            transform.Find("UI").GetComponent<UI>().cell[previousSelectedItem].GetComponent<Image>().material = null;
+        }
     }
 
     private void SelectItem()

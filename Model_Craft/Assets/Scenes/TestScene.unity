@@ -684,7 +684,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.1, y: -0.25399396}
+  m_AnchoredPosition: {x: 0.1, y: -0.27}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &170219659
@@ -2588,7 +2588,7 @@ Transform:
   m_GameObject: {fileID: 485153083}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.022, z: 0}
+  m_LocalPosition: {x: 0, y: -0.053, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4102,13 +4102,13 @@ MonoBehaviour:
   allBlocks:
   - {fileID: 11400000, guid: 04cd0a666431db74588e46a9d5df15ff, type: 2}
   - {fileID: 11400000, guid: 61ed43e3e468d6747af3badefe553a26, type: 2}
-  - {fileID: 11400000, guid: ab4fcb32ef6b96847a05375642145704, type: 2}
-  - {fileID: 11400000, guid: d0776618423b6774d8efd290417d9178, type: 2}
-  - {fileID: 11400000, guid: 49715719c5309f5439639da30ec7256b, type: 2}
   - {fileID: 11400000, guid: ccb152fab2378904f970b377a57018f2, type: 2}
   - {fileID: 11400000, guid: 764aea26fdeb0894086ad5d9ffc13ccd, type: 2}
+  - {fileID: 11400000, guid: ab4fcb32ef6b96847a05375642145704, type: 2}
+  - {fileID: 11400000, guid: d0776618423b6774d8efd290417d9178, type: 2}
   - {fileID: 11400000, guid: b4cc218577d0aa3429e6963a3de8a0ae, type: 2}
   - {fileID: 11400000, guid: 930f986ffae42c545ad6d9b070cff356, type: 2}
+  - {fileID: 11400000, guid: 49715719c5309f5439639da30ec7256b, type: 2}
   colorSelector: {fileID: 1878338532}
 --- !u!1 &680821688
 GameObject:
@@ -5402,7 +5402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 1
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -9886,8 +9886,8 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
+  m_ChildAlignment: 1
+  m_Spacing: 40
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0

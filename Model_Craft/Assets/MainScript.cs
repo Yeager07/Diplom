@@ -86,8 +86,6 @@ public class MainScript : MonoBehaviour
                 playerScript.movedObject = newBlock;
                 return;
             }
-            else
-            Debug.Log($"Имена префабов не совпадают");
         }
     }
 

@@ -75,7 +75,7 @@ public class UI : MonoBehaviour
             count.gameObject.SetActive(true);
             name.gameObject.SetActive(true);
             count.GetComponent<TMP_Text>().text = playerScript.values[i];
-            name.GetComponent<TMP_Text>().text = playerScript.keys[i];
+            name.GetComponent<TMP_Text>().text = playerScript.keys[i]/*.Split(" ")[1]*/;
             
             if(playerScript.values[i] != "")
             countBlock += int.Parse(playerScript.values[i]);
@@ -94,7 +94,7 @@ public class UI : MonoBehaviour
                 Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance)),
                 bucket.transform.Find("Name").GetComponent<TMP_Text>().text,
                 Camera.main.GetComponent<MainScript>().blockPrefabs[playerScript.keys[playerScript.selectedItem - 1].Split(" ")[0]],
-                playerScript.materials[int.Parse(bucket.transform.name[int.Parse(bucket.transform.name.Length.ToString()) - 1].ToString()) - 1]);
+                playerScript.materials[bucket.transform.Find("Name").GetComponent<TMP_Text>().text][playerScript.materials[bucket.transform.Find("Name").GetComponent<TMP_Text>().text].Count - 1]);
                 playerScript.RemoveBlockfromInventory();
                 return;
             }
@@ -106,7 +106,7 @@ public class UI : MonoBehaviour
         Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance)),
         playerScript.keys[playerScript.selectedItem - 1],
         Camera.main.GetComponent<MainScript>().blockPrefabs[playerScript.keys[playerScript.selectedItem - 1].Split(" ")[0]],
-        playerScript.materials[playerScript.selectedItem - 1]);
+        playerScript.materials[playerScript.keys[playerScript.selectedItem - 1]][playerScript.materials[playerScript.keys[playerScript.selectedItem - 1]].Count - 1]);
         playerScript.RemoveBlockfromInventory();
     }
 

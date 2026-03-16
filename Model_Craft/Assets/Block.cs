@@ -260,6 +260,7 @@ public class Block : MonoBehaviour
         {
             playerScript.keys[iterator] = value.Key;
             playerScript.values[iterator] = value.Value.ToString();
+            playerScript.materials2 = playerScript.materials[playerScript.keys[iterator]];
             iterator += 1;
         }
 
@@ -272,7 +273,8 @@ public class Block : MonoBehaviour
         if(playerScript.inventory.Count != 5 && !playerScript.inventory.ContainsKey(transform.name))
         {
             playerScript.inventory.Add(transform.name, 1);
-            playerScript.materials[playerScript.inventory.Count - 1] = gameObject.GetComponent<MeshRenderer>().material;
+            playerScript.materials.Add(transform.name, new List<Material>());
+            playerScript.materials[transform.name].Add(transform.GetComponent<Renderer>().material);
             UpdateMassive();
         }
 
@@ -280,6 +282,7 @@ public class Block : MonoBehaviour
         {
 
             playerScript.inventory[transform.name] += 1;
+            playerScript.materials[transform.name].Add(transform.GetComponent<Renderer>().material);
             UpdateMassive();
         }
 
@@ -333,7 +336,6 @@ public class Block : MonoBehaviour
 
     void OnMouseExit()
     {
-        //if(Input.GetMouseButtonUp(0))
         isActive = false;
 
         FindMainParent(transform).GetComponent<Block>().blockChild.Clear();
