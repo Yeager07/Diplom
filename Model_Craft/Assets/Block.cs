@@ -604,11 +604,11 @@ public class Block : MonoBehaviour
         {
             if(positionHistory.Count >= 1)
             {
-                if(previousRotate.Count > 1 && previousRotate.Contains(positionHistory[positionHistory.Count-1]))
+                if(previousRotate.Count > 1 && previousRotate.Contains(positionHistory[positionHistory.Count - 1]))
                 {
                     transform.rotation = Quaternion.Euler(positionHistory[positionHistory.Count - 1]);
                     rotateDirection = positionHistory[positionHistory.Count - 1];
-                    previousRotate.RemoveAt(previousRotate.Count-1);
+                    previousRotate.RemoveAt(previousRotate.Count - 1);
                 }
 
                 else

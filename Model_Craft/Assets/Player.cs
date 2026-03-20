@@ -98,8 +98,8 @@ public class Player : MonoBehaviour
         {
             if(inventory[keys[selectedItem-1]] != 1)
             {
-                inventory[keys[selectedItem-1]] -= 1;
-                materials[keys[selectedItem - 1]].RemoveAt(materials.Count - 1);
+                inventory[keys[selectedItem - 1]] -= 1;
+                materials[keys[selectedItem - 1]].RemoveAt(materials[keys[selectedItem - 1]].Count - 1);
                 values[selectedItem - 1] = (int.Parse(values[selectedItem - 1]) - 1).ToString();
             }
 

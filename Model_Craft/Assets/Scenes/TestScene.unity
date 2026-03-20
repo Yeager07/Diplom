@@ -169,7 +169,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8012953238331507001, guid: 3b6040ec325b26e43bc2e09a2438390c, type: 3}
       propertyPath: m_Name
-      value: 1x1x1
+      value: Plate 1x1x1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2127,7 +2127,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5288439374233960478, guid: c691c207c21172b46986b1bea12ff5ba, type: 3}
       propertyPath: m_Name
-      value: 2x2x1
+      value: Plate 2x2x1
       objectReference: {fileID: 0}
     - target: {fileID: 5829528626076484428, guid: c691c207c21172b46986b1bea12ff5ba, type: 3}
       propertyPath: m_LocalScale.x
@@ -2200,7 +2200,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5189425500420487365, guid: f8cd63ef345561842881f6992e42ba76, type: 3}
       propertyPath: m_Name
-      value: 1x2x1
+      value: Plate 1x2x1
       objectReference: {fileID: 0}
     - target: {fileID: 6464355419782603613, guid: f8cd63ef345561842881f6992e42ba76, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3918,12 +3918,7 @@ MonoBehaviour:
   - 
   - 
   - 
-  materials:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  materials2: []
   lengthDictionary: 0
   rotateDirection: {x: 0, y: 0, z: 0}
   isBuildMode: 0
@@ -5303,7 +5298,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4152627420950079203, guid: 94eea012f49300f42a1930d2ff790841, type: 3}
       propertyPath: m_Name
-      value: 2x2x2
+      value: Brick 2x2x3
       objectReference: {fileID: 0}
     - target: {fileID: 7634873425558419936, guid: 94eea012f49300f42a1930d2ff790841, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10026,7 +10021,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4152627420950079203, guid: 94eea012f49300f42a1930d2ff790841, type: 3}
       propertyPath: m_Name
-      value: 2x2x2
+      value: Brick 2x2x3
       objectReference: {fileID: 0}
     - target: {fileID: 7634873425558419936, guid: 94eea012f49300f42a1930d2ff790841, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10219,7 +10214,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4152627420950079203, guid: 94eea012f49300f42a1930d2ff790841, type: 3}
       propertyPath: m_Name
-      value: 2x2x2
+      value: Brick 2x2x3
       objectReference: {fileID: 0}
     - target: {fileID: 7634873425558419936, guid: 94eea012f49300f42a1930d2ff790841, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10276,7 +10271,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5288439374233960478, guid: c691c207c21172b46986b1bea12ff5ba, type: 3}
       propertyPath: m_Name
-      value: 2x2x1
+      value: Plate 2x2x1
       objectReference: {fileID: 0}
     - target: {fileID: 5829528626076484428, guid: c691c207c21172b46986b1bea12ff5ba, type: 3}
       propertyPath: m_LocalScale.x
