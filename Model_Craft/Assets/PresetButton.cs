@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PresetButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
-    public float longPressDuration = 0.75f; // порог долгого нажатия в секундах
+    public float longPressDuration = 1.5f; // порог долгого нажатия в секундах
     private bool isPressed = false;
     private float pressStartTime;
     private Color myColor;
@@ -32,26 +32,28 @@ public class PresetButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (!isPressed) return;
+        if (!isPressed)
+        return;
 
         // Останавливаем корутину прогресса
         if (longPressCoroutine != null)
         StopCoroutine(longPressCoroutine);
 
         float pressDuration = Time.time - pressStartTime;
-        if (pressDuration < longPressDuration)
+
         // Короткое нажатие — выбираем цвет
+        if (pressDuration < longPressDuration)
         onClick?.Invoke(myColor);
 
-        else
         // Долгое нажатие — удаляем пресет
+        else
         onLongPress?.Invoke(myColor);
 
         isPressed = false;
 
         // Сбрасываем индикатор, если он есть
         if (progressIndicator != null)
-        progressIndicator.fillAmount = 0f;
+        progressIndicator.fillAmount = 1.0f;
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -65,13 +67,16 @@ public class PresetButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
             // Сбрасываем индикатор
             if (progressIndicator != null)
-            progressIndicator.fillAmount = 0f;
+            progressIndicator.fillAmount = 0.0f;
         }
+
+        //Invoke(myColor);
     }
 
     private IEnumerator LongPressProgress()
     {
-        float elapsed = 0f;
+        float elapsed = 0.0f;
+
         while (elapsed < longPressDuration)
         {
             elapsed += Time.deltaTime;
@@ -81,5 +86,8 @@ public class PresetButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
             
             yield return null;
         }
+
+        if (elapsed == longPressDuration)
+        progressIndicator.fillAmount = 0.0f;
     }
 }
