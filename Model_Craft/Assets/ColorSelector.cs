@@ -3,14 +3,14 @@ using UnityEngine.UI;
 
 public class ColorSelector : MonoBehaviour
 {
-    public ColorPicker colorPickerPrefab;   // Префаб панели ColorPicker
+    public AdvancedColorPicker colorPickerPrefab;   // Префаб панели ColorPicker
+    private AdvancedColorPicker activePicker;
     public Transform uiRoot;                 // Родитель для инстанса (например, Canvas)
     public Shader standardShader;            // Шейдер для создания материала (например, Standard)
     public string colorProperty = "_Color";  // Имя свойства цвета в шейдере
     public string prefRKey = "LastColorR";
     public string prefGKey = "LastColorG";
     public string prefBKey = "LastColorB";
-    private ColorPicker activePicker;
     private Material currentMaterial;        // Материал, используемый для спавна
     private Color defaultColor = Color.white; // Цвет по умолчанию (будет заменён на материал блока)
 
@@ -35,18 +35,16 @@ public class ColorSelector : MonoBehaviour
         if (activePicker != null)
         {
             // Показываем панель с текущим цветом (из currentMaterial)
-            Color current = currentMaterial != null ? currentMaterial.GetColor(colorProperty) : defaultColor;
-            activePicker.Show(current);
+            activePicker.Show(Color.white);
             activePicker.onColorApplied = (selectedColor) => {
                 UpdateMaterial(selectedColor);
                 onMaterialSelected?.Invoke(currentMaterial);
             };
         }
+        
         else
-        {
-            // Если нет ColorPicker, просто применяем текущий материал
-            onMaterialSelected?.Invoke(currentMaterial);
-        }
+        // Если нет ColorPicker, просто применяем текущий материал
+        onMaterialSelected?.Invoke(currentMaterial);
     }
 
     // Обновление материала при выборе цвета

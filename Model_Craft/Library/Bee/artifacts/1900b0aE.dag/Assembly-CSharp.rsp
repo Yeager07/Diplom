@@ -406,6 +406,7 @@
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll"
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.0.44f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll"
+"Assets/AdvancedColorPicker.cs"
 "Assets/Block.cs"
 "Assets/BlockCard.cs"
 "Assets/BlockCatalog.cs"

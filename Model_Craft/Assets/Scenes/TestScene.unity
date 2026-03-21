@@ -9081,7 +9081,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7960fbea3edf6a4981fdb1434c9b40c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorPickerPrefab: {fileID: 7211072662634797437, guid: 90a031a8267cfd442835e071898d0dd5, type: 3}
+  colorPickerPrefab: {fileID: 9210488979009640788, guid: 303f3464d4be7ec4b976a28ddad40bb9, type: 3}
   uiRoot: {fileID: 1312796646}
   standardShader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   colorProperty: _Color
