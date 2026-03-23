@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class Block : MonoBehaviour
 {
-    private int count;
+    private InventoryManager inventoryManager;
     private Player playerScript;
     private MainScript mainScript;
     private GameObject player;
@@ -53,6 +53,10 @@ public class Block : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player");
         mainScript = Camera.main.GetComponent<MainScript>();
+
+        GameObject inventory = GameObject.FindGameObjectWithTag("InventoryManager");
+        if(inventory != null)
+        inventoryManager = inventory.GetComponent<InventoryManager>();
 
         if (player != null)
         playerScript = player.GetComponent<Player>();
@@ -253,43 +257,6 @@ public class Block : MonoBehaviour
         }
     }
 
-    private void UpdateMassive()
-    {
-        int iterator = 0;
-        foreach(var value in playerScript.inventory)
-        {
-            playerScript.keys[iterator] = value.Key;
-            playerScript.values[iterator] = value.Value.ToString();
-            playerScript.materials2 = playerScript.materials[playerScript.keys[iterator]];
-            iterator += 1;
-        }
-
-        player.transform.Find("UI").GetComponent<UI>().UpdateInventoryView();
-        Destroy(this.gameObject);
-    }
-
-    void AddToInventory()
-    {
-        if(playerScript.inventory.Count != 5 && !playerScript.inventory.ContainsKey(transform.name))
-        {
-            playerScript.inventory.Add(transform.name, 1);
-            playerScript.materials.Add(transform.name, new List<Material>());
-            playerScript.materials[transform.name].Add(transform.GetComponent<Renderer>().material);
-            UpdateMassive();
-        }
-
-        else if(playerScript.inventory.ContainsKey(transform.name))
-        {
-
-            playerScript.inventory[transform.name] += 1;
-            playerScript.materials[transform.name].Add(transform.GetComponent<Renderer>().material);
-            UpdateMassive();
-        }
-
-        else
-        return;
-    }
-
     void OnMouseDrag()
     {
         if(Input.GetMouseButton(0))
@@ -338,7 +305,7 @@ public class Block : MonoBehaviour
     {
         isActive = false;
 
-        FindMainParent(transform).GetComponent<Block>().blockChild.Clear();
+        //FindMainParent(transform).GetComponent<Block>().blockChild.Clear();
     }
 
     private void CalculateDistance(GameObject currentBlock, GameObject place, List<Transform> hollows, List<Transform> bulges)
@@ -393,6 +360,8 @@ public class Block : MonoBehaviour
                 currentBlock.transform.position = currentBlock.GetComponent<Block>().bulgePosition - currentBlock.transform.TransformVector(localHollowPosition);
             }
         }
+
+        place.GetComponent<Block>().blockChild.Add(currentBlock.transform);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -434,6 +403,9 @@ public class Block : MonoBehaviour
                 
                 isFree = true;
                 place = null;
+
+                if(blockChild.Count != 0)
+                blockChild.RemoveAt(0);
             }
         }
 
@@ -441,12 +413,18 @@ public class Block : MonoBehaviour
         {
             transform.parent = null;
             isFree = true;
+
+            if(blockChild.Count != 0)
+            blockChild.RemoveAt(0);
         }
 
         isMagnetic = false;
         
         if(previousBlock.Count != 0)
         previousBlock.RemoveAt(0);
+
+        if(blockChild.Count != 0)
+        blockChild.RemoveAt(0);
     }
 
     private void Rotate(Transform currentObject)
@@ -468,25 +446,10 @@ public class Block : MonoBehaviour
 
     private void MoveSpawnedObject()
     {
-        count = 0;
-
-        foreach(GameObject bucket in GameObject.FindGameObjectWithTag("UI").GetComponent<UI>().cell)
+        if(Input.GetMouseButtonUp(0))
         {
-            if(bucket.GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial)
-            count += 1;
-        }
-
-        if(count == 0)
-        {
-            if(Input.GetMouseButtonUp(0))
-            {
-                Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced = true;
-                playerScript.OutlinedSelectedItem();
-            }
-
-            else
-            Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().Move(playerScript.distance, Camera.main.GetComponent<MainScript>().newBlock);
-
+            Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced = true;
+            playerScript.OutlinedSelectedItem();
         }
 
         else
@@ -527,6 +490,7 @@ public class Block : MonoBehaviour
                     if(block != null && block != transform.parent)
                     {
                         block.transform.SetParent(transform);
+                        blockChild.Add(block.transform);
                         block.GetComponent<Block>().place = gameObject;
                         block.GetComponent<Block>().isMagnetic = true;
                         previousPosition = transform.localPosition;
@@ -585,19 +549,23 @@ public class Block : MonoBehaviour
         else if(Input.GetKey(KeyCode.R) && isActive)
         Rotate(FindMainParent(transform));
 
-        else if(isActive && Input.GetKeyUp(KeyCode.E))
+        else if(isActive && Input.GetKeyUp(KeyCode.E) && blockChild.Count == 0 && transform.parent == null)
         {
-            if(playerScript.inventory.Count != 0)
+            if(inventoryManager.inventory.Count != 0)
             {
-                foreach(var value in playerScript.inventory)
+                foreach(var value in inventoryManager.inventory)
                 {
                     if(value.Value == 0)
-                    playerScript.inventory.Remove(value.Key);
+                    inventoryManager.inventory.Remove(value.Key);
                 }
-                AddToInventory();
+                
+                inventoryManager.AddToInventory(transform);
             }
+            
             else
-            AddToInventory();
+            inventoryManager.AddToInventory(transform);
+            
+            Destroy(this.gameObject);
         }
 
         else if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.I))

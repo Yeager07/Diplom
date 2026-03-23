@@ -7,10 +7,11 @@ using UnityEngine.UI;
 public class UI : MonoBehaviour
 {
     private Player playerScript;
-    public GameObject[] cell;
+    private InventoryManager inventoryManager;
+    //public GameObject[] cell;
     public GameObject instructionBlock;
     public GameObject blocksCatalog;
-    private GameObject inventoryIcon;
+    //private GameObject inventoryIcon;
     private GameObject cursor;
     public Button blockList;
 
@@ -21,19 +22,11 @@ public class UI : MonoBehaviour
         if(player != null)
         playerScript = player.GetComponent<Player>();
 
-        cell = GameObject.FindGameObjectsWithTag("Inventory");
+        GameObject inventory = GameObject.FindGameObjectWithTag("InventoryManager");
+        if(inventory != null)
+        inventoryManager = inventory.GetComponent<InventoryManager>();
+
         cursor = GameObject.Find("Cursor");
-
-        inventoryIcon = transform.Find("InventoryIcon").gameObject;
-
-        if(playerScript.inventory.Count == 0)
-        {
-            for(int i = 0; i < cell.Length; i++)
-            {
-                cell[i].transform.Find("Count").gameObject.SetActive(false);
-                cell[i].transform.Find("Name").gameObject.SetActive(false);
-            }
-        }
 
         if(playerScript.isBuildMode)
         blockList.gameObject.SetActive(true);
@@ -41,7 +34,7 @@ public class UI : MonoBehaviour
 
     public void MakeOutline(Transform marker)
     {
-        foreach(GameObject image in cell)
+        foreach(GameObject image in inventoryManager.cell)
         image.GetComponent<Image>().material = null;
         
         marker.GetComponent<Image>().material = Camera.main.GetComponent<MainScript>().outlineMaterial;
@@ -53,7 +46,7 @@ public class UI : MonoBehaviour
         playerScript.selectedItem = 0;
     }
 
-    public void SelectItem(int previousInventoryNumber, int currentInventoryNumber)
+    public void SelectItem(int previousInventoryNumber, int currentInventoryNumber, GameObject[] cell)
     {
         if(previousInventoryNumber != 0)
         cell[previousInventoryNumber-1].GetComponent<Image>().material = null;
@@ -61,41 +54,18 @@ public class UI : MonoBehaviour
         cell[currentInventoryNumber-1].GetComponent<Image>().material = Camera.main.GetComponent<MainScript>().outlineMaterial;
     }
 
-    public void UpdateInventoryView()
-    {
-        int countBlock = 0;
-        Transform allCount = inventoryIcon.transform.Find("Count");
-
-        for(int i = 0; i <= 4; i++)
-        {
-            Transform count = cell[i].transform.Find("Count");
-            Transform name = cell[i].transform.Find("Name");
-            Transform type = cell[i].transform.Find("Type");
-
-            count.gameObject.SetActive(true);
-            name.gameObject.SetActive(true);
-            count.GetComponent<TMP_Text>().text = playerScript.values[i];
-            name.GetComponent<TMP_Text>().text = playerScript.keys[i]/*.Split(" ")[1]*/;
-            
-            if(playerScript.values[i] != "")
-            countBlock += int.Parse(playerScript.values[i]);
-        }
-        
-        allCount.GetComponent<TMP_Text>().text = countBlock.ToString();
-    }
-
     public void SpawnBlock()
     {   
-        foreach(GameObject bucket in cell)
+        foreach(GameObject bucket in inventoryManager.cell)
         {
             if(bucket.GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial && bucket.transform.Find("Count").GetComponent<TMP_Text>().text != "")
             {
                 playerScript.selectedItem = int.Parse(bucket.transform.name[int.Parse(bucket.transform.name.Length.ToString()) - 1].ToString());
-                Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance)),
+                Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
                 bucket.transform.Find("Name").GetComponent<TMP_Text>().text,
-                Camera.main.GetComponent<MainScript>().blockPrefabs[playerScript.keys[playerScript.selectedItem - 1].Split(" ")[0]],
-                playerScript.materials[bucket.transform.Find("Name").GetComponent<TMP_Text>().text][playerScript.materials[bucket.transform.Find("Name").GetComponent<TMP_Text>().text].Count - 1]);
-                playerScript.RemoveBlockfromInventory();
+                Camera.main.GetComponent<MainScript>().blockPrefabs[inventoryManager.keys[playerScript.selectedItem - 1].Split(" ")[0]],
+                inventoryManager.materials[bucket.transform.Find("Name").GetComponent<TMP_Text>().text][inventoryManager.materials[bucket.transform.Find("Name").GetComponent<TMP_Text>().text].Count - 1]);
+                inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
                 return;
             }
         }
@@ -104,20 +74,21 @@ public class UI : MonoBehaviour
     public void SpawnBlockButton()
     {
         Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance)),
-        playerScript.keys[playerScript.selectedItem - 1],
-        Camera.main.GetComponent<MainScript>().blockPrefabs[playerScript.keys[playerScript.selectedItem - 1].Split(" ")[0]],
-        playerScript.materials[playerScript.keys[playerScript.selectedItem - 1]][playerScript.materials[playerScript.keys[playerScript.selectedItem - 1]].Count - 1]);
-        playerScript.RemoveBlockfromInventory();
+        inventoryManager.keys[playerScript.selectedItem - 1],
+        Camera.main.GetComponent<MainScript>().blockPrefabs[inventoryManager.keys[playerScript.selectedItem - 1].Split(" ")[0]],
+        inventoryManager.materials[inventoryManager.keys[playerScript.selectedItem - 1]][inventoryManager.materials[inventoryManager.keys[playerScript.selectedItem - 1]].Count - 1]);
+        inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
     }
 
     public void OpenCloseInventory()
     {
-        for(int i = 0; i <= cell.Length - 1; i++)
+        for(int i = 0; i <= inventoryManager.cell.Length - 1; i++)
         {
-            if(cell[i].activeInHierarchy)
-            cell[i].SetActive(false);
+            if(inventoryManager.cell[i].activeInHierarchy)
+            inventoryManager.cell[i].SetActive(false);
+            
             else
-            cell[i].SetActive(true);
+            inventoryManager.cell[i].SetActive(true);
         }
     }
 

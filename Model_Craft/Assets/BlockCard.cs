@@ -15,10 +15,8 @@ public class BlockCard : MonoBehaviour
     {
         // Подписываемся на клик кнопки (если компонент Button есть)
         Button btn = GetComponent<Button>();
-        if (btn != null)
-        {
-            btn.onClick.AddListener(OnCardClick);
-        }
+        if(btn != null)
+        btn.onClick.AddListener(OnCardClick);
     }
 
     public void Setup(BlockData data, System.Action<BlockData> onClick)

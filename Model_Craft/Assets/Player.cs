@@ -7,9 +7,11 @@ using System.Security.Cryptography;
 
 public class Player : MonoBehaviour
 {
+    private InventoryManager inventoryManager;
     private float speed = 4.0f;
     public float minDistance = 1.0f;
     private float maxDistance = 10f;
+    public float distance = 0.0f;
     private float buildSpeed = 25.0f;
     private float speedRot = 1.5f;
     private float verRotLim = 60.0f;
@@ -21,21 +23,18 @@ public class Player : MonoBehaviour
     public GameObject movedObject;
     public int selectedItem = 0;
     public int previousSelectedItem = 0;
-    public Dictionary<string, int> inventory = new Dictionary<string, int>();
-    public string[] keys;
-    public string[] values;
-    public Dictionary<string, List<Material>> materials = new Dictionary<string, List<Material>>();
-    public List<Material> materials2 = new List<Material>();
-    public int lengthDictionary;
     public Vector3 rotateDirection;
     public bool isBuildMode = false;
-    public float distance = 0.0f;
     public Vector3 target;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
+
+        GameObject inventory = GameObject.FindGameObjectWithTag("InventoryManager");
+        if(inventory != null)
+        inventoryManager = inventory.GetComponent<InventoryManager>();
     }
 
     void Move()
@@ -92,47 +91,18 @@ public class Player : MonoBehaviour
         transform.position = moveDirection;
     }
 
-    public void RemoveBlockfromInventory()
-    {
-        if(keys[selectedItem - 1] != "")
-        {
-            if(inventory[keys[selectedItem-1]] != 1)
-            {
-                inventory[keys[selectedItem - 1]] -= 1;
-                materials[keys[selectedItem - 1]].RemoveAt(materials[keys[selectedItem - 1]].Count - 1);
-                values[selectedItem - 1] = (int.Parse(values[selectedItem - 1]) - 1).ToString();
-            }
-
-            else
-            {
-                inventory.Remove(keys[selectedItem-1]);
-                materials.Remove(keys[selectedItem - 1]);
-                keys[selectedItem - 1] = "";
-                values[selectedItem - 1] = "";
-                previousSelectedItem = selectedItem;
-                selectedItem = 0;
-                transform.Find("UI").GetComponent<UI>().MakeNone(transform.Find("UI").GetComponent<UI>().cell[previousSelectedItem - 1].transform);
-            }
-
-            transform.Find("UI").GetComponent<UI>().UpdateInventoryView();
-            OutlinedSelectedItem();
-        }
-        else
-        return;
-    }
-
     public void OutlinedSelectedItem()
     {
         if(selectedItem != 0)
-        transform.Find("UI").GetComponent<UI>().SelectItem(previousSelectedItem, selectedItem);
+        transform.Find("UI").GetComponent<UI>().SelectItem(previousSelectedItem, selectedItem, inventoryManager.cell);
 
         else
         {
             if(previousSelectedItem != 0)
-            transform.Find("UI").GetComponent<UI>().cell[previousSelectedItem - 1].GetComponent<Image>().material = null;
+            inventoryManager.cell[previousSelectedItem - 1].GetComponent<Image>().material = null;
 
             else
-            transform.Find("UI").GetComponent<UI>().cell[previousSelectedItem].GetComponent<Image>().material = null;
+            inventoryManager.cell[previousSelectedItem].GetComponent<Image>().material = null;
         }
     }
 
@@ -185,23 +155,23 @@ public class Player : MonoBehaviour
 
         if(Input.GetKey(KeyCode.KeypadEnter) && selectedItem != 0 && isBuildMode)
         {
-            if(keys[selectedItem - 1] != "")
+            if(inventoryManager.keys[selectedItem - 1] != "")
             transform.Find("UI").GetComponent<UI>().SpawnBlockButton();
 
-            transform.Find("UI").GetComponent<UI>().MakeNone(transform.Find("UI").GetComponent<UI>().cell[previousSelectedItem - 1].transform);
+            transform.Find("UI").GetComponent<UI>().MakeNone(inventoryManager.cell[previousSelectedItem - 1].transform);
         }
 
         if(Input.GetKeyUp(KeyCode.Delete) && selectedItem != 0)
-        RemoveBlockfromInventory();
+        inventoryManager.RemoveBlockfromInventory(selectedItem, previousSelectedItem);
 
         if(Input.GetKeyUp(KeyCode.I))
         {
-            if(transform.Find("UI").GetComponent<UI>().cell[0].activeInHierarchy &&
+            if(inventoryManager.cell[0].activeInHierarchy &&
             !transform.Find("UI").GetComponent<UI>().instructionBlock.activeInHierarchy)
             transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
             
             else if(transform.Find("UI").GetComponent<UI>().instructionBlock.activeInHierarchy &&
-            !transform.Find("UI").GetComponent<UI>().cell[0].activeInHierarchy)
+            !inventoryManager.cell[0].activeInHierarchy)
             transform.Find("UI").GetComponent<UI>().OpenCloseInstruction();
 
             else

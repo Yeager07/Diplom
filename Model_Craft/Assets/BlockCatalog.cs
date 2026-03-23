@@ -113,7 +113,7 @@ public class BlockCatalog : MonoBehaviour
         {
             // Показываем ColorPicker и передаём колбэк для спавна с выбранным материалом
             colorSelector.ShowColorPicker((Material selectedMaterial) => {
-            Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance/*Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance))*/,
+            Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
             selectedBlock.type + " " + selectedBlock.blockName, Camera.main.GetComponent<MainScript>().blockPrefabs[selectedBlock.type.ToString()], Camera.main.GetComponent<MainScript>().standartMaterial);
             Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Renderer>().material = selectedMaterial;
             });
@@ -122,7 +122,7 @@ public class BlockCatalog : MonoBehaviour
         else
         {
             // Если ColorSelector нет, спавним с материалом по умолчанию
-            Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance/*Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance))*/,
+            Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
             selectedBlock.type + " " + selectedBlock.blockName, Camera.main.GetComponent<MainScript>().blockPrefabs[selectedBlock.type.ToString()], Camera.main.GetComponent<MainScript>().standartMaterial);;
         }
     }
