@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 
+
 public class BlockCatalog : MonoBehaviour
 {
     private Player playerScript;
@@ -123,7 +124,8 @@ public class BlockCatalog : MonoBehaviour
         {
             // Если ColorSelector нет, спавним с материалом по умолчанию
             Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
-            selectedBlock.type + " " + selectedBlock.blockName, Camera.main.GetComponent<MainScript>().blockPrefabs[selectedBlock.type.ToString()], Camera.main.GetComponent<MainScript>().standartMaterial);;
+            selectedBlock.type + " " + selectedBlock.blockName, Camera.main.GetComponent<MainScript>().blockPrefabs[selectedBlock.type.ToString()],
+            Camera.main.GetComponent<MainScript>().standartMaterial);
         }
     }
 }

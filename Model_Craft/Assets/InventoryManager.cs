@@ -15,6 +15,9 @@ public class InventoryManager : MonoBehaviour
     public string[] keys;
     public string[] values;
     public Dictionary<string, List<Material>> materials = new Dictionary<string, List<Material>>();
+    public Dictionary<string, Dictionary<Material, int>> materialsCount = new Dictionary<string, Dictionary<Material, int>>();
+    public Material material1Material;
+    public int material1MaterialCount;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -45,6 +48,7 @@ public class InventoryManager : MonoBehaviour
             {
                 inventory.Remove(keys[selectedItem-1]);
                 materials.Remove(keys[selectedItem - 1]);
+                materialsCount.Remove(keys[selectedItem - 1]);
                 keys[selectedItem - 1] = "";
                 values[selectedItem - 1] = "";
                 previousSelectedItem = selectedItem;
@@ -77,8 +81,19 @@ public class InventoryManager : MonoBehaviour
         if(inventory.Count != 5 && !inventory.ContainsKey(selectedBlock.name))
         {
             inventory.Add(selectedBlock.name, 1);
+
             materials.Add(selectedBlock.name, new List<Material>());
             materials[selectedBlock.name].Add(selectedBlock.GetComponent<Renderer>().material);
+                
+            materialsCount.Add(selectedBlock.name, new Dictionary<Material, int>());
+            materialsCount[selectedBlock.name].Add(selectedBlock.GetComponent<Renderer>().material, 1);
+
+            foreach(var item in materialsCount[selectedBlock.name])
+            {
+                material1Material = item.Key;
+                material1MaterialCount = item.Value;
+            }
+            
             UpdateMassive();
         }
 
@@ -86,6 +101,16 @@ public class InventoryManager : MonoBehaviour
         {
 
             inventory[selectedBlock.name] += 1;
+            
+            foreach(Material material in materials[selectedBlock.name])
+            {
+                if(material == selectedBlock.GetComponent<Renderer>().material)
+                {
+                    materialsCount[selectedBlock.name][selectedBlock.GetComponent<Renderer>().material] += 1;
+                    return;
+                }
+            }
+
             materials[selectedBlock.name].Add(selectedBlock.GetComponent<Renderer>().material);
             UpdateMassive();
         }

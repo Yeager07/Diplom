@@ -142,6 +142,7 @@ public class Player : MonoBehaviour
             selectedItem = 5;
             OutlinedSelectedItem();
         }
+
     }
 
     /*void FixedUpdate()

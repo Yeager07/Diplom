@@ -415,6 +415,8 @@
 "Assets/ColorPicker.cs"
 "Assets/ColorSelector.cs"
 "Assets/InstructionChangeSize.cs"
+"Assets/InventoryCard.cs"
+"Assets/InventoryCatalog.cs"
 "Assets/InventoryManager.cs"
 "Assets/MainManager.cs"
 "Assets/MainScript.cs"

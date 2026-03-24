@@ -43,7 +43,16 @@ public class UI : MonoBehaviour
     public void MakeNone(Transform marker)
     {
         marker.GetComponent<Image>().material = null;
-        playerScript.selectedItem = 0;
+        //playerScript.selectedItem = 0;
+    }
+
+    public void SetSelectedItem()
+    {
+        foreach(GameObject bucket in inventoryManager.cell)
+        {
+            if(bucket.GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial)
+            playerScript.selectedItem = int.Parse(bucket.name[bucket.name.Length - 1].ToString());
+        }
     }
 
     public void SelectItem(int previousInventoryNumber, int currentInventoryNumber, GameObject[] cell)
@@ -68,6 +77,9 @@ public class UI : MonoBehaviour
                 inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
                 return;
             }
+
+            else
+            Debug.Log($"Ошибка");
         }
     }
 
