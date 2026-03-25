@@ -8,10 +8,8 @@ public class UI : MonoBehaviour
 {
     private Player playerScript;
     private InventoryManager inventoryManager;
-    //public GameObject[] cell;
     public GameObject instructionBlock;
     public GameObject blocksCatalog;
-    //private GameObject inventoryIcon;
     private GameObject cursor;
     public Button blockList;
 
@@ -61,35 +59,6 @@ public class UI : MonoBehaviour
         cell[previousInventoryNumber-1].GetComponent<Image>().material = null;
 
         cell[currentInventoryNumber-1].GetComponent<Image>().material = Camera.main.GetComponent<MainScript>().outlineMaterial;
-    }
-
-    public void SpawnBlock()
-    {   
-        foreach(GameObject bucket in inventoryManager.cell)
-        {
-            if(bucket.GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial && bucket.transform.Find("Count").GetComponent<TMP_Text>().text != "")
-            {
-                playerScript.selectedItem = int.Parse(bucket.transform.name[int.Parse(bucket.transform.name.Length.ToString()) - 1].ToString());
-                Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
-                bucket.transform.Find("Name").GetComponent<TMP_Text>().text,
-                Camera.main.GetComponent<MainScript>().blockPrefabs[inventoryManager.keys[playerScript.selectedItem - 1].Split(" ")[0]],
-                inventoryManager.materials[bucket.transform.Find("Name").GetComponent<TMP_Text>().text][inventoryManager.materials[bucket.transform.Find("Name").GetComponent<TMP_Text>().text].Count - 1]);
-                inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
-                return;
-            }
-
-            else
-            Debug.Log($"Ошибка");
-        }
-    }
-
-    public void SpawnBlockButton()
-    {
-        Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance)),
-        inventoryManager.keys[playerScript.selectedItem - 1],
-        Camera.main.GetComponent<MainScript>().blockPrefabs[inventoryManager.keys[playerScript.selectedItem - 1].Split(" ")[0]],
-        inventoryManager.materials[inventoryManager.keys[playerScript.selectedItem - 1]][inventoryManager.materials[inventoryManager.keys[playerScript.selectedItem - 1]].Count - 1]);
-        inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
     }
 
     public void OpenCloseInventory()

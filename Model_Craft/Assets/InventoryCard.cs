@@ -12,14 +12,23 @@ public class InventoryCard : MonoBehaviour
     private Player playerScript;
     private InventoryManager inventoryManager;
     private UI uiScript;
+    private Shader myShader;
+    private Material applyMaterial;
     private GameObject ui;
     public Image iconColor;
     public TextMeshProUGUI countText;
     public Button generateButton;   
     public Button deleteButton;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    void Awake()
+    {
+        myShader = Shader.Find("Standard");
+        applyMaterial = new Material(myShader);
+    }
     void Start()
     {
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if(player != null)
         playerScript = player.GetComponent<Player>();
@@ -33,11 +42,14 @@ public class InventoryCard : MonoBehaviour
         uiScript = ui.GetComponent<UI>();
     }
 
-    public void Setup(Material dataMaterial, int dataCount)
+    public void Setup(Color dataColor, int dataCount)
     {
         // Заполняем UI
         if(iconColor != null)
-        iconColor.GetComponent<Image>().material = dataMaterial;
+        {
+            iconColor.GetComponent<Image>().color = dataColor;
+            applyMaterial.color = dataColor;
+        }
         
         if(countText != null)
         countText.text = "Count:" + dataCount.ToString();
@@ -47,21 +59,37 @@ public class InventoryCard : MonoBehaviour
     {
         Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
         inventoryManager.keys[playerScript.selectedItem - 1], Camera.main.GetComponent<MainScript>().blockPrefabs[inventoryManager.keys[playerScript.selectedItem - 1].Split(" ")[0]],
-        iconColor.GetComponent<Image>().material);
+        applyMaterial);
+        
+        DeleteBLock();
     }
 
     public void DeleteBLock()
     {
-        if(inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]][iconColor.GetComponent<Image>().material] != 0)
-        inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]][iconColor.GetComponent<Image>().material] -= 1;
-
-        else
+        foreach(Dictionary<Color, int> dictionary in inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]])
         {
-            inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]].Remove(iconColor.GetComponent<Image>().material);
-            inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
+            foreach(var value in dictionary)
+            {
+                if(value.Key == iconColor.GetComponent<Image>().color)
+                {
+                    if(value.Value != 0)
+                    {
+                        dictionary[value.Key] -= 1;
+                        inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
+                        ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
+                        return;
+                    }
+                    
+                    else
+                    {
+                        inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]].Remove(dictionary);
+                        inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
+                        ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
+                        return;
+                    }
+                }
+            }
         }
-
-        ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
     }
 
 

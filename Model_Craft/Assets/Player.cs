@@ -154,14 +154,6 @@ public class Player : MonoBehaviour
     {
         SelectItem();
 
-        if(Input.GetKey(KeyCode.KeypadEnter) && selectedItem != 0 && isBuildMode)
-        {
-            if(inventoryManager.keys[selectedItem - 1] != "")
-            transform.Find("UI").GetComponent<UI>().SpawnBlockButton();
-
-            transform.Find("UI").GetComponent<UI>().MakeNone(inventoryManager.cell[previousSelectedItem - 1].transform);
-        }
-
         if(Input.GetKeyUp(KeyCode.Delete) && selectedItem != 0)
         inventoryManager.RemoveBlockfromInventory(selectedItem, previousSelectedItem);
 

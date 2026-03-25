@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PresetButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
-    public float longPressDuration = 1.5f; // порог долгого нажатия в секундах
+    public float longPressDuration = 1.0f; // порог долгого нажатия в секундах
     private bool isPressed = false;
     private float pressStartTime;
     private Color myColor;

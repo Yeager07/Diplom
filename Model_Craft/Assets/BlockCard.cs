@@ -25,6 +25,7 @@ public class BlockCard : MonoBehaviour
         blockData = data;
         onClickCallback = onClick;
         Debug.Log($"BlockCard.Setup: {data.blockName}, callback is { (onClick == null ? "NULL" : "OK") }");
+        
         // Заполняем UI
         if(iconImage != null)
         iconImage.sprite = data.icon;
