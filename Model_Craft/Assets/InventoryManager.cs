@@ -47,7 +47,6 @@ public class InventoryManager : MonoBehaviour
                         {
                             materialsCount[keys[selectedItem - 1]].Remove(dictionary);
                             UpdateInventoryView();
-                            playerScript.OutlinedSelectedItem();                            
                             return;
                         }
                     }
@@ -67,7 +66,6 @@ public class InventoryManager : MonoBehaviour
             }
 
             UpdateInventoryView();
-            playerScript.OutlinedSelectedItem();
         }
         else
         return;

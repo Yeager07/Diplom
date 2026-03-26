@@ -99,13 +99,21 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Transform colorChoosePanel = transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
+        
         if(Input.GetKey(KeyCode.B))
-        {
-            if(blockList.gameObject.activeInHierarchy)
-            blockList.gameObject.SetActive(false);
+        {   
+            if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
+            {
+                if(blockList.gameObject.activeInHierarchy)
+                blockList.gameObject.SetActive(false);
             
+                else
+                blockList.gameObject.SetActive(true);
+            }
+
             else
-            blockList.gameObject.SetActive(true);
+            return;
         }
     }
 }

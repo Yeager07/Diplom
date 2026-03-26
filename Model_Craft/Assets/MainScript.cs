@@ -92,19 +92,27 @@ public class MainScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Transform colorChoosePanel = playerScript.transform.Find("UI").transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
+        
         if(Input.GetKey(KeyCode.B))
-        {
-            if(!playerScript.isBuildMode)
+        {   
+            if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
             {
-                Cursor.lockState = CursorLockMode.None;
-                playerScript.distance = playerScript.minDistance;
-                LoadScene("BuildScene", playerScript.isBuildMode, zeroPos, zeroPos);
+                if(!playerScript.isBuildMode)
+                {
+                    Cursor.lockState = CursorLockMode.None;
+                    playerScript.distance = playerScript.minDistance;
+                    LoadScene("BuildScene", playerScript.isBuildMode, zeroPos, zeroPos);
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    LoadScene("TestScene", playerScript.isBuildMode, scenePos, zeroPos);
+                }
             }
+
             else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                LoadScene("TestScene", playerScript.isBuildMode, scenePos, zeroPos);
-            }
+            return;
         }
     }
 }

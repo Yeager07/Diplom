@@ -7,6 +7,8 @@ using System.Security.Cryptography;
 
 public class Player : MonoBehaviour
 {
+    public Transform colorChoosePanel;
+    public Transform instruction;
     private InventoryManager inventoryManager;
     private float speed = 4.0f;
     public float minDistance = 1.0f;
@@ -106,72 +108,47 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void SelectItem()
+    void FixedUpdate()
     {
-        if(Input.GetKey(KeyCode.Alpha1))
-        {
-            previousSelectedItem = selectedItem;
-            selectedItem = 1;
-            OutlinedSelectedItem();
-        }
-        
-        if(Input.GetKey(KeyCode.Alpha2))
-        {
-            previousSelectedItem = selectedItem;
-            selectedItem = 2;
-            OutlinedSelectedItem();
-        }
-            
-        if(Input.GetKey(KeyCode.Alpha3))
-        {
-            previousSelectedItem = selectedItem;
-            selectedItem = 3;
-            OutlinedSelectedItem();
-        }
-            
-        if(Input.GetKey(KeyCode.Alpha4))
-        {
-            previousSelectedItem = selectedItem;
-            selectedItem = 4;
-            OutlinedSelectedItem();
-        }
-
-        if(Input.GetKey(KeyCode.Alpha5))
-        {
-            previousSelectedItem = selectedItem;
-            selectedItem = 5;
-            OutlinedSelectedItem();
-        }
 
     }
 
-    /*void FixedUpdate()
-    {
-    }*/
-
     // Update is called once per frame
     void Update()
-    {
-        SelectItem();
+    {   
 
-        if(Input.GetKeyUp(KeyCode.Delete) && selectedItem != 0)
-        inventoryManager.RemoveBlockfromInventory(selectedItem, previousSelectedItem);
+        colorChoosePanel = transform.Find("UI").transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
+
+        if(Input.GetMouseButtonUp(1) && selectedItem != 0)
+        {
+            inventoryManager.inventory.Remove(inventoryManager.keys[selectedItem-1]);
+            inventoryManager.materialsCount.Remove(inventoryManager.keys[selectedItem - 1]);
+            inventoryManager.keys[selectedItem - 1] = "";
+            inventoryManager.values[selectedItem - 1] = "";
+            inventoryManager.UpdateInventoryView();
+        }
 
         if(Input.GetKeyUp(KeyCode.I))
         {
-            if(inventoryManager.cell[0].activeInHierarchy &&
-            !transform.Find("UI").GetComponent<UI>().instructionBlock.activeInHierarchy)
-            transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
+            if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
+            {
+                if(inventoryManager.cell[0].activeInHierarchy &&
+                !transform.Find("UI").GetComponent<UI>().instructionBlock.activeInHierarchy)
+                transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
             
-            else if(transform.Find("UI").GetComponent<UI>().instructionBlock.activeInHierarchy &&
-            !inventoryManager.cell[0].activeInHierarchy)
-            transform.Find("UI").GetComponent<UI>().OpenCloseInstruction();
+                else if(transform.Find("UI").GetComponent<UI>().instructionBlock.activeInHierarchy &&
+                !inventoryManager.cell[0].activeInHierarchy)
+                transform.Find("UI").GetComponent<UI>().OpenCloseInstruction();
+
+                else
+                {
+                    transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
+                    transform.Find("UI").GetComponent<UI>().OpenCloseInstruction();
+                }
+            }
 
             else
-            {
-                transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
-                transform.Find("UI").GetComponent<UI>().OpenCloseInstruction();
-            }
+            return;
         }
 
         if(!isBuildMode)

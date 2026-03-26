@@ -10,7 +10,7 @@ using System.Security.Cryptography;
 
 public class InventoryCatalog : MonoBehaviour
 {
-    private List<Dictionary<Color, int>> currentFilteredBlocks = new List<Dictionary<Color, int>>();
+    //private List<Dictionary<Color, int>> currentFilteredBlocks = new List<Dictionary<Color, int>>();
     public Player playerScript;
     public InventoryManager inventoryManager;
     public GameObject cardsPanel;
@@ -18,6 +18,7 @@ public class InventoryCatalog : MonoBehaviour
     public GameObject cardPrefab;
     public Transform cardsContainer; 
     public Button backButton;
+    public ScrollRect scrollRect;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -32,14 +33,9 @@ public class InventoryCatalog : MonoBehaviour
     }
 
     public void OpenPanel(Transform cell)
-    {
+    {   
         cardsPanel.SetActive(true);
         cardsPanel.transform.localPosition = cell.transform.localPosition + new Vector3(0.0f, 230.0f, 0.0f);
-        
-        if(inventoryManager.keys[playerScript.selectedItem - 1] != "")
-        ShowType(inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]]);
-
-        else
         RefreshCatalog();
     }
 
@@ -47,20 +43,8 @@ public class InventoryCatalog : MonoBehaviour
     {
         foreach (Transform child in cardsContainer)
         Destroy(child.gameObject);
-        
+
         cardsPanel.SetActive(false);
-    }
-
-    public void ShowType(List<Dictionary<Color, int>> dictionary)
-    {
-        // Фильтруем блоки по типу
-        currentFilteredBlocks.Clear();
-        
-        foreach (var block in dictionary)
-        currentFilteredBlocks.Add(block);
-
-        // Обновляем карточки
-        RefreshCatalog();
     }
 
     public void RefreshCatalog()
@@ -87,6 +71,22 @@ public class InventoryCatalog : MonoBehaviour
         
         else
         Debug.Log($"пустой словарь");
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(cardsContainer.GetComponent<RectTransform>());
+
+        if(cardsPanel.activeInHierarchy)
+        StartCoroutine(ResetScrollPositionAfterFrame());
+    }
+
+    private IEnumerator ResetScrollPositionAfterFrame()
+    {
+        yield return null; // ждём один кадр
+        
+        if(scrollRect != null && scrollRect.content != null)
+        scrollRect.content.anchoredPosition = Vector2.zero;
+    
+        else
+        cardsContainer.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
     }
 
     // Update is called once per frame

@@ -119,6 +119,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &11252644 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4169057848667006705, guid: dc6118d25997a124f97de5bad0dce56b, type: 3}
+  m_PrefabInstance: {fileID: 1892448555}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &90564066
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4008,6 +4019,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e0cc5c51ff68fa46a07bd43abd64e32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  colorChoosePanel: {fileID: 0}
+  instruction: {fileID: 344316741}
   minDistance: 1
   distance: 0
   movedObject: {fileID: 0}
@@ -4843,6 +4856,7 @@ MonoBehaviour:
   cardPrefab: {fileID: 6121208829470605544, guid: dd6216d5955498649a1b08c4b0274a00, type: 3}
   cardsContainer: {fileID: 1912681762}
   backButton: {fileID: 1433246902}
+  scrollRect: {fileID: 11252644}
 --- !u!1 &756376631
 GameObject:
   m_ObjectHideFlags: 0
@@ -9358,7 +9372,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4169057848667006705, guid: dc6118d25997a124f97de5bad0dce56b, type: 3}
       propertyPath: m_MovementType
-      value: 2
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4169057848667006705, guid: dc6118d25997a124f97de5bad0dce56b, type: 3}
+      propertyPath: m_VerticalScrollbarSpacing
+      value: -15
       objectReference: {fileID: 0}
     - target: {fileID: 4571108505754905697, guid: dc6118d25997a124f97de5bad0dce56b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -9406,7 +9424,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7180123476191113385, guid: dc6118d25997a124f97de5bad0dce56b, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -17
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 7485867281122248736, guid: dc6118d25997a124f97de5bad0dce56b, type: 3}
       propertyPath: m_Name

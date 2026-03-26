@@ -386,6 +386,7 @@ public class AdvancedColorPicker : MonoBehaviour
                 float dx = x - center;
                 float dy = y - center;
                 float distance = Mathf.Sqrt(dx * dx + dy * dy);
+                
                 if(distance > radius)
                 {
                     colors[y * wheelSize + x] = Color.clear;
@@ -399,6 +400,7 @@ public class AdvancedColorPicker : MonoBehaviour
                 colors[y * wheelSize + x] = c;
             }
         }
+
         colorWheelTexture.SetPixels(colors);
         colorWheelTexture.Apply();
         colorWheelImage.texture = colorWheelTexture;
@@ -419,6 +421,7 @@ public class AdvancedColorPicker : MonoBehaviour
             c.a = 1;
             valueGradientTexture.SetPixel(0, y, c);
         }
+        
         valueGradientTexture.Apply();
         
         if(valueGradientImage != null)

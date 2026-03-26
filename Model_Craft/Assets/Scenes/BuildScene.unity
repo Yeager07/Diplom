@@ -169,7 +169,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8012953238331507001, guid: 3b6040ec325b26e43bc2e09a2438390c, type: 3}
       propertyPath: m_Name
-      value: 1x1x1
+      value: Plate 1x1x1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -186,7 +186,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5189425500420487365, guid: f8cd63ef345561842881f6992e42ba76, type: 3}
       propertyPath: m_Name
-      value: 1x2x1
+      value: Plate 1x2x1
       objectReference: {fileID: 0}
     - target: {fileID: 6464355419782603613, guid: f8cd63ef345561842881f6992e42ba76, type: 3}
       propertyPath: m_LocalPosition.x
@@ -497,7 +497,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4152627420950079203, guid: 94eea012f49300f42a1930d2ff790841, type: 3}
       propertyPath: m_Name
-      value: 2x2x2
+      value: Brick 2x2x2
       objectReference: {fileID: 0}
     - target: {fileID: 7634873425558419936, guid: 94eea012f49300f42a1930d2ff790841, type: 3}
       propertyPath: m_LocalScale.x

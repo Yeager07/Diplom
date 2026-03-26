@@ -21,6 +21,7 @@ public class Block : MonoBehaviour
     public Vector3 moveVector = new Vector3(0.0f, 0.0f, 0.0f);
     public Vector3 curPosition;
     public Vector3 previousPosition;
+    public GameObject colorChoosePanel;
     public GameObject place;
     private float bulgeWidth = 0.16f;
     public float blockHeight = 0.064f;
@@ -258,39 +259,42 @@ public class Block : MonoBehaviour
     }
 
     void OnMouseDrag()
-    {
-        if(Input.GetMouseButton(0))
-        playerScript.movedObject = FindMainParent(transform).gameObject;
-        
-        if(playerScript.isBuildMode)
-        {   
-            if(!Input.GetKey(KeyCode.R))
-            {
-                FindChildPoint("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
+    {   
+        if(playerScript.colorChoosePanel == null || !playerScript.colorChoosePanel.gameObject.activeInHierarchy)
+        {
+            if(Input.GetMouseButton(0))
+            playerScript.movedObject = FindMainParent(transform).gameObject;
+    
+            if(playerScript.isBuildMode)
+            {   
+                if(!Input.GetKey(KeyCode.R))
+                {
+                    FindChildPoint("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
 
-                if(FindMainParent(transform) == null)
-                Move(playerScript.distance, gameObject);
+                    if(FindMainParent(transform) == null)
+                    Move(playerScript.distance, gameObject);
 
-                else
-                {   
-                    if(!FindMainParent(transform).gameObject.GetComponent<Block>().isFree)
-                    {
-                        FindMainParent(transform).gameObject.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
+                    else
+                    {   
+                        if(!FindMainParent(transform).gameObject.GetComponent<Block>().isFree)
+                        {
+                            FindMainParent(transform).gameObject.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
 
-                        if(FindMainParent(transform).GetComponent<Block>().blockChild.Count == 0)
-                        mainScript.FindAllChild(FindMainParent(transform), FindMainParent(transform).GetComponent<Block>().blockChild);
+                            if(FindMainParent(transform).GetComponent<Block>().blockChild.Count == 0)
+                            mainScript.FindAllChild(FindMainParent(transform), FindMainParent(transform).GetComponent<Block>().blockChild);
 
-                        foreach(Transform child in FindMainParent(transform).GetComponent<Block>().blockChild)
-                        child.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
+                            foreach(Transform child in FindMainParent(transform).GetComponent<Block>().blockChild)
+                            child.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
+                        }
+
+                        Move(playerScript.distance, FindMainParent(transform).gameObject);
                     }
-
-                    Move(playerScript.distance, FindMainParent(transform).gameObject);
                 }
             }
+    
+            else
+            Move(playerScript.minDistance, gameObject);
         }
-
-        else
-        Move(playerScript.minDistance, gameObject);
     }
 
     void OnMouseEnter()
@@ -447,11 +451,8 @@ public class Block : MonoBehaviour
     private void MoveSpawnedObject()
     {
         if(Input.GetMouseButtonUp(0))
-        {
-            Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced = true;
-            playerScript.OutlinedSelectedItem();
-        }
-
+        Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced = true;
+        
         else
         Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().Move(playerScript.distance, Camera.main.GetComponent<MainScript>().newBlock);
     }
@@ -462,7 +463,7 @@ public class Block : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {   
         if(Camera.main.GetComponent<MainScript>().newBlock != null && !Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced)
         MoveSpawnedObject(); 
 
