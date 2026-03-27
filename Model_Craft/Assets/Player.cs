@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 public class Player : MonoBehaviour
 {
     public Transform colorChoosePanel;
+    public Transform colorListPanel;
     public Transform instruction;
     private InventoryManager inventoryManager;
     private float speed = 4.0f;
@@ -126,6 +127,7 @@ public class Player : MonoBehaviour
             inventoryManager.keys[selectedItem - 1] = "";
             inventoryManager.values[selectedItem - 1] = "";
             inventoryManager.UpdateInventoryView();
+            colorListPanel.GetComponent<InventoryCatalog>().RefreshCatalog();
         }
 
         if(Input.GetKeyUp(KeyCode.I))

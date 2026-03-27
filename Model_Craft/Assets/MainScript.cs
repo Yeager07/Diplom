@@ -26,9 +26,9 @@ public class MainScript : MonoBehaviour
         outlineMaterial = Resources.Load<Material>("Materials/MaterialOutline");
 
         Cursor.lockState = CursorLockMode.Locked;
+        
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-
-        if (player != null)
+        if(player != null)
         playerScript = player.GetComponent<Player>();
     }
 
@@ -107,6 +107,7 @@ public class MainScript : MonoBehaviour
                 else
                 {
                     Cursor.lockState = CursorLockMode.Locked;
+                    playerScript.colorListPanel.gameObject.SetActive(false);
                     LoadScene("TestScene", playerScript.isBuildMode, scenePos, zeroPos);
                 }
             }

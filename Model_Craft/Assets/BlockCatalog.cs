@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-
+using System.Linq;
+using System.Security.Cryptography;
 
 public class BlockCatalog : MonoBehaviour
 {
@@ -16,6 +18,7 @@ public class BlockCatalog : MonoBehaviour
     public BlockData[] allBlocks;           // Все доступные блоки
     private List<BlockData> currentFilteredBlocks = new List<BlockData>();
     public ColorSelector colorSelector;
+    public ScrollRect scrollRect;
     private BlockData selectedBlock;
 
     void Start()
@@ -85,7 +88,7 @@ public class BlockCatalog : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-
+        
         // Создаём новые карточки для отфильтрованных блоков
         foreach (var blockData in currentFilteredBlocks)
         {
