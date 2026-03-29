@@ -4213,10 +4213,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ab4fcb32ef6b96847a05375642145704, type: 2}
   - {fileID: 11400000, guid: 24d81112393259e4d9d4e441a680ef56, type: 2}
   - {fileID: 11400000, guid: cf272db5f82e7a540927e818faf11dc6, type: 2}
+  - {fileID: 11400000, guid: ba65f4eab09b4884abdefa113bb420ab, type: 2}
+  - {fileID: 11400000, guid: a8fac48911fc55840b40914f02eaff3a, type: 2}
   - {fileID: 11400000, guid: d0776618423b6774d8efd290417d9178, type: 2}
   - {fileID: 11400000, guid: b4cc218577d0aa3429e6963a3de8a0ae, type: 2}
   - {fileID: 11400000, guid: 930f986ffae42c545ad6d9b070cff356, type: 2}
   - {fileID: 11400000, guid: 49715719c5309f5439639da30ec7256b, type: 2}
+  - {fileID: 11400000, guid: ba689b6103f4f0c4baf713df1ee1b832, type: 2}
   colorSelector: {fileID: 1878338532}
   scrollRect: {fileID: 1255347349}
 --- !u!1 &680821688

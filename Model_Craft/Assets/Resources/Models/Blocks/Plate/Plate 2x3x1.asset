@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Plate 2x3x1
   m_EditorClassIdentifier: 
   blockName: 2x3x1
-  icon: {fileID: 21300000, guid: 500d34e6ca049b744ab863fa2658ca19, type: 3}
+  icon: {fileID: 21300000, guid: d86785b89a615864196d5d13d92fe7cc, type: 3}
   prefab: {fileID: 2705225126614559653, guid: 8525ccd176f17f141813e114712a93da, type: 3}
   type: 1

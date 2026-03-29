@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Brick 2x2x3
   m_EditorClassIdentifier: 
   blockName: 2x2x3
-  icon: {fileID: 21300000, guid: 500d34e6ca049b744ab863fa2658ca19, type: 3}
+  icon: {fileID: 21300000, guid: 92a7b92cfd5e6f04ab251c009111f324, type: 3}
   prefab: {fileID: 4152627420950079203, guid: 94eea012f49300f42a1930d2ff790841, type: 3}
   type: 0
