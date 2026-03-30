@@ -308,6 +308,9 @@ public class Block : MonoBehaviour
     void OnMouseExit()
     {
         isActive = false;
+        
+        if(playerScript.isBuildMode)
+        playerScript.target = new Vector3(0.0f, 0.0f, 0.0f);
 
         //FindMainParent(transform).GetComponent<Block>().blockChild.Clear();
     }

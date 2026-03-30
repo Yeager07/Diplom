@@ -82,7 +82,7 @@ public class Player : MonoBehaviour
 
         Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
 
-        if(Input.GetKeyDown(KeyCode.KeypadPeriod))
+        if(Input.GetMouseButtonUp(1) && target != new Vector3(0.0f, 0.0f, 0.0f))
         {
             targetPosition = target;
             distance = minDistance;
@@ -120,7 +120,8 @@ public class Player : MonoBehaviour
 
         colorChoosePanel = transform.Find("UI").transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
 
-        if(Input.GetMouseButtonUp(1) && selectedItem != 0)
+        if(Input.GetMouseButtonUp(1) && selectedItem != 0 && 
+        inventoryManager.cell[selectedItem - 1].GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial)
         {
             inventoryManager.inventory.Remove(inventoryManager.keys[selectedItem-1]);
             inventoryManager.materialsCount.Remove(inventoryManager.keys[selectedItem - 1]);
