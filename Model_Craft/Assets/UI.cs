@@ -48,7 +48,7 @@ public class UI : MonoBehaviour
     {
         foreach(GameObject bucket in inventoryManager.cell)
         {
-            if(bucket.GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial)
+            if(bucket.GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial && !playerScript.colorListPanel.gameObject.activeInHierarchy)
             playerScript.selectedItem = int.Parse(bucket.name[bucket.name.Length - 1].ToString());
         }
     }

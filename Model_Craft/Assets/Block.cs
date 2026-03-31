@@ -569,7 +569,9 @@ public class Block : MonoBehaviour
             else
             inventoryManager.AddToInventory(transform);
             
-            Destroy(this.gameObject);
+            playerScript.target = new Vector3(0.0f, 0.0f, 0.0f);
+            
+            //Destroy(this.gameObject);
         }
 
         else if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.I))

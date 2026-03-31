@@ -28,7 +28,6 @@ public class InventoryCard : MonoBehaviour
     }
     void Start()
     {
-
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if(player != null)
         playerScript = player.GetComponent<Player>();
@@ -38,6 +37,7 @@ public class InventoryCard : MonoBehaviour
         inventoryManager = inventory.GetComponent<InventoryManager>();
 
         ui = GameObject.FindGameObjectWithTag("UI");
+        
         if(ui != null)
         uiScript = ui.GetComponent<UI>();
     }
@@ -48,6 +48,7 @@ public class InventoryCard : MonoBehaviour
         if(iconColor != null)
         {
             iconColor.GetComponent<Image>().color = dataColor;
+            Awake();
             applyMaterial.color = dataColor;
         }
         
