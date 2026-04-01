@@ -505,22 +505,11 @@ public class Block : MonoBehaviour
             if(transform.position != previousPosition)
             {
                 SavePosition(previousPosition);
-                
-                if(transform.parent != null)
                 previousPosition = transform.localPosition;
-
-                else
-                previousPosition = transform.position;
             }
 
             else
-            {
-                if(transform.parent != null)
-                SavePosition(transform.localPosition);
-
-                else
-                SavePosition(transform.position);
-            }
+            SavePosition(transform.localPosition);
         }
 
         else if(Input.GetKeyUp(KeyCode.M))
@@ -570,8 +559,6 @@ public class Block : MonoBehaviour
             inventoryManager.AddToInventory(transform);
             
             playerScript.target = new Vector3(0.0f, 0.0f, 0.0f);
-            
-            //Destroy(this.gameObject);
         }
 
         else if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.I))
@@ -580,18 +567,25 @@ public class Block : MonoBehaviour
             {
                 if(previousRotate.Count > 1 && previousRotate.Contains(positionHistory[positionHistory.Count - 1]))
                 {
-                    transform.rotation = Quaternion.Euler(positionHistory[positionHistory.Count - 1]);
-                    rotateDirection = positionHistory[positionHistory.Count - 1];
+                    if(transform.parent == null)
+                    {
+                        transform.rotation = Quaternion.Euler(positionHistory[positionHistory.Count - 1]);
+                        rotateDirection = positionHistory[positionHistory.Count - 1];
+                    }
+
                     previousRotate.RemoveAt(previousRotate.Count - 1);
                 }
 
                 else
                 {
-                    if(positionHistory[positionHistory.Count - 1].x < 0.1f)
+                    if(Math.Abs(positionHistory[positionHistory.Count - 1].x) < 0.1f)
                     transform.localPosition = positionHistory[positionHistory.Count - 1];
 
                     else
-                    transform.position = positionHistory[positionHistory.Count - 1];
+                    {
+                        transform.parent = null;
+                        transform.localPosition = positionHistory[positionHistory.Count - 1];
+                    }
                 }
 
                 if(positionHistory.Count > 1)

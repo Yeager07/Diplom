@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 
 public class BlockCard : MonoBehaviour
 {
+    private Player playerScript;
     public Image iconImage;
     public TextMeshProUGUI nameText;
 
@@ -18,6 +19,10 @@ public class BlockCard : MonoBehaviour
         
         if(btn != null)
         btn.onClick.AddListener(OnCardClick);
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if(player != null)
+        playerScript = player.GetComponent<Player>();
     }
 
     public void Setup(BlockData data, System.Action<BlockData> onClick)
@@ -34,20 +39,13 @@ public class BlockCard : MonoBehaviour
         nameText.text = data.blockName;
     }
 
-    public void OnMouseEnter()
-    {
-        gameObject.GetComponent<Image>().material = Camera.main.GetComponent<MainScript>().outlineMaterial;
-    }
-
-    public void OnMouseExit()
-    {
-        gameObject.GetComponent<Image>().material = null;
-    }
-
     // Вызывается кнопкой
     public void OnCardClick()
     {
-        Debug.Log($"BlockCard.OnCardClick: {blockData?.blockName}, callback is { (onClickCallback == null ? "NULL" : "OK") }");
-        onClickCallback?.Invoke(blockData);
+        if(playerScript.colorChoosePanel == null || !playerScript.colorChoosePanel.gameObject.activeInHierarchy)
+        {
+            Debug.Log($"BlockCard.OnCardClick: {blockData?.blockName}, callback is { (onClickCallback == null ? "NULL" : "OK") }");
+            onClickCallback?.Invoke(blockData);
+        }
     }
 }

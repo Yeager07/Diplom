@@ -133,7 +133,7 @@ public class Player : MonoBehaviour
             colorListPanel.GetComponent<InventoryCatalog>().ClosePanel();
         }
 
-        if(Input.GetKeyUp(KeyCode.I))
+        if(Input.GetKeyUp(KeyCode.I) && !Input.GetKey(KeyCode.LeftControl))
         {
             if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
             {
