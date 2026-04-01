@@ -38,7 +38,7 @@ public class Block : MonoBehaviour
     public List<Vector3> bulgeChildCoordinat = new List<Vector3>();
     public List<Vector3> hollowChildRotation = new List<Vector3>();
     public List<Vector3> bulgeChildRotation = new List<Vector3>();
-    public Vector3 nearestBulgeRotation = new Vector3(0.0f, 0.0f, 0.0f);
+    public Transform nearestBulge;
     public List<Transform> blockChild;
     public List<GameObject> previousBlock = new List<GameObject>();
     public bool isActive = false;
@@ -93,7 +93,7 @@ public class Block : MonoBehaviour
             if(child.name == childName)
             {
                 childCoordinat.Add(child.position);
-                childRotation.Add(child.rotation.eulerAngles);
+                childRotation.Add(transform.localRotation.eulerAngles);
                 massiveChild.Add(child);
             }
         }
@@ -270,6 +270,7 @@ public class Block : MonoBehaviour
                 if(!Input.GetKey(KeyCode.R))
                 {
                     FindChildPoint("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
+                    FindChildPoint("Bulge", bulgeChildCoordinat, bulgeChildRotation, transform, bulgeChild);
 
                     if(FindMainParent(transform) == null)
                     Move(playerScript.distance, gameObject);
@@ -339,7 +340,7 @@ public class Block : MonoBehaviour
                     currentBlock.GetComponent<Block>().localHollowPosition = hollows[jterator].localPosition;
                     currentBlock.GetComponent<Block>().localBulgePosition = transformBulges[jterator].localPosition;
                     currentBlock.GetComponent<Block>().bulgePosition = bulges[iterator].position;
-                    currentBlock.GetComponent<Block>().nearestBulgeRotation = bulges[iterator].rotation.eulerAngles;
+                    currentBlock.GetComponent<Block>().nearestBulge = bulges[iterator];
                     currentBlock.GetComponent<Block>().placeHollowPosition = place.transform.GetComponent<Block>().hollowChild[iterator].position;
                 }
 
@@ -356,7 +357,7 @@ public class Block : MonoBehaviour
         {
             CalculateDistance(currentBlock, place, currentBlock.GetComponent<Block>().hollowChild, place.GetComponent<Block>().bulgeChild);
             
-            if(currentBlock.GetComponent<Block>().hollowChildRotation[0].x == currentBlock.GetComponent<Block>().nearestBulgeRotation.x)
+            if(Vector3.Dot(currentBlock.GetComponent<Block>().hollowChild[0].up, currentBlock.GetComponent<Block>().nearestBulge.up) > 0.99f)
             {
                 currentBlock.GetComponent<Block>().isFree = false;
                         
@@ -434,7 +435,7 @@ public class Block : MonoBehaviour
         blockChild.RemoveAt(0);
     }
 
-    private void Rotate(Transform currentObject)
+    private void Rotation(Transform currentObject)
     {
         if(Input.GetKeyUp(KeyCode.UpArrow))
         currentObject.Rotate(Vector3.right * 90.0f, Space.World);
@@ -540,7 +541,7 @@ public class Block : MonoBehaviour
         }
 
         else if(Input.GetKey(KeyCode.R) && isActive)
-        Rotate(FindMainParent(transform));
+        Rotation(FindMainParent(transform));
 
         else if(isActive && Input.GetKeyUp(KeyCode.E) && blockChild.Count == 0 && transform.parent == null)
         {

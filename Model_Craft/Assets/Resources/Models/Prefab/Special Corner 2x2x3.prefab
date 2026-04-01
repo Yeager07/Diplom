@@ -77,6 +77,7 @@ GameObject:
   - component: {fileID: 4512203295015114460}
   - component: {fileID: 252559035402569663}
   - component: {fileID: 3953896652906491629}
+  - component: {fileID: 646695193656062472}
   m_Layer: 0
   m_Name: Special Corner 2x2x3
   m_TagString: Selectable
@@ -185,7 +186,7 @@ MonoBehaviour:
   bulgeChildCoordinat: []
   hollowChildRotation: []
   bulgeChildRotation: []
-  nearestBulgeRotation: {x: 0, y: 0, z: 0}
+  nearestBulge: {fileID: 0}
   blockChild: []
   previousBlock: []
   isActive: 0
@@ -263,6 +264,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.015, y: 0.0115, z: 0.007}
   m_Center: {x: 0, y: -0.0039, z: -0.004}
+--- !u!64 &646695193656062472
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707112348000149933}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 8361818550236942492, guid: ff6e4eb2bfd622249ab384ac6a4f308d, type: 3}
 --- !u!1 &5480949218360486010
 GameObject:
   m_ObjectHideFlags: 0
