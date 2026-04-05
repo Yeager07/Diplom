@@ -4,6 +4,7 @@ using System.Collections;
 using static System.Math;
 using System.Collections.Generic;
 using UnityEngine.UI;
+//using System.Diagnostics;
 
 public class Block : MonoBehaviour
 {
@@ -131,9 +132,9 @@ public class Block : MonoBehaviour
 
     private void CalculateMoveVector(float distance, Transform movingObject, Vector3 moveSide, Vector3 moveHeight)
     {
-        if(distance > 1)
+        if(distance > 0)
         {
-            if(distance == xDistance)
+            if(distance == movingObject.gameObject.GetComponent<Block>().xDistance)
             {
                 if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
                     movingObject.position += moveSide;
@@ -150,7 +151,7 @@ public class Block : MonoBehaviour
                 movingObject.gameObject.GetComponent<Block>().xDistance = 0.0f;
             }
             
-            else if(distance == zDistance)
+            else if(distance == movingObject.gameObject.GetComponent<Block>().zDistance)
             {
                 if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
                     movingObject.position += moveHeight;
@@ -168,9 +169,9 @@ public class Block : MonoBehaviour
             }
         }
 
-        else if (distance < 1)
+        else if (distance < 0)
         {
-            if(distance == xDistance)
+            if(distance == movingObject.gameObject.GetComponent<Block>().xDistance)
             {
                 if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
                     movingObject.position -= moveSide;
@@ -187,7 +188,7 @@ public class Block : MonoBehaviour
                 movingObject.gameObject.GetComponent<Block>().xDistance = 0.0f;
             }
             
-            else if(distance == zDistance)
+            else if(distance == movingObject.gameObject.GetComponent<Block>().zDistance)
             {
                 if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
                     movingObject.position -= moveHeight;
@@ -212,7 +213,7 @@ public class Block : MonoBehaviour
         Block blockScript = currentObject.GetComponent<Block>();
 
         if(blockScript.isFree)
-        {
+        {   
             curPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
             movingObject.position = Camera.main.ScreenToWorldPoint(curPosition);
             PlaceObjectCorrectly(movingObject);
@@ -488,6 +489,7 @@ public class Block : MonoBehaviour
             {
                 isMagnetic = true;
                 transform.SetParent(place.transform);
+                playerScript.movedObject = null;
             }
 
             if(previousBlock.Count != 1)
