@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public float minDistance = 1.0f;
     private float maxDistance = 10f;
     public float distance = 0.0f;
+    public float currentDistance = 0.0f;
     private float buildSpeed = 25.0f;
     private float speedRot = 1.5f;
     private float verRotLim = 60.0f;
@@ -64,8 +65,15 @@ public class Player : MonoBehaviour
     void MoveBuildMode()
     {
         rigidBody.constraints = RigidbodyConstraints.FreezeRotationZ;
-        distance -= Input.GetAxis("Mouse ScrollWheel") * speed;
-        distance = Mathf.Clamp(distance, minDistance, maxDistance);
+
+        if(movedObject == null)
+        {
+            distance -= Input.GetAxis("Mouse ScrollWheel") * speed;
+            distance = Mathf.Clamp(distance, minDistance, maxDistance);
+            
+            currentDistance -= Input.GetAxis("Mouse ScrollWheel") * speed;
+            currentDistance = Mathf.Clamp(currentDistance, minDistance, maxDistance);
+        }
             
         if(Input.GetMouseButton(2))
         {
@@ -80,7 +88,11 @@ public class Player : MonoBehaviour
             }
         }
 
-        Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
+        //if(movedObject == null)
+        Vector3 negDistance = new Vector3(0.0f, 0.0f, -currentDistance);
+
+        /*else
+        Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);*/
 
         if(Input.GetMouseButtonUp(1) && target != new Vector3(0.0f, 0.0f, 0.0f))
         {

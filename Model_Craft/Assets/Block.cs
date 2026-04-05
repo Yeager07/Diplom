@@ -264,6 +264,8 @@ public class Block : MonoBehaviour
         {
             if(Input.GetMouseButton(0))
             playerScript.movedObject = FindMainParent(transform).gameObject;
+
+            playerScript.distance += Input.GetAxis("Mouse ScrollWheel") * 4.0f;
     
             if(playerScript.isBuildMode)
             {   
