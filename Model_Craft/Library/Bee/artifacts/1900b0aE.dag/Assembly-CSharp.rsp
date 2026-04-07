@@ -419,6 +419,7 @@
 "Assets/InventoryCatalog.cs"
 "Assets/InventoryManager.cs"
 "Assets/MainManager.cs"
+"Assets/MainMenu.cs"
 "Assets/MainScript.cs"
 "Assets/OutlineSelection.cs"
 "Assets/PdfInstructionViewer.cs"

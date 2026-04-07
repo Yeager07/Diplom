@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 
 public class Player : MonoBehaviour
 {
+    public string typeGame = "MainMenu";
     public Transform colorChoosePanel;
     public Transform colorListPanel;
     public Transform instruction;
@@ -129,49 +130,51 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   
-
-        colorChoosePanel = transform.Find("UI").transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
-
-        if(Input.GetMouseButtonUp(1) && selectedItem != 0 && 
-        inventoryManager.cell[selectedItem - 1].GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial)
+        if(typeGame != "MainMenu")
         {
-            inventoryManager.inventory.Remove(inventoryManager.keys[selectedItem-1]);
-            inventoryManager.materialsCount.Remove(inventoryManager.keys[selectedItem - 1]);
-            inventoryManager.keys[selectedItem - 1] = "";
-            inventoryManager.values[selectedItem - 1] = "";
-            inventoryManager.UpdateInventoryView();
-            inventoryManager.cell[selectedItem - 1].GetComponent<Image>().sprite = null;
-            colorListPanel.GetComponent<InventoryCatalog>().RefreshCatalog();
-            colorListPanel.GetComponent<InventoryCatalog>().ClosePanel();
-        }
+            colorChoosePanel = transform.Find("UI").transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
 
-        if(Input.GetKeyUp(KeyCode.I) && !Input.GetKey(KeyCode.LeftControl))
-        {
-            if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
+            if(Input.GetMouseButtonUp(1) && selectedItem != 0 && 
+            inventoryManager.cell[selectedItem - 1].GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial)
             {
-                if(inventoryManager.cell[0].activeInHierarchy &&
-                !transform.Find("UI").GetComponent<UI>().instructionBlock.activeInHierarchy)
-                transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
-            
-                else if(transform.Find("UI").GetComponent<UI>().instructionBlock.activeInHierarchy &&
-                !inventoryManager.cell[0].activeInHierarchy)
-                transform.Find("UI").GetComponent<UI>().OpenCloseInstruction();
-
-                else
-                {
-                    transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
-                    transform.Find("UI").GetComponent<UI>().OpenCloseInstruction();
-                }
+                inventoryManager.inventory.Remove(inventoryManager.keys[selectedItem-1]);
+                inventoryManager.materialsCount.Remove(inventoryManager.keys[selectedItem - 1]);
+                inventoryManager.keys[selectedItem - 1] = "";
+                inventoryManager.values[selectedItem - 1] = "";
+                inventoryManager.UpdateInventoryView();
+                inventoryManager.cell[selectedItem - 1].GetComponent<Image>().sprite = null;
+                colorListPanel.GetComponent<InventoryCatalog>().RefreshCatalog();
+                colorListPanel.GetComponent<InventoryCatalog>().ClosePanel();
             }
 
+            if(Input.GetKeyUp(KeyCode.I) && !Input.GetKey(KeyCode.LeftControl))
+            {
+                if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
+                {
+                    if(inventoryManager.cell[0].activeInHierarchy &&
+                    !transform.Find("UI").GetComponent<UI>().instructionBlock.activeInHierarchy)
+                    transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
+            
+                    else if(transform.Find("UI").GetComponent<UI>().instructionBlock.activeInHierarchy &&
+                    !inventoryManager.cell[0].activeInHierarchy)
+                    transform.Find("UI").GetComponent<UI>().OpenCloseInstruction();
+
+                    else
+                    {
+                        transform.Find("UI").GetComponent<UI>().OpenCloseInventory();
+                        transform.Find("UI").GetComponent<UI>().OpenCloseInstruction();
+                    }
+                }
+
+                else
+                return;
+            }
+
+            if(!isBuildMode)
+            Move();
+
             else
-            return;
+            MoveBuildMode();
         }
-
-        if(!isBuildMode)
-        Move();
-
-        else
-        MoveBuildMode();
     }
 }

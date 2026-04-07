@@ -10,7 +10,6 @@ public class MainScript : MonoBehaviour
 
     private Player playerScript;
     private Vector3 zeroPos = new Vector3(0.0f, 0.0f, 0.0f);
-    private Vector3 scenePos = new Vector3(-2.5f, 1.65f, -9.3f);
     public Dictionary<string, BlockData[]> blockPrefabs = new Dictionary<string, BlockData[]>();
     public GameObject newBlock;
     public Material rendgenMaterial;
@@ -24,8 +23,6 @@ public class MainScript : MonoBehaviour
         rendgenMaterial = Resources.Load<Material>("Materials/BlockRendgen");
         standartMaterial = Resources.Load<Material>("Materials/BlockStandart");
         outlineMaterial = Resources.Load<Material>("Materials/MaterialOutline");
-
-        Cursor.lockState = CursorLockMode.Locked;
         
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if(player != null)
@@ -45,7 +42,7 @@ public class MainScript : MonoBehaviour
         blockPrefabs["RoundPlate"] = Resources.LoadAll<BlockData>("Models/Blocks/RoundPlate");
     }
 
-    void LoadScene(string sceneName, bool isBuildMode, Vector3 pos, Vector3 rotate)
+    public void LoadScene(string sceneName, bool isBuildMode, Vector3 pos, Vector3 rotate)
     {
         playerScript.rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
         SceneManager.LoadScene(sceneName);
@@ -94,7 +91,7 @@ public class MainScript : MonoBehaviour
     {
         Transform colorChoosePanel = playerScript.transform.Find("UI").transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
         
-        if(Input.GetKey(KeyCode.B))
+        if(Input.GetKey(KeyCode.B) && playerScript.typeGame == "CareerMode")
         {   
             if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
             {
@@ -102,13 +99,13 @@ public class MainScript : MonoBehaviour
                 {
                     Cursor.lockState = CursorLockMode.None;
                     playerScript.distance = playerScript.minDistance;
-                    LoadScene("BuildScene", playerScript.isBuildMode, zeroPos, zeroPos);
+                    LoadScene("03_BuildScene", playerScript.isBuildMode, zeroPos, zeroPos);
                 }
                 else
                 {
                     Cursor.lockState = CursorLockMode.Locked;
                     playerScript.colorListPanel.gameObject.SetActive(false);
-                    LoadScene("TestScene", playerScript.isBuildMode, scenePos, zeroPos);
+                    LoadScene("02_TestScene", playerScript.isBuildMode, zeroPos, zeroPos);
                 }
             }
 
