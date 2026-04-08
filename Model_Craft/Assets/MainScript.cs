@@ -91,7 +91,8 @@ public class MainScript : MonoBehaviour
     {
         Transform colorChoosePanel = playerScript.transform.Find("UI").transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
         
-        if(Input.GetKey(KeyCode.B) && playerScript.typeGame == "CareerMode")
+        if(Input.GetKey(KeyCode.B) && playerScript.typeGame == "CareerMode" &&
+        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {   
             if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
             {
@@ -101,6 +102,7 @@ public class MainScript : MonoBehaviour
                     playerScript.distance = playerScript.minDistance;
                     LoadScene("03_BuildScene", playerScript.isBuildMode, zeroPos, zeroPos);
                 }
+                
                 else
                 {
                     Cursor.lockState = CursorLockMode.Locked;

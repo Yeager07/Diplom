@@ -4,10 +4,15 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
     private Player playerScript;
+    public Button careerButton;
+    public Button freeGameButton;
+    public Button gulleryButton;
+    public Button exitButton;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -31,6 +36,41 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("02_TestScene");
         playerScript.typeGame = "CareerMode";
         playerScript.transform.Find("UI").gameObject.SetActive(true);
+    }
+
+    public void ChangeLanguageMode()
+    {
+        if(playerScript.language == "En")
+        playerScript.language = "Ru";
+        
+        else
+        playerScript.language = "En";
+
+        ChangeLanguage();
+    }
+
+    public void OpenMainMenu()
+    {
+        SceneManager.LoadScene("01_Menu");
+    }
+    
+    private void ChangeLanguage()
+    {
+        if(playerScript.language == "En")
+        {
+            careerButton.transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = "Career Mode";
+            freeGameButton.transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = "Free Game Mode";
+            gulleryButton.transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = "Gullery Mode";
+            exitButton.transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = "Exit";
+        }
+        
+        else
+        {
+            careerButton.transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = "Режим Карьеры";
+            freeGameButton.transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = "Свободная Сборка";
+            gulleryButton.transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = "Галерея";
+            exitButton.transform.Find("Text (TMP)").GetComponent<TMP_Text>().text = "Выход";
+        }
     }
 
     // Update is called once per frame

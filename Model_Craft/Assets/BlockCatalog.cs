@@ -45,39 +45,45 @@ public class BlockCatalog : MonoBehaviour
     // Показать панель выбора типа
     public void ShowTypeSelection()
     {
-        if (typeSelectionPanel != null)
+        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
-            typeSelectionPanel.SetActive(true);
-            backButton.gameObject.SetActive(false);
-        }
+            if (typeSelectionPanel != null)
+            {
+                typeSelectionPanel.SetActive(true);
+                backButton.gameObject.SetActive(false);
+            }
 
-        if (cardsPanel != null)
-        cardsPanel.SetActive(false);
+            if (cardsPanel != null)
+            cardsPanel.SetActive(false);
+        }
     }
 
     // Показать карточки выбранного типа
     public void ShowType(BlockType type)
     {
-        // Фильтруем блоки по типу
-        currentFilteredBlocks.Clear();
-        foreach (var block in allBlocks)
+        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
-            if (block.type == type)
+            // Фильтруем блоки по типу
+            currentFilteredBlocks.Clear();
+            foreach (var block in allBlocks)
+            {
+                if (block.type == type)
                 currentFilteredBlocks.Add(block);
-        }
+            }
 
-        // Скрываем панель выбора типа, показываем панель карточек
-        if (typeSelectionPanel != null)
-        typeSelectionPanel.SetActive(false);
+            // Скрываем панель выбора типа, показываем панель карточек
+            if (typeSelectionPanel != null)
+            typeSelectionPanel.SetActive(false);
         
-        if (cardsPanel != null)
-        {
-            cardsPanel.SetActive(true);
-            backButton.gameObject.SetActive(true);
-        }
+            if (cardsPanel != null)
+            {
+                cardsPanel.SetActive(true);
+                backButton.gameObject.SetActive(true);
+            }
 
-        // Обновляем карточки
-        RefreshCatalog();
+            // Обновляем карточки
+            RefreshCatalog();
+        }
     }
 
     // Очистить старые карточки и создать новые
@@ -105,30 +111,34 @@ public class BlockCatalog : MonoBehaviour
     // Обработчик клика по карточке
     public void OnBlockSelected(BlockData selectedBlock)
     {
-        Debug.Log($"Выбран блок: {selectedBlock.type.ToString()} {selectedBlock.blockName}");
+        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        {
+            Debug.Log($"Выбран блок: {selectedBlock.type.ToString()} {selectedBlock.blockName}");
         
-        if (selectedBlock.prefab == null)
-        {
-            Debug.LogWarning("У блока нет префаба!");
-            return;
-        }
+            if (selectedBlock.prefab == null)
+            {
+                Debug.LogWarning("У блока нет префаба!");
+                return;
+            }
 
-        if (colorSelector != null)
-        {
-            // Показываем ColorPicker и передаём колбэк для спавна с выбранным материалом
-            colorSelector.ShowColorPicker((Material selectedMaterial) => {
-            Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
-            selectedBlock.type + " " + selectedBlock.blockName, Camera.main.GetComponent<MainScript>().blockPrefabs[selectedBlock.type.ToString()], Camera.main.GetComponent<MainScript>().standartMaterial);
-            Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Renderer>().material = selectedMaterial;
-            });
-            //Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Renderer>().material = selectedMaterial;
-        }
-        else
-        {
-            // Если ColorSelector нет, спавним с материалом по умолчанию
-            Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
-            selectedBlock.type + " " + selectedBlock.blockName, Camera.main.GetComponent<MainScript>().blockPrefabs[selectedBlock.type.ToString()],
-            Camera.main.GetComponent<MainScript>().standartMaterial);
+            if (colorSelector != null)
+            {
+                // Показываем ColorPicker и передаём колбэк для спавна с выбранным материалом
+                colorSelector.ShowColorPicker((Material selectedMaterial) => {
+                Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
+                selectedBlock.type + " " + selectedBlock.blockName, Camera.main.GetComponent<MainScript>().blockPrefabs[selectedBlock.type.ToString()], Camera.main.GetComponent<MainScript>().standartMaterial);
+                Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Renderer>().material = selectedMaterial;
+                });
+                //Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Renderer>().material = selectedMaterial;
+            }
+            
+            else
+            {
+               // Если ColorSelector нет, спавним с материалом по умолчанию
+                Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
+                selectedBlock.type + " " + selectedBlock.blockName, Camera.main.GetComponent<MainScript>().blockPrefabs[selectedBlock.type.ToString()],
+                Camera.main.GetComponent<MainScript>().standartMaterial);
+            }
         }
     }
 }

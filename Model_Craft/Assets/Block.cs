@@ -261,7 +261,8 @@ public class Block : MonoBehaviour
 
     void OnMouseDrag()
     {   
-        if(playerScript.colorChoosePanel == null || !playerScript.colorChoosePanel.gameObject.activeInHierarchy)
+        if((playerScript.colorChoosePanel == null || !playerScript.colorChoosePanel.gameObject.activeInHierarchy) &&
+        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
             if(Input.GetMouseButton(0))
             playerScript.movedObject = FindMainParent(transform).gameObject;
@@ -474,7 +475,7 @@ public class Block : MonoBehaviour
         if(Camera.main.GetComponent<MainScript>().newBlock != null && !Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced)
         MoveSpawnedObject(); 
 
-        else if(Input.GetMouseButtonUp(0))
+        else if(Input.GetMouseButtonUp(0) && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {   
             GetComponent<MeshRenderer>().material = mainBlockMaterial;
 
@@ -538,16 +539,18 @@ public class Block : MonoBehaviour
             return;
         }
 
-        else if(Input.GetKeyUp(KeyCode.R))
+        else if(Input.GetKeyUp(KeyCode.R) && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
             SavePosition(previousRotate[previousRotate.Count - 1]);
             previousRotate.Add(new Vector3(rotateDirection.x % 360, rotateDirection.y % 360, rotateDirection.z));
         }
 
-        else if(Input.GetKey(KeyCode.R) && isActive)
+        else if(Input.GetKey(KeyCode.R) && isActive &&
+        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         Rotation(FindMainParent(transform));
 
-        else if(isActive && Input.GetKeyUp(KeyCode.E) && blockChild.Count == 0 && transform.parent == null)
+        else if(isActive && Input.GetKeyUp(KeyCode.E) && blockChild.Count == 0 &&
+        transform.parent == null && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
             if(inventoryManager.inventory.Count != 0)
             {
@@ -566,7 +569,8 @@ public class Block : MonoBehaviour
             playerScript.target = new Vector3(0.0f, 0.0f, 0.0f);
         }
 
-        else if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.I))
+        else if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.I) &&
+        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
             if(positionHistory.Count >= 1)
             {

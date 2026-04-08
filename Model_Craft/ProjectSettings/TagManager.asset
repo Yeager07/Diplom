@@ -11,6 +11,7 @@ TagManager:
   - UI
   - Instruction
   - InventoryManager
+  - Pause
   layers:
   - Default
   - TransparentFX

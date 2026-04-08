@@ -58,35 +58,41 @@ public class InventoryCard : MonoBehaviour
 
     public void GenerateBlock()
     {
-        Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
-        inventoryManager.keys[playerScript.selectedItem - 1], Camera.main.GetComponent<MainScript>().blockPrefabs[inventoryManager.keys[playerScript.selectedItem - 1].Split(" ")[0]],
-        applyMaterial);
+        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        {
+            Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
+            inventoryManager.keys[playerScript.selectedItem - 1], Camera.main.GetComponent<MainScript>().blockPrefabs[inventoryManager.keys[playerScript.selectedItem - 1].Split(" ")[0]],
+            applyMaterial);
         
-        DeleteBLock();
+            DeleteBLock();
+        }
     }
 
     public void DeleteBLock()
     {
-        foreach(Dictionary<Color, int> dictionary in inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]])
+        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
-            foreach(var value in dictionary)
+            foreach(Dictionary<Color, int> dictionary in inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]])
             {
-                if(value.Key == iconColor.GetComponent<Image>().color)
+                foreach(var value in dictionary)
                 {
-                    if(value.Value != 0)
+                    if(value.Key == iconColor.GetComponent<Image>().color)
                     {
-                        dictionary[value.Key] -= 1;
-                        inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
-                        ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
-                        return;
-                    }
+                        if(value.Value != 0)
+                        {
+                            dictionary[value.Key] -= 1;
+                            inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
+                            ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
+                            return;
+                        }
                     
-                    else
-                    {
-                        inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]].Remove(dictionary);
-                        inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
-                        ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
-                        return;
+                        else
+                        {
+                            inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]].Remove(dictionary);
+                            inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
+                            ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
+                            return;
+                        }
                     }
                 }
             }

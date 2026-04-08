@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
 
+
 public class UI : MonoBehaviour
 {
     private Player playerScript;
     private InventoryManager inventoryManager;
+    public GameObject pauseMenu;
     public GameObject instructionBlock;
     public GameObject blocksCatalog;
     private GameObject cursor;
@@ -63,36 +65,70 @@ public class UI : MonoBehaviour
 
     public void OpenCloseInventory()
     {
-        for(int i = 0; i <= inventoryManager.cell.Length - 1; i++)
+        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
-            if(inventoryManager.cell[i].activeInHierarchy)
-            inventoryManager.cell[i].SetActive(false);
+            for(int i = 0; i <= inventoryManager.cell.Length - 1; i++)
+            {
+                if(inventoryManager.cell[i].activeInHierarchy)
+                inventoryManager.cell[i].SetActive(false);
             
-            else
-            inventoryManager.cell[i].SetActive(true);
+                else
+                inventoryManager.cell[i].SetActive(true);
+            }
         }
     }
 
     public void OpenCloseInstruction()
     {
-        if(instructionBlock.activeInHierarchy)
-        instructionBlock.SetActive(false);
-        else
-        instructionBlock.SetActive(true);
+        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        {
+            if(instructionBlock.activeInHierarchy)
+            instructionBlock.SetActive(false);
+        
+            else
+            instructionBlock.SetActive(true);
+        }
     }
 
     public void OpenCloseBlockList()
     {
-        if(blocksCatalog.activeInHierarchy)
-        blocksCatalog.SetActive(false);
+        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        {
+            if(blocksCatalog.activeInHierarchy)
+            blocksCatalog.SetActive(false);
+        
+            else
+            blocksCatalog.SetActive(true);
+        }
+    }
+
+    public void OpenClosePauseMenu()
+    {
+        if(pauseMenu.activeInHierarchy)
+        {
+            pauseMenu.SetActive(false);
+            Time.timeScale = 1;
+
+            if(playerScript.isBuildMode)
+            Cursor.lockState = CursorLockMode.None;
+            
+            else
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
         else
-        blocksCatalog.SetActive(true);
+        {
+            pauseMenu.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
+            Time.timeScale = 0;
+        }
     }
 
     void FixedUpdate()
     {
         if(playerScript.isBuildMode)
         cursor.gameObject.SetActive(false);
+        
         else
         cursor.gameObject.SetActive(true);
     }
@@ -101,7 +137,8 @@ public class UI : MonoBehaviour
     {
         Transform colorChoosePanel = transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
         
-        if(Input.GetKey(KeyCode.B) && playerScript.typeGame == "CareerMode")
+        if(Input.GetKey(KeyCode.B) && playerScript.typeGame == "CareerMode" &&
+        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {   
             if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
             {
@@ -114,6 +151,11 @@ public class UI : MonoBehaviour
 
             else
             return;
+        }
+
+        if(playerScript.typeGame != "MainMenu" && Input.GetKeyUp(KeyCode.Escape))
+        {
+            OpenClosePauseMenu();
         }
     }
 }

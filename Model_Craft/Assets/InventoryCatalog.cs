@@ -34,18 +34,24 @@ public class InventoryCatalog : MonoBehaviour
 
     public void OpenPanel(Transform cell)
     {
-        playerScript.selectedItem = int.Parse(cell.gameObject.name[cell.gameObject.name.Length - 1].ToString());
-        cardsPanel.SetActive(true);
-        cardsPanel.transform.localPosition = cell.transform.localPosition + new Vector3(0.0f, 280.0f, 0.0f);
-        RefreshCatalog();
+        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        {
+            playerScript.selectedItem = int.Parse(cell.gameObject.name[cell.gameObject.name.Length - 1].ToString());
+            cardsPanel.SetActive(true);
+            cardsPanel.transform.localPosition = cell.transform.localPosition + new Vector3(0.0f, 280.0f, 0.0f);
+            RefreshCatalog();
+        }
     }
 
     public void ClosePanel()
     {
-        foreach (Transform child in cardsContainer)
-        Destroy(child.gameObject);
+        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        {
+            foreach (Transform child in cardsContainer)
+            Destroy(child.gameObject);
 
-        cardsPanel.SetActive(false);
+            cardsPanel.SetActive(false);
+        }
     }
 
     public void RefreshCatalog()

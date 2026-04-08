@@ -42,7 +42,8 @@ public class BlockCard : MonoBehaviour
     // Вызывается кнопкой
     public void OnCardClick()
     {
-        if(playerScript.colorChoosePanel == null || !playerScript.colorChoosePanel.gameObject.activeInHierarchy)
+        if((playerScript.colorChoosePanel == null || !playerScript.colorChoosePanel.gameObject.activeInHierarchy) &&
+        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
             Debug.Log($"BlockCard.OnCardClick: {blockData?.blockName}, callback is { (onClickCallback == null ? "NULL" : "OK") }");
             onClickCallback?.Invoke(blockData);

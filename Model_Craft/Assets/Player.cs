@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 public class Player : MonoBehaviour
 {
     public string typeGame = "MainMenu";
+    public string language = "En";
     public Transform colorChoosePanel;
     public Transform colorListPanel;
     public Transform instruction;
@@ -135,7 +136,8 @@ public class Player : MonoBehaviour
             colorChoosePanel = transform.Find("UI").transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
 
             if(Input.GetMouseButtonUp(1) && selectedItem != 0 && 
-            inventoryManager.cell[selectedItem - 1].GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial)
+            inventoryManager.cell[selectedItem - 1].GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial &&
+            !transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
             {
                 inventoryManager.inventory.Remove(inventoryManager.keys[selectedItem-1]);
                 inventoryManager.materialsCount.Remove(inventoryManager.keys[selectedItem - 1]);
@@ -147,7 +149,8 @@ public class Player : MonoBehaviour
                 colorListPanel.GetComponent<InventoryCatalog>().ClosePanel();
             }
 
-            if(Input.GetKeyUp(KeyCode.I) && !Input.GetKey(KeyCode.LeftControl))
+            if(Input.GetKeyUp(KeyCode.I) && !Input.GetKey(KeyCode.LeftControl) &&
+            !transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
             {
                 if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
                 {
@@ -170,11 +173,14 @@ public class Player : MonoBehaviour
                 return;
             }
 
-            if(!isBuildMode)
-            Move();
+            if(!transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+            {
+                if(!isBuildMode)
+                Move();
 
-            else
-            MoveBuildMode();
+                else
+                MoveBuildMode();
+            }
         }
     }
 }
