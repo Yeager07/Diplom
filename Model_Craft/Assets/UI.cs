@@ -111,6 +111,7 @@ public class UI : MonoBehaviour
         blocksCatalog.SetActive(false);
         blockList.gameObject.SetActive(false);
         playerScript.transform.Find("UI").gameObject.SetActive(false);
+        playerScript.transform.Find("UI").transform.Find("Instruction").gameObject.SetActive(false);
 
         inventoryManager.inventory.Clear();
         inventoryManager.materialsCount.Clear();

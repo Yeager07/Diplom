@@ -25,9 +25,10 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadScene("04_FreeMode");
         playerScript.typeGame = "FreeMode";
-        playerScript.transform.Find("UI").gameObject.SetActive(true);
         playerScript.isBuildMode = true;
-        playerScript.transform.Find("UI").Find("BlocksIcon").gameObject.SetActive(true);;
+        playerScript.transform.Find("UI").gameObject.SetActive(true);
+        playerScript.transform.Find("UI").transform.Find("Instruction").transform.Find("InstructionDownload").gameObject.SetActive(true);
+        playerScript.transform.Find("UI").Find("BlocksIcon").gameObject.SetActive(true);
     }
 
     public void OpenCareerMode()
@@ -36,6 +37,7 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("02_TestScene");
         playerScript.typeGame = "CareerMode";
         playerScript.transform.Find("UI").gameObject.SetActive(true);
+        playerScript.transform.Find("UI").transform.Find("Instruction").transform.Find("InstructionDownload").gameObject.SetActive(false);
         
         Camera.main.GetComponent<MainScript>().PlacePlayerZero();
     }
