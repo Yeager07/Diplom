@@ -36,6 +36,8 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("02_TestScene");
         playerScript.typeGame = "CareerMode";
         playerScript.transform.Find("UI").gameObject.SetActive(true);
+        
+        Camera.main.GetComponent<MainScript>().PlacePlayerZero();
     }
 
     public void ChangeLanguageMode()
@@ -47,11 +49,6 @@ public class MainMenu : MonoBehaviour
         playerScript.language = "En";
 
         ChangeLanguage();
-    }
-
-    public void OpenMainMenu()
-    {
-        SceneManager.LoadScene("01_Menu");
     }
     
     private void ChangeLanguage()

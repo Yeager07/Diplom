@@ -55,7 +55,6 @@ public class InventoryManager : MonoBehaviour
             {
                 inventory.Remove(keys[selectedItem-1]);
                 materialsCount.Remove(keys[selectedItem - 1]);
-                cell[selectedItem - 1].GetComponent<Image>().sprite = null;
                 keys[selectedItem - 1] = "";
                 values[selectedItem - 1] = "";
                 previousSelectedItem = selectedItem;
@@ -162,6 +161,9 @@ public class InventoryManager : MonoBehaviour
 
             if(values[i] != "")
             countBlock += int.Parse(values[i]);
+
+            if(values[i] == "")
+            cell[i].GetComponent<Image>().sprite = null;
         }
         
         allCount.GetComponent<TMP_Text>().text = countBlock.ToString();

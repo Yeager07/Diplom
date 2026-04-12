@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class UI : MonoBehaviour
 {
@@ -102,25 +103,57 @@ public class UI : MonoBehaviour
         }
     }
 
+    public void OpenMainMenu()
+    {
+        Time.timeScale = 1;
+        Cursor.lockState = CursorLockMode.None;
+        pauseMenu.SetActive(false);
+        blocksCatalog.SetActive(false);
+        blockList.gameObject.SetActive(false);
+        playerScript.transform.Find("UI").gameObject.SetActive(false);
+
+        inventoryManager.inventory.Clear();
+        inventoryManager.materialsCount.Clear();
+        
+        for(int iterator = 0; iterator < inventoryManager.keys.Length; iterator++)
+        {
+            inventoryManager.keys[iterator] = "";
+            inventoryManager.values[iterator] = "";
+        }
+
+        inventoryManager.UpdateInventoryView();
+
+        Camera.main.GetComponent<MainScript>().PlacePlayerZero();
+
+
+        if(playerScript.isBuildMode)
+        playerScript.isBuildMode = false;
+
+        playerScript.typeGame = "MainMenu";
+    
+        SceneManager.LoadScene("01_Menu");
+    }
+
     public void OpenClosePauseMenu()
     {
         if(pauseMenu.activeInHierarchy)
         {
-            pauseMenu.SetActive(false);
             Time.timeScale = 1;
-
+            
             if(playerScript.isBuildMode)
             Cursor.lockState = CursorLockMode.None;
             
             else
             Cursor.lockState = CursorLockMode.Locked;
+
+            pauseMenu.SetActive(false);
         }
 
         else
         {
-            pauseMenu.SetActive(true);
-            Cursor.lockState = CursorLockMode.None;
             Time.timeScale = 0;
+            Cursor.lockState = CursorLockMode.None;
+            pauseMenu.SetActive(true);
         }
     }
 
@@ -143,7 +176,10 @@ public class UI : MonoBehaviour
             if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
             {
                 if(blockList.gameObject.activeInHierarchy)
-                blockList.gameObject.SetActive(false);
+                {
+                    blockList.gameObject.SetActive(false);
+                    blocksCatalog.SetActive(false);
+                }
             
                 else
                 blockList.gameObject.SetActive(true);

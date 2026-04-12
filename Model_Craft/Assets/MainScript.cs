@@ -42,13 +42,18 @@ public class MainScript : MonoBehaviour
         blockPrefabs["RoundPlate"] = Resources.LoadAll<BlockData>("Models/Blocks/RoundPlate");
     }
 
-    public void LoadScene(string sceneName, bool isBuildMode, Vector3 pos, Vector3 rotate)
+    public void PlacePlayerZero()
     {
-        playerScript.rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
+        playerScript.rotateDirection = zeroPos;
+        playerScript.transform.rotation = Quaternion.Euler(zeroPos);
+        playerScript.transform.position = zeroPos;
+    }
+
+    public void LoadScene(string sceneName, bool isBuildMode)
+    {
         SceneManager.LoadScene(sceneName);
         playerScript.isBuildMode = !isBuildMode;
-        playerScript.transform.position = pos;
-        playerScript.transform.rotation = Quaternion.Euler(rotate);
+        PlacePlayerZero();
     }
 
     public void FindAllChild(Transform parentTransform, List<Transform> children)
@@ -100,14 +105,14 @@ public class MainScript : MonoBehaviour
                 {
                     Cursor.lockState = CursorLockMode.None;
                     playerScript.distance = playerScript.minDistance;
-                    LoadScene("03_BuildScene", playerScript.isBuildMode, zeroPos, zeroPos);
+                    LoadScene("03_BuildScene", playerScript.isBuildMode);
                 }
                 
                 else
                 {
                     Cursor.lockState = CursorLockMode.Locked;
                     playerScript.colorListPanel.gameObject.SetActive(false);
-                    LoadScene("02_TestScene", playerScript.isBuildMode, zeroPos, zeroPos);
+                    LoadScene("02_TestScene", playerScript.isBuildMode);
                 }
             }
 
