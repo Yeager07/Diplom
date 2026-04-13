@@ -1,10 +1,10 @@
 using UnityEngine;
 using System;
 using System.Collections;
-using static System.Math;
 using System.Collections.Generic;
 using UnityEngine.UI;
-//using System.Diagnostics;
+using UnityEngine.SceneManagement;
+using static System.Math;
 
 public class Block : MonoBehaviour
 {
@@ -472,6 +472,8 @@ public class Block : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   
+        Camera.main.GetComponent<MainScript>().MakeObjectGravity(gameObject);
+
         if(Camera.main.GetComponent<MainScript>().newBlock != null && !Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced)
         MoveSpawnedObject(); 
 

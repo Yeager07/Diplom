@@ -231,10 +231,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde1ead9e0d071843ad2ee3c9d86dc3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorListPanel: {fileID: 7485867281122248736, guid: dc6118d25997a124f97de5bad0dce56b, type: 3}
   moveVector: {x: 0, y: 0, z: 0}
   curPosition: {x: 0, y: 0, z: 0}
   previousPosition: {x: 0, y: 0, z: 0}
+  colorChoosePanel: {fileID: 0}
   place: {fileID: 0}
   blockHeight: 0.064
   spaceBetweenBlockCursor: {x: 0, y: 0, z: 0}
@@ -246,7 +246,7 @@ MonoBehaviour:
   bulgeChildCoordinat: []
   hollowChildRotation: []
   bulgeChildRotation: []
-  nearestBulgeRotation: {x: 0, y: 0, z: 0}
+  nearestBulge: {fileID: 0}
   blockChild: []
   previousBlock: []
   isActive: 0

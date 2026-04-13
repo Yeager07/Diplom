@@ -49,11 +49,9 @@ public class MainScript : MonoBehaviour
         playerScript.transform.position = zeroPos;
     }
 
-    public void LoadScene(string sceneName, bool isBuildMode)
+    public void LoadScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
-        playerScript.isBuildMode = !isBuildMode;
-        PlacePlayerZero();
     }
 
     public void FindAllChild(Transform parentTransform, List<Transform> children)
@@ -91,6 +89,23 @@ public class MainScript : MonoBehaviour
         }
     }
 
+    public void MakeObjectGravity(GameObject currentObject)
+    {
+        if(SceneManager.GetActiveScene().name == "02_TestScene")
+        {
+            currentObject.GetComponent<Rigidbody>().isKinematic = false;
+            currentObject.GetComponent<Rigidbody>().useGravity = true;
+            currentObject.GetComponent<Collider>().isTrigger = false;
+        }
+
+        else
+        {
+            currentObject.GetComponent<Rigidbody>().isKinematic = true;
+            currentObject.GetComponent<Rigidbody>().useGravity = false;
+            currentObject.GetComponent<Collider>().isTrigger = true;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -105,14 +120,18 @@ public class MainScript : MonoBehaviour
                 {
                     Cursor.lockState = CursorLockMode.None;
                     playerScript.distance = playerScript.minDistance;
-                    LoadScene("03_BuildScene", playerScript.isBuildMode);
+                    playerScript.isBuildMode = true;
+
+                    SceneManager.LoadScene("03_BuildScene");
                 }
                 
                 else
                 {
                     Cursor.lockState = CursorLockMode.Locked;
                     playerScript.colorListPanel.gameObject.SetActive(false);
-                    LoadScene("02_TestScene", playerScript.isBuildMode);
+                    playerScript.isBuildMode = false;
+
+                    SceneManager.LoadScene("02_TestScene");
                 }
             }
 

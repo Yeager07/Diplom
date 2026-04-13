@@ -151,7 +151,7 @@ MonoBehaviour:
   bulgeChildCoordinat: []
   hollowChildRotation: []
   bulgeChildRotation: []
-  nearestBulgeRotation: {x: 0, y: 0, z: 0}
+  nearestBulge: {fileID: 0}
   blockChild: []
   previousBlock: []
   isActive: 0

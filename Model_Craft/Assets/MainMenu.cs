@@ -9,10 +9,18 @@ using TMPro;
 public class MainMenu : MonoBehaviour
 {
     private Player playerScript;
+    private int levelIndex = 0;
+    private float speed = 20.0f;
+    private Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
+    public float timer = 4.0f;
     public Button careerButton;
     public Button freeGameButton;
     public Button gulleryButton;
     public Button exitButton;
+    public Button nextLevelButton;
+    public Button previousLevelButton;
+    public List<GameObject> levelPreview = new List<GameObject>();
+    public GameObject levelList;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -24,6 +32,7 @@ public class MainMenu : MonoBehaviour
     public void OpenFreeMode()
     {
         SceneManager.LoadScene("04_FreeMode");
+        
         playerScript.typeGame = "FreeMode";
         playerScript.isBuildMode = true;
         playerScript.transform.Find("UI").gameObject.SetActive(true);
@@ -33,12 +42,12 @@ public class MainMenu : MonoBehaviour
 
     public void OpenCareerMode()
     {
-        Cursor.lockState = CursorLockMode.Locked;
         SceneManager.LoadScene("02_TestScene");
+
+        Cursor.lockState = CursorLockMode.Locked;
         playerScript.typeGame = "CareerMode";
         playerScript.transform.Find("UI").gameObject.SetActive(true);
         playerScript.transform.Find("UI").transform.Find("Instruction").transform.Find("InstructionDownload").gameObject.SetActive(false);
-        
         Camera.main.GetComponent<MainScript>().PlacePlayerZero();
     }
 
@@ -72,9 +81,40 @@ public class MainMenu : MonoBehaviour
         }
     }
 
+    public void ShowPreviousLevel()
+    {
+        if(levelIndex != 0)
+        {
+            nextLevelButton.interactable = true;
+            targetPosition = levelList.transform.localPosition + new Vector3(1100.0f, 0.0f, 0.0f);
+            
+            //levelList.transform.localPosition = levelList.transform.localPosition + new Vector3(1100.0f, 0.0f, 0.0f);
+            levelIndex--;
+        }
+
+        if(levelIndex == 0)
+        previousLevelButton.interactable = false;
+    }
+
+    public void ShowNextLevel()
+    {
+        if(levelIndex != levelPreview.Count - 1)
+        {
+            previousLevelButton.interactable = true;
+            targetPosition = levelList.transform.localPosition - new Vector3(1100.0f, 0.0f, 0.0f);
+            
+            //levelList.transform.localPosition = levelList.transform.localPosition + new Vector3(-1100.0f, 0.0f, 0.0f);
+            levelIndex++;
+        }
+
+        if(levelIndex == levelPreview.Count - 1)
+        nextLevelButton.interactable = false;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        
+        if(!careerButton.gameObject.activeInHierarchy && targetPosition != new Vector3(0.0f, 0.0f, 0.0f))
+        levelList.transform.localPosition = Vector3.MoveTowards(levelList.transform.localPosition, targetPosition, speed);
     }
 }
