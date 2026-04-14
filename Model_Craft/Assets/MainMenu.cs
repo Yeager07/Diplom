@@ -11,7 +11,7 @@ public class MainMenu : MonoBehaviour
     private Player playerScript;
     private int levelIndex = 0;
     private float speed = 20.0f;
-    private Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
+    private Vector3 targetPosition = new Vector3(-196.0f, 0.0f, 0.0f);
     public float timer = 4.0f;
     public Button careerButton;
     public Button freeGameButton;
@@ -86,7 +86,7 @@ public class MainMenu : MonoBehaviour
         if(levelIndex != 0)
         {
             nextLevelButton.interactable = true;
-            targetPosition = levelList.transform.localPosition + new Vector3(1100.0f, 0.0f, 0.0f);
+            targetPosition += new Vector3(1100.0f, 0.0f, 0.0f);
             
             //levelList.transform.localPosition = levelList.transform.localPosition + new Vector3(1100.0f, 0.0f, 0.0f);
             levelIndex--;
@@ -101,7 +101,7 @@ public class MainMenu : MonoBehaviour
         if(levelIndex != levelPreview.Count - 1)
         {
             previousLevelButton.interactable = true;
-            targetPosition = levelList.transform.localPosition - new Vector3(1100.0f, 0.0f, 0.0f);
+            targetPosition -= new Vector3(1100.0f, 0.0f, 0.0f);
             
             //levelList.transform.localPosition = levelList.transform.localPosition + new Vector3(-1100.0f, 0.0f, 0.0f);
             levelIndex++;
@@ -114,7 +114,7 @@ public class MainMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!careerButton.gameObject.activeInHierarchy && targetPosition != new Vector3(0.0f, 0.0f, 0.0f))
+        if(levelList.transform.localPosition != targetPosition)
         levelList.transform.localPosition = Vector3.MoveTowards(levelList.transform.localPosition, targetPosition, speed);
     }
 }

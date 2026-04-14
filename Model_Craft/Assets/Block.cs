@@ -362,14 +362,26 @@ public class Block : MonoBehaviour
             CalculateDistance(currentBlock, place, currentBlock.GetComponent<Block>().hollowChild, place.GetComponent<Block>().bulgeChild);
             
             if(Vector3.Dot(currentBlock.GetComponent<Block>().hollowChild[0].up, currentBlock.GetComponent<Block>().nearestBulge.up) > 0.99f)
-            {
-                currentBlock.GetComponent<Block>().isFree = false;
-                        
-                if(currentBlock.GetComponent<Block>().bulgeChild[0].transform.position.y < place.GetComponent<Block>().bulgeChild[0].transform.position.y)
+            {   
+                if(place.name.Split(" ")[0] == "Tile" && currentBlock.name.Split(" ")[0] == "Tile")
+                return;
+
+                else if(place.name.Split(" ")[0] == "Tile")
                 currentBlock.transform.position = currentBlock.GetComponent<Block>().placeHollowPosition - currentBlock.transform.TransformVector(currentBlock.GetComponent<Block>().localBulgePosition);
-                        
+                
+                else if(currentBlock.name.Split(" ")[0] == "Tile")
+                currentBlock.transform.position = currentBlock.GetComponent<Block>().bulgePosition - currentBlock.transform.TransformVector(localHollowPosition);                
+                
                 else
-                currentBlock.transform.position = currentBlock.GetComponent<Block>().bulgePosition - currentBlock.transform.TransformVector(localHollowPosition);
+                {       
+                    if(currentBlock.GetComponent<Block>().bulgeChild[0].transform.position.y < place.GetComponent<Block>().bulgeChild[0].transform.position.y)
+                    currentBlock.transform.position = currentBlock.GetComponent<Block>().placeHollowPosition - currentBlock.transform.TransformVector(currentBlock.GetComponent<Block>().localBulgePosition);
+                        
+                    else
+                    currentBlock.transform.position = currentBlock.GetComponent<Block>().bulgePosition - currentBlock.transform.TransformVector(localHollowPosition);
+                }
+                
+                currentBlock.GetComponent<Block>().isFree = false;
             }
         }
 
