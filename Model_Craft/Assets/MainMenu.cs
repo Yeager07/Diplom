@@ -30,25 +30,27 @@ public class MainMenu : MonoBehaviour
     }
 
     public void OpenFreeMode()
-    {
-        SceneManager.LoadScene("04_FreeMode");
-        
+    {   
         playerScript.typeGame = "FreeMode";
         playerScript.isBuildMode = true;
         playerScript.transform.Find("UI").gameObject.SetActive(true);
         playerScript.transform.Find("UI").transform.Find("Instruction").transform.Find("InstructionDownload").gameObject.SetActive(true);
         playerScript.transform.Find("UI").Find("BlocksIcon").gameObject.SetActive(true);
+
+        SceneManager.LoadScene("04_FreeMode");
     }
 
-    public void OpenCareerMode()
+    public void OpenCareerMode(Button levelButton)
     {
-        SceneManager.LoadScene("02_TestScene");
+        LevelLoader.SelectedLevel = Camera.main.GetComponent<MainScript>().levelDatas[int.Parse((levelButton.gameObject.name[levelButton.gameObject.name.Length - 1]).ToString())];
 
         Cursor.lockState = CursorLockMode.Locked;
         playerScript.typeGame = "CareerMode";
         playerScript.transform.Find("UI").gameObject.SetActive(true);
         playerScript.transform.Find("UI").transform.Find("Instruction").transform.Find("InstructionDownload").gameObject.SetActive(false);
         Camera.main.GetComponent<MainScript>().PlacePlayerZero();
+
+        SceneManager.LoadScene("02_TestScene");
     }
 
     public void ChangeLanguageMode()

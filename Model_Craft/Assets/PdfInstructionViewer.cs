@@ -18,6 +18,9 @@ public class PdfInstructionViewer : MonoBehaviour
     public TextMeshProUGUI pageNumberText;
     public Button nextButton;
     public Button prevButton;
+    public GameObject loadingScreenPanel;
+    public float minLoadTime = 1.5f;
+    private float loadStartTime;
 
     void Start()
     {
@@ -28,6 +31,10 @@ public class PdfInstructionViewer : MonoBehaviour
             return;
         }
 
+        if(loadingScreenPanel != null)
+        loadingScreenPanel.SetActive(false);
+
+        if(pdfFileName != "manual.pdf")
         StartCoroutine(LoadAndSetup());
     }
 
@@ -97,21 +104,32 @@ public class PdfInstructionViewer : MonoBehaviour
         }
     }
 
-    IEnumerator LoadAndSetup()
+    public IEnumerator LoadAndSetup()
     {
+        if(loadingScreenPanel != null)
+        loadingScreenPanel.SetActive(true);
+
+
+        loadStartTime = Time.time;
+
         if(pdfViewer.pdfImage != null)
         pdfViewer.pdfImage.texture = null;
 
         if(pageNumberText != null)
         pageNumberText.text = "Загрузка PDF...";
 
+        pdfViewer.renderDPI = 72;
+        
+        yield return null;
+        Canvas.ForceUpdateCanvases();
+
         pdfViewer.LoadPDF(pdfFileName);
         Debug.Log("Загружаем PDF, ожидаем инициализацию...");
 
         System.Type type = pdfViewer.GetType();
-        // Ищем поле navigator (оно публичное)
         FieldInfo navigatorField = type.GetField("navigator", BindingFlags.Public | BindingFlags.Instance);
-        if (navigatorField == null)
+        
+        if(navigatorField == null)
         {
             Debug.LogError("Поле navigator не найдено!");
             yield break;
@@ -121,15 +139,17 @@ public class PdfInstructionViewer : MonoBehaviour
         float startTime = Time.time;
         object navigator = null;
 
-        while (Time.time - startTime < timeout)
+        while(Time.time - startTime < timeout)
         {
             navigator = navigatorField.GetValue(pdfViewer);
-            if (navigator != null)
-                break;
+            
+            if(navigator != null)
+            break;
+            
             yield return new WaitForSeconds(0.2f);
         }
 
-        if (navigator == null)
+        if(navigator == null)
         {
             Debug.LogError("navigator не инициализировался за 5 секунд!");
             yield break;
@@ -141,7 +161,8 @@ public class PdfInstructionViewer : MonoBehaviour
         // Получаем массив текстур страниц
         System.Type navType = pdfNavigator.GetType();
         PropertyInfo pagesProp = navType.GetProperty("Pages");
-        if (pagesProp != null)
+        
+        if(pagesProp != null)
         {
             pageTextures = (Texture2D[])pagesProp.GetValue(pdfNavigator);
             Debug.Log("Загружено страниц: " + pageTextures.Length);
@@ -149,8 +170,17 @@ public class PdfInstructionViewer : MonoBehaviour
 
         // Получаем текущую страницу
         PropertyInfo currentProp = navType.GetProperty("CurrentPage");
-        if (currentProp != null)
+        
+        if(currentProp != null)
         currentPageIndex = (int)currentProp.GetValue(pdfNavigator);
+
+        float elapsed = Time.time - loadStartTime;
+
+        if(elapsed < minLoadTime)
+        yield return new WaitForSeconds(minLoadTime - elapsed);
+
+        if(loadingScreenPanel != null)
+        loadingScreenPanel.SetActive(false);
 
         // Отображаем первую страницу
         UpdateDisplay();
@@ -159,20 +189,21 @@ public class PdfInstructionViewer : MonoBehaviour
     // Обновление состояния кнопок в зависимости от страницы
     private void UpdateButtonStates()
     {
-        if (pageTextures == null)
+        if(pageTextures == null)
         return;
 
-        if (nextButton != null)
+        if(nextButton != null)
         nextButton.interactable = (currentPageIndex < pageTextures.Length - 1);
     
-        if (prevButton != null)
+        if(prevButton != null)
         prevButton.interactable = (currentPageIndex > 0);
     }
     
     // Переход к следующей странице
     public void NextPage()
     {
-        if (pdfNavigator == null) return;
+        if(pdfNavigator == null)
+        return;
 
         MethodInfo nextMethod = pdfNavigator.GetType().GetMethod("Next");
         nextMethod?.Invoke(pdfNavigator, null);
@@ -196,7 +227,8 @@ public class PdfInstructionViewer : MonoBehaviour
     // Переход на конкретную страницу (нумерация с 0)
     public void GoToPage(int pageIndex)
     {
-        if (pdfNavigator == null) return;
+        if(pdfNavigator == null)
+        return;
 
         MethodInfo goToMethod = pdfNavigator.GetType().GetMethod("GoTo");
         goToMethod?.Invoke(pdfNavigator, new object[] { pageIndex });
@@ -210,20 +242,22 @@ public class PdfInstructionViewer : MonoBehaviour
         System.Type navType = pdfNavigator.GetType();
 
         PropertyInfo currentProp = navType.GetProperty("CurrentPage");
-        if (currentProp != null)
-            currentPageIndex = (int)currentProp.GetValue(pdfNavigator);
+        
+        if(currentProp != null)
+        currentPageIndex = (int)currentProp.GetValue(pdfNavigator);
 
         PropertyInfo pagesProp = navType.GetProperty("Pages");
-        if (pagesProp != null)
-            pageTextures = (Texture2D[])pagesProp.GetValue(pdfNavigator);
+        
+        if(pagesProp != null)
+        pageTextures = (Texture2D[])pagesProp.GetValue(pdfNavigator);
     }
 
     private void UpdateDisplay()
     {
-        if (pageTextures != null && currentPageIndex >= 0 && currentPageIndex < pageTextures.Length)
+        if(pageTextures != null && currentPageIndex >= 0 && currentPageIndex < pageTextures.Length)
         pdfViewer.pdfImage.texture = pageTextures[currentPageIndex];
         
-        if (pageNumberText != null)
+        if(pageNumberText != null)
         pageNumberText.text = $"{currentPageIndex + 1} / {pageTextures.Length}";
 
         UpdateButtonStates();

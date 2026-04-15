@@ -11,6 +11,7 @@ public class MainScript : MonoBehaviour
     private Player playerScript;
     private Vector3 zeroPos = new Vector3(0.0f, 0.0f, 0.0f);
     public Dictionary<string, BlockData[]> blockPrefabs = new Dictionary<string, BlockData[]>();
+    public List<LevelData> levelDatas= new List<LevelData>();
     public GameObject newBlock;
     public Material rendgenMaterial;
     public Material standartMaterial;
@@ -20,9 +21,13 @@ public class MainScript : MonoBehaviour
     void Start()
     {
         FindAllBlockPrefab();
+        
         rendgenMaterial = Resources.Load<Material>("Materials/BlockRendgen");
         standartMaterial = Resources.Load<Material>("Materials/BlockStandart");
         outlineMaterial = Resources.Load<Material>("Materials/MaterialOutline");
+
+        foreach(LevelData levelData in Resources.LoadAll<LevelData>("Level"))
+        levelDatas.Add(levelData);
         
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if(player != null)

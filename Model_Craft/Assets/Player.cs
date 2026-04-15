@@ -99,7 +99,7 @@ public class Player : MonoBehaviour
         if(Input.GetMouseButtonUp(1) && target != new Vector3(0.0f, 0.0f, 0.0f))
         {
             targetPosition = target;
-            distance = minDistance;
+            currentDistance = minDistance;
         }
         
         moveDirection = Quaternion.Euler(rotateDirection) * negDistance + targetPosition;
