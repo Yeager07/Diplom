@@ -65,6 +65,14 @@ public class InventoryCard : MonoBehaviour
             applyMaterial);
         
             DeleteBLock();
+
+            LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+
+            if(stepManager != null)
+            {
+                string blockName = inventoryManager.keys[playerScript.selectedItem - 1];
+                stepManager.OnBlockUsed(blockName);
+            }
         }
     }
 
@@ -81,16 +89,36 @@ public class InventoryCard : MonoBehaviour
                         if(value.Value != 0)
                         {
                             dictionary[value.Key] -= 1;
-                            inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
+                            inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem, value.Key);
+                            //inventoryManager.RemoveBlockFromInventoryByColor(playerScript.selectedItem, iconColor.GetComponent<Image>().color);
                             ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
+
+                            LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+
+                            if(stepManager != null)
+                            {
+                                string blockName = inventoryManager.keys[playerScript.selectedItem - 1];
+                                stepManager.OnBlockUsed(blockName);
+                            }
+                            
                             return;
                         }
                     
                         else
                         {
                             inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]].Remove(dictionary);
-                            inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem);
+                            inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem, value.Key);
+                            //inventoryManager.RemoveBlockFromInventoryByColor(playerScript.selectedItem, iconColor.GetComponent<Image>().color);
                             ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
+
+                            LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+
+                            if(stepManager != null)
+                            {
+                                string blockName = inventoryManager.keys[playerScript.selectedItem - 1];
+                                stepManager.OnBlockUsed(blockName);
+                            }
+                            
                             return;
                         }
                     }

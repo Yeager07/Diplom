@@ -10,11 +10,12 @@ using System.IO;
 
 public class PdfInstructionViewer : MonoBehaviour
 {
+    public System.Action<int> OnPageChanged;
     public string pdfFileName = "manual.pdf";
     private PdfViewerUI pdfViewer;
     private object pdfNavigator;
-    private Texture2D[] pageTextures;
-    private int currentPageIndex;
+    public Texture2D[] pageTextures;
+    public int currentPageIndex;
     public TextMeshProUGUI pageNumberText;
     public Button nextButton;
     public Button prevButton;
@@ -184,6 +185,8 @@ public class PdfInstructionViewer : MonoBehaviour
 
         // Отображаем первую страницу
         UpdateDisplay();
+
+        OnPageChanged?.Invoke(currentPageIndex + 1);
     }
 
     // Обновление состояния кнопок в зависимости от страницы
@@ -210,6 +213,8 @@ public class PdfInstructionViewer : MonoBehaviour
 
         RefreshPageInfo();
         UpdateDisplay();
+        
+        OnPageChanged?.Invoke(currentPageIndex + 1);
     }
 
     // Переход к предыдущей странице
@@ -222,6 +227,8 @@ public class PdfInstructionViewer : MonoBehaviour
 
         RefreshPageInfo();
         UpdateDisplay();
+        
+        OnPageChanged?.Invoke(currentPageIndex + 1);
     }
 
     // Переход на конкретную страницу (нумерация с 0)
@@ -235,6 +242,8 @@ public class PdfInstructionViewer : MonoBehaviour
 
         RefreshPageInfo();
         UpdateDisplay();
+
+        OnPageChanged?.Invoke(currentPageIndex + 1);
     }
 
     private void RefreshPageInfo()

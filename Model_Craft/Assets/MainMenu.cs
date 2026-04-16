@@ -25,6 +25,7 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
+        
         if(player != null)
         playerScript = player.GetComponent<Player>();
     }

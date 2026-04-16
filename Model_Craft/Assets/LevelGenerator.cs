@@ -7,6 +7,7 @@ public class LevelGenerator : MonoBehaviour
     void Start()
     {
         LevelData data = LevelLoader.SelectedLevel;
+        
         if(data == null)
         {
             Debug.LogError("Нет данных уровня!");
@@ -22,11 +23,11 @@ public class LevelGenerator : MonoBehaviour
             StartCoroutine(pdfViewer.LoadAndSetup());
         }
 
-        foreach(RequiredBlock req in data.requiredBlocks)
+        /*foreach(RequiredBlock req in data.requiredBlocks)
         {
             for(int i = 0; i < req.count; i++)
             {
-                /*GameObject block = Instantiate(req.block.prefab, spawnPoint.position, Quaternion.identity);*/
+                //GameObject block = Instantiate(req.block.prefab, spawnPoint.position, Quaternion.identity);
                 Camera.main.GetComponent<MainScript>().SpawnBlock(spawnPoint.position, req.block.type + " " + req.block.blockName,
                 Camera.main.GetComponent<MainScript>().blockPrefabs[req.block.type.ToString()], Camera.main.GetComponent<MainScript>().standartMaterial);
                 
@@ -41,7 +42,7 @@ public class LevelGenerator : MonoBehaviour
                     renderer.material = mat;
                 }
             }
-        }
+        }*/
     }
 
     // Update is called once per frame

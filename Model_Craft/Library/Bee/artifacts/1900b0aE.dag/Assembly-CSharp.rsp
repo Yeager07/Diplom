@@ -421,6 +421,7 @@
 "Assets/LevelData.cs"
 "Assets/LevelGenerator.cs"
 "Assets/LevelLoader.cs"
+"Assets/LevelStepManager.cs"
 "Assets/MainManager.cs"
 "Assets/MainMenu.cs"
 "Assets/MainScript.cs"

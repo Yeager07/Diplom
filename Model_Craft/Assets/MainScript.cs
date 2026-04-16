@@ -10,6 +10,7 @@ public class MainScript : MonoBehaviour
 
     private Player playerScript;
     private Vector3 zeroPos = new Vector3(0.0f, 0.0f, 0.0f);
+    private Vector3 buildPos = new Vector3(1000.0f, 1000.0f, 1000.0f);
     public Dictionary<string, BlockData[]> blockPrefabs = new Dictionary<string, BlockData[]>();
     public List<LevelData> levelDatas= new List<LevelData>();
     public GameObject newBlock;
@@ -30,6 +31,7 @@ public class MainScript : MonoBehaviour
         levelDatas.Add(levelData);
         
         GameObject player = GameObject.FindGameObjectWithTag("Player");
+        
         if(player != null)
         playerScript = player.GetComponent<Player>();
     }
@@ -96,7 +98,7 @@ public class MainScript : MonoBehaviour
 
     public void MakeObjectGravity(GameObject currentObject)
     {
-        if(SceneManager.GetActiveScene().name == "02_TestScene")
+        if(SceneManager.GetActiveScene().name == "02_TestScene" && !playerScript.isBuildMode && currentObject.transform.position.x < 800.0f)
         {
             currentObject.GetComponent<Rigidbody>().isKinematic = false;
             currentObject.GetComponent<Rigidbody>().useGravity = true;
@@ -116,7 +118,7 @@ public class MainScript : MonoBehaviour
     {
         Transform colorChoosePanel = playerScript.transform.Find("UI").transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
         
-        if(Input.GetKey(KeyCode.B) && playerScript.typeGame == "CareerMode" &&
+        if(Input.GetKeyUp(KeyCode.B) && playerScript.typeGame == "CareerMode" &&
         !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {   
             if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
@@ -124,10 +126,13 @@ public class MainScript : MonoBehaviour
                 if(!playerScript.isBuildMode)
                 {
                     Cursor.lockState = CursorLockMode.None;
-                    playerScript.distance = playerScript.minDistance;
+                    playerScript.currentDistance = playerScript.minDistance;
                     playerScript.isBuildMode = true;
 
-                    SceneManager.LoadScene("03_BuildScene");
+                    playerScript.rotateDirection = zeroPos;
+                    playerScript.transform.rotation = Quaternion.Euler(zeroPos);
+                    playerScript.targetPosition = buildPos;
+                    //SceneManager.LoadScene("03_BuildScene");
                 }
                 
                 else
@@ -136,7 +141,8 @@ public class MainScript : MonoBehaviour
                     playerScript.colorListPanel.gameObject.SetActive(false);
                     playerScript.isBuildMode = false;
 
-                    SceneManager.LoadScene("02_TestScene");
+                    PlacePlayerZero();
+                    //SceneManager.LoadScene("02_TestScene");
                 }
             }
 

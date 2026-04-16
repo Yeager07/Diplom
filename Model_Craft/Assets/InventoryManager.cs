@@ -28,7 +28,7 @@ public class InventoryManager : MonoBehaviour
         cell[i].transform.Find("Count").gameObject.SetActive(false);
     }
 
-    public void RemoveBlockfromInventory(int selectedItem, int previousSelectedItem)
+    public void RemoveBlockfromInventory(int selectedItem, int previousSelectedItem, Color color)
     {
         if(keys[selectedItem - 1] != "")
         {
@@ -49,12 +49,29 @@ public class InventoryManager : MonoBehaviour
                         }
                     }
                 }
+
+                LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+
+                if(stepManager != null)
+                {
+                    string blockName = keys[selectedItem - 1];
+                    stepManager.OnBlockRemoved(blockName, color, 1);
+                }
             }
 
             else
             {
                 inventory.Remove(keys[selectedItem-1]);
                 materialsCount.Remove(keys[selectedItem - 1]);
+                
+                LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+
+                if(stepManager != null)
+                {
+                    string blockName = keys[selectedItem - 1];
+                    stepManager.OnBlockRemoved(blockName, color, 1);
+                }
+                
                 keys[selectedItem - 1] = "";
                 values[selectedItem - 1] = "";
                 previousSelectedItem = selectedItem;
@@ -170,6 +187,23 @@ public class InventoryManager : MonoBehaviour
         
         if(playerScript.selectedItem != 0)
         colorListPanel.GetComponent<InventoryCatalog>().RefreshCatalog();
+    }
+
+    public int GetCountForColor(string blockName, Color color)
+    {
+        if(!materialsCount.ContainsKey(blockName))
+        return 0;
+
+        foreach(var dict in materialsCount[blockName])
+        {
+            foreach(var kv in dict)
+            {
+                if(kv.Key == color)
+                return kv.Value;
+            }
+        }
+
+        return 0;
     }
 
     // Update is called once per frame

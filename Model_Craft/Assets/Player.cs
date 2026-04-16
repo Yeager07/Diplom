@@ -24,7 +24,7 @@ public class Player : MonoBehaviour
     private float speedBuildRot = 3.0f;
     private Rigidbody rigidBody;
     private Vector3 targetOffset = Vector3.zero;
-    private Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
+    public Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 moveDirection;
     public GameObject movedObject;
     public int selectedItem = 0;

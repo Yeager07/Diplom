@@ -6,7 +6,14 @@ public class LevelData : ScriptableObject
 {
     public string levelName;
     public string instructionFileName;
-    public List<RequiredBlock> requiredBlocks;
+    public List<Step> steps;
+}
+
+[System.Serializable]
+public class Step
+{
+    public int pageNumber;
+    public List<RequiredBlock> blocks;
 }
 
 [System.Serializable]

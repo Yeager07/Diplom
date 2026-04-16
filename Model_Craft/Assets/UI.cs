@@ -171,7 +171,7 @@ public class UI : MonoBehaviour
     {
         Transform colorChoosePanel = transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
         
-        if(Input.GetKey(KeyCode.B) && playerScript.typeGame == "CareerMode" &&
+        if(Input.GetKeyUp(KeyCode.B) && playerScript.typeGame == "CareerMode" &&
         !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {   
             if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
