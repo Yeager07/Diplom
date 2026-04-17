@@ -136,9 +136,24 @@ public class Player : MonoBehaviour
             colorChoosePanel = transform.Find("UI").transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
 
             if(Input.GetMouseButtonUp(1) && selectedItem != 0 && 
-            inventoryManager.cell[selectedItem - 1].GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial &&
+            inventoryManager.keys[selectedItem - 1] != "" && 
+            inventoryManager.cell[selectedItem - 1].GetComponent<Image>().material == Camera.main.GetComponent<MainScript>().outlineMaterial && 
             !transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
             {
+                LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+
+                if(stepManager != null)
+                {
+                    foreach(Dictionary<Color, int> dictionary in inventoryManager.materialsCount[inventoryManager.keys[selectedItem - 1]])
+                    {
+                        foreach(var value in dictionary)
+                        {
+                            string blockName = inventoryManager.keys[selectedItem - 1];
+                            stepManager.OnBlockRemoved(blockName, value.Key, value.Value);
+                        }
+                    }
+                }
+
                 inventoryManager.inventory.Remove(inventoryManager.keys[selectedItem-1]);
                 inventoryManager.materialsCount.Remove(inventoryManager.keys[selectedItem - 1]);
                 inventoryManager.keys[selectedItem - 1] = "";

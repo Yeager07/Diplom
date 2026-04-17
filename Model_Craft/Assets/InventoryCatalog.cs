@@ -70,14 +70,14 @@ public class InventoryCatalog : MonoBehaviour
             
                 foreach(var param in blockData)
                 {
-                    Debug.Log($"Создаю карточку для {inventoryManager.keys[playerScript.selectedItem - 1]}, передаю колбэк OnBlockSelected");
+                    //Debug.Log($"Создаю карточку для {inventoryManager.keys[playerScript.selectedItem - 1]}, передаю колбэк OnBlockSelected");
                     card.Setup(param.Key, param.Value);
                 }
             }
         }
         
-        else
-        Debug.Log($"пустой словарь");
+        /*else
+        Debug.Log($"пустой словарь");*/
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(cardsContainer.GetComponent<RectTransform>());
 

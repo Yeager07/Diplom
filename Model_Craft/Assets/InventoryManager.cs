@@ -28,8 +28,16 @@ public class InventoryManager : MonoBehaviour
         cell[i].transform.Find("Count").gameObject.SetActive(false);
     }
 
-    public void RemoveBlockfromInventory(int selectedItem, int previousSelectedItem, Color color)
+    /*public void RemoveBlockfromInventory(int selectedItem, int previousSelectedItem, Color color)
     {
+        LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+
+        if(stepManager != null)
+        {
+            string blockName = keys[selectedItem - 1];
+            stepManager.OnBlockRemoved(blockName, color, 1);
+        }
+
         if(keys[selectedItem - 1] != "")
         {
             if(inventory[keys[selectedItem - 1]] != 1)
@@ -49,29 +57,12 @@ public class InventoryManager : MonoBehaviour
                         }
                     }
                 }
-
-                LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
-
-                if(stepManager != null)
-                {
-                    string blockName = keys[selectedItem - 1];
-                    stepManager.OnBlockRemoved(blockName, color, 1);
-                }
             }
 
             else
             {
                 inventory.Remove(keys[selectedItem-1]);
-                materialsCount.Remove(keys[selectedItem - 1]);
-                
-                LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
-
-                if(stepManager != null)
-                {
-                    string blockName = keys[selectedItem - 1];
-                    stepManager.OnBlockRemoved(blockName, color, 1);
-                }
-                
+                materialsCount.Remove(keys[selectedItem - 1]);                
                 keys[selectedItem - 1] = "";
                 values[selectedItem - 1] = "";
                 previousSelectedItem = selectedItem;
@@ -84,6 +75,147 @@ public class InventoryManager : MonoBehaviour
         }
         else
         return;
+    }*/
+
+    private bool RemoveBlockData(int selectedItem, Color color, out string blockName)
+    {
+        blockName = keys[selectedItem - 1];
+        
+        if(string.IsNullOrEmpty(blockName))
+        return false;
+        
+        if(!materialsCount.ContainsKey(blockName))
+        return false;
+
+    // Находим словарь с нужным цветом
+        Dictionary<Color, int> targetDict = null;
+        
+        foreach(var dict in materialsCount[blockName])
+        {
+            if(dict.ContainsKey(color))
+            {
+                targetDict = dict;
+                break;
+            }
+        }
+        
+        if(targetDict == null)
+        return false;
+
+        int currentCount = targetDict[color];
+        
+        if(currentCount > 1)
+        {
+            targetDict[color]--;
+            inventory[blockName]--;
+            values[selectedItem - 1] = inventory[blockName].ToString();
+        }
+        
+        else
+        {
+            materialsCount[blockName].Remove(targetDict);
+            inventory[blockName] -= currentCount;
+            
+            if(inventory[blockName] <= 0)
+            {
+                inventory.Remove(blockName);
+                materialsCount.Remove(blockName);
+                keys[selectedItem - 1] = "";
+                values[selectedItem - 1] = "";
+                GameObject.FindGameObjectWithTag("UI").GetComponent<UI>().MakeNone(cell[selectedItem - 1].transform);
+                colorListPanel.GetComponent<InventoryCatalog>().ClosePanel();
+            }
+            
+            else
+            values[selectedItem - 1] = inventory[blockName].ToString();
+        }
+        
+        UpdateInventoryView();
+        return true;
+    }
+
+    public void RemoveBlockFromInventoryNoNotify(int selectedItem, Color color)
+    {
+        if(RemoveBlockData(selectedItem, color, out string blockName))
+        {
+        // Ничего не делаем, просто удалили
+        }
+    }
+
+// Удаление с уведомлением (используется в DeleteBLock)
+    public void RemoveBlockFromInventoryWithNotify(int selectedItem, Color color)
+    {
+        if(RemoveBlockData(selectedItem, color, out string blockName))
+        {
+            LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+            
+            if(stepManager != null)
+            stepManager.OnBlockRemoved(blockName, color, 1);
+        }
+    }
+
+    public void RemoveBlockFromInventoryByColor(int selectedItem, Color color, bool notify = false)
+    {
+        string blockName = keys[selectedItem - 1];
+        
+        if(string.IsNullOrEmpty(blockName))
+        return;
+        
+        if(!materialsCount.ContainsKey(blockName))
+        return;
+
+    // Находим словарь с нужным цветом
+        Dictionary<Color, int> targetDict = null;
+        
+        foreach(var dict in materialsCount[blockName])
+        {
+            if(dict.ContainsKey(color))
+            {
+                targetDict = dict;
+                break;
+            }
+        }
+        
+        if(targetDict == null)
+        return;
+
+        int currentCount = targetDict[color];
+        
+        if(currentCount > 1)
+        {
+            targetDict[color]--;
+            inventory[blockName]--;
+            values[selectedItem - 1] = inventory[blockName].ToString();
+        }
+        
+        else
+        {
+            materialsCount[blockName].Remove(targetDict);
+            inventory[blockName] -= currentCount;
+            
+            if(inventory[blockName] <= 0)
+            {
+                inventory.Remove(blockName);
+                materialsCount.Remove(blockName);
+                keys[selectedItem - 1] = "";
+                values[selectedItem - 1] = "";
+                GameObject.FindGameObjectWithTag("UI").GetComponent<UI>().MakeNone(cell[selectedItem - 1].transform);
+                colorListPanel.GetComponent<InventoryCatalog>().ClosePanel();
+            }
+            
+            else
+            values[selectedItem - 1] = inventory[blockName].ToString();
+        }
+        
+        UpdateInventoryView();
+
+        if(notify)
+        {
+            LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+            
+            if(stepManager != null)
+            stepManager.OnBlockRemoved(blockName, color, 1);
+        }
     }
 
     private void UpdateMassive()
@@ -113,25 +245,25 @@ public class InventoryManager : MonoBehaviour
 
     public void AddToInventory(Transform selectedBlock)
     {
-        if(inventory.Count != 5 && !inventory.ContainsKey(selectedBlock.name))
+        if(inventory.Count != 5 && !inventory.ContainsKey(selectedBlock.name.Replace("(Clone)", "")))
         {
-            inventory.Add(selectedBlock.name, 1);
+            inventory.Add(selectedBlock.name.Replace("(Clone)", ""), 1);
                 
-            materialsCount.Add(selectedBlock.name, new List<Dictionary<Color, int>>()
+            materialsCount.Add(selectedBlock.name.Replace("(Clone)", ""), new List<Dictionary<Color, int>>()
             { new Dictionary<Color, int>()  { { selectedBlock.GetComponent<Renderer>().material.color, 1 } }});
 
-            Debug.Log($"Добавляю новый цвет {selectedBlock.GetComponent<Renderer>().material.color}");
+            //Debug.Log($"Добавляю новый цвет {selectedBlock.GetComponent<Renderer>().material.color}");
             
             UpdateMassive();
 
             Destroy(selectedBlock.gameObject);
         }
 
-        else if(inventory.ContainsKey(selectedBlock.name))
+        else if(inventory.ContainsKey(selectedBlock.name.Replace("(Clone)", "")))
         {
-            inventory[selectedBlock.name] += 1;
+            inventory[selectedBlock.name.Replace("(Clone)", "")] += 1;
 
-            foreach(Dictionary<Color, int> dictionary in materialsCount[selectedBlock.name])
+            foreach(Dictionary<Color, int> dictionary in materialsCount[selectedBlock.name.Replace("(Clone)", "")])
             {
                 foreach(var value in dictionary)
                 {
@@ -139,7 +271,7 @@ public class InventoryManager : MonoBehaviour
                     
                     if(value.Key == selectedBlock.GetComponent<Renderer>().material.color)
                     {
-                        Debug.Log($"Такой материал есть, увеличиваю количество для {selectedBlock.GetComponent<Renderer>().material.color}");
+                        //Debug.Log($"Такой материал есть, увеличиваю количество для {selectedBlock.GetComponent<Renderer>().material.color}");
                         dictionary[selectedBlock.GetComponent<Renderer>().material.color] += 1;
                         UpdateMassive();
                         count = 0;
@@ -147,10 +279,10 @@ public class InventoryManager : MonoBehaviour
                         return;
                     }
                     
-                    if(count == materialsCount[selectedBlock.name].Count)
+                    if(count == materialsCount[selectedBlock.name.Replace("(Clone)", "")].Count)
                     {
-                        Debug.Log($"Такого цвета нет, добавляю его как новый {selectedBlock.GetComponent<Renderer>().material.color}");
-                        materialsCount[selectedBlock.name].Add(new Dictionary<Color, int>()  { { selectedBlock.GetComponent<Renderer>().material.color, 1 } });
+                        //Debug.Log($"Такого цвета нет, добавляю его как новый {selectedBlock.GetComponent<Renderer>().material.color}");
+                        materialsCount[selectedBlock.name.Replace("(Clone)", "")].Add(new Dictionary<Color, int>()  { { selectedBlock.GetComponent<Renderer>().material.color, 1 } });
                         UpdateMassive();
                         count = 0;
                         Destroy(selectedBlock.gameObject);

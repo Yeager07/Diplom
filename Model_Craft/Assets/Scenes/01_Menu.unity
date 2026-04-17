@@ -980,6 +980,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pdfFileName: manual.pdf
+  pageTextures: []
+  currentPageIndex: 0
   pageNumberText: {fileID: 1553299824}
   nextButton: {fileID: 2008387200}
   prevButton: {fileID: 784518109}
@@ -3856,6 +3858,7 @@ MonoBehaviour:
   minDistance: 1
   distance: 0
   currentDistance: 0
+  targetPosition: {x: 0, y: 0, z: 0}
   movedObject: {fileID: 0}
   selectedItem: 0
   previousSelectedItem: 0

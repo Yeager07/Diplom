@@ -58,27 +58,45 @@ public class InventoryCard : MonoBehaviour
 
     public void GenerateBlock()
     {
-        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
-        {
-            Camera.main.GetComponent<MainScript>().SpawnBlock(Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
-            inventoryManager.keys[playerScript.selectedItem - 1], Camera.main.GetComponent<MainScript>().blockPrefabs[inventoryManager.keys[playerScript.selectedItem - 1].Split(" ")[0]],
-            applyMaterial);
+        string blockName = inventoryManager.keys[playerScript.selectedItem - 1];
         
-            DeleteBLock();
+        if(string.IsNullOrEmpty(blockName))
+        return;
+        
+        if(playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        return;
 
-            LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+        Color blockColor = applyMaterial.color;
+        Debug.Log($"GenerateBlock: blockName={blockName}, color={blockColor}");
+        LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
 
-            if(stepManager != null)
-            {
-                string blockName = inventoryManager.keys[playerScript.selectedItem - 1];
-                stepManager.OnBlockUsed(blockName);
-            }
+        bool isNeeded = stepManager != null && stepManager.IsBlockColorNeeded(blockName, blockColor);
+        
+        if(!isNeeded && playerScript.typeGame == "CareerMode")
+        {
+            Debug.Log("Этот блок не нужен для текущего шага! Используйте Delete, чтобы убрать его.");
+            return;
         }
-    }
 
+        // Спавним блок в зоне сборки
+        Camera.main.GetComponent<MainScript>().SpawnBlock(
+            Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
+            blockName,
+            Camera.main.GetComponent<MainScript>().blockPrefabs[blockName.Split(" ")[0]],
+            applyMaterial);
+
+        // Уведомляем StepManager, что блок использован
+        if(stepManager != null && playerScript.typeGame == "CareerMode")
+        stepManager.OnBlockUsed(blockName);
+
+        // Удаляем блок из инвентаря без возврата на стол
+        inventoryManager.RemoveBlockFromInventoryNoNotify(playerScript.selectedItem, blockColor);
+        ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
+    }
+    
     public void DeleteBLock()
     {
-        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        /*if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
             foreach(Dictionary<Color, int> dictionary in inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]])
             {
@@ -90,16 +108,7 @@ public class InventoryCard : MonoBehaviour
                         {
                             dictionary[value.Key] -= 1;
                             inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem, value.Key);
-                            //inventoryManager.RemoveBlockFromInventoryByColor(playerScript.selectedItem, iconColor.GetComponent<Image>().color);
                             ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
-
-                            LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
-
-                            if(stepManager != null)
-                            {
-                                string blockName = inventoryManager.keys[playerScript.selectedItem - 1];
-                                stepManager.OnBlockUsed(blockName);
-                            }
                             
                             return;
                         }
@@ -108,22 +117,29 @@ public class InventoryCard : MonoBehaviour
                         {
                             inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]].Remove(dictionary);
                             inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem, value.Key);
-                            //inventoryManager.RemoveBlockFromInventoryByColor(playerScript.selectedItem, iconColor.GetComponent<Image>().color);
                             ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
-
-                            LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
-
-                            if(stepManager != null)
-                            {
-                                string blockName = inventoryManager.keys[playerScript.selectedItem - 1];
-                                stepManager.OnBlockUsed(blockName);
-                            }
                             
                             return;
                         }
                     }
                 }
             }
+        }*/
+
+        if (!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        {
+            Color blockColor = iconColor.GetComponent<Image>().color;
+            string blockName = inventoryManager.keys[playerScript.selectedItem - 1];
+            LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+            bool isNeeded = stepManager != null && stepManager.IsBlockColorNeeded(blockName, blockColor);
+            
+            if(isNeeded && playerScript.typeGame == "CareerMode")
+            inventoryManager.RemoveBlockFromInventoryWithNotify(playerScript.selectedItem, blockColor);
+            
+            else
+            inventoryManager.RemoveBlockFromInventoryNoNotify(playerScript.selectedItem, blockColor);
+            
+            ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
         }
     }
 

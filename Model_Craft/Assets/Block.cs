@@ -468,14 +468,14 @@ public class Block : MonoBehaviour
         rotateDirection = currentObject.rotation.eulerAngles;
     }
 
-    private void MoveSpawnedObject()
+    /*private void MoveSpawnedObject()
     {
         if(Input.GetMouseButtonUp(0))
         Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced = true;
         
         else
         Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().Move(playerScript.distance, Camera.main.GetComponent<MainScript>().newBlock);
-    }
+    }*/
 
     /*void FixedUpdate()
     {   
@@ -486,10 +486,7 @@ public class Block : MonoBehaviour
     {   
         Camera.main.GetComponent<MainScript>().MakeObjectGravity(gameObject);
 
-        if(Camera.main.GetComponent<MainScript>().newBlock != null && !Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced)
-        MoveSpawnedObject(); 
-
-        else if(Input.GetMouseButtonUp(0) && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        if(Input.GetMouseButtonUp(0) && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {   
             GetComponent<MeshRenderer>().material = mainBlockMaterial;
 
