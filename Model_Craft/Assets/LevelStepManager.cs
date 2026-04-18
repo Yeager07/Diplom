@@ -86,7 +86,7 @@ public class LevelStepManager : MonoBehaviour
                 foreach(var req in step.blocks)
                 {
                     string fullName = req.block.type + " " + req.block.blockName;
-                    int remaining = remainingForCurrentStep.ContainsKey(fullName) ? remainingForCurrentStep[req.block.blockName] : 0;
+                    int remaining = remainingForCurrentStep.ContainsKey(fullName) ? remainingForCurrentStep[req.block.type + " " + req.block.blockName] : 0;
                     int total = totalForCurrentStep[fullName];
                     int missing = total - remaining;
                     
@@ -243,11 +243,11 @@ public class LevelStepManager : MonoBehaviour
         for(int i = 0; i < count; i++)
         SpawnBlockAtSpawnPoint(req.block, req.color);
 
-        if(remainingForCurrentStep.ContainsKey(blockName))
+        /*if(remainingForCurrentStep.ContainsKey(blockName))
         remainingForCurrentStep[blockName] += count;
         
         else
-        remainingForCurrentStep[blockName] = count;
+        remainingForCurrentStep[blockName] = count;*/
 
         if(stepCompleted)
         stepCompleted = false;
