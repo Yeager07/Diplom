@@ -66,7 +66,7 @@ public class InventoryCard : MonoBehaviour
         if(playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         return;
 
-        Color blockColor = applyMaterial.color;
+        Color blockColor = iconColor.GetComponent<Image>().color;
         Debug.Log($"GenerateBlock: blockName={blockName}, color={blockColor}");
         LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
 

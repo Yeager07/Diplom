@@ -245,25 +245,25 @@ public class InventoryManager : MonoBehaviour
 
     public void AddToInventory(Transform selectedBlock)
     {
-        if(inventory.Count != 5 && !inventory.ContainsKey(selectedBlock.name.Replace("(Clone)", "")))
+        if(inventory.Count != 5 && !inventory.ContainsKey(selectedBlock.name))
         {
-            inventory.Add(selectedBlock.name.Replace("(Clone)", ""), 1);
+            inventory.Add(selectedBlock.name, 1);
                 
-            materialsCount.Add(selectedBlock.name.Replace("(Clone)", ""), new List<Dictionary<Color, int>>()
+            materialsCount.Add(selectedBlock.name, new List<Dictionary<Color, int>>()
             { new Dictionary<Color, int>()  { { selectedBlock.GetComponent<Renderer>().material.color, 1 } }});
 
-            //Debug.Log($"Добавляю новый цвет {selectedBlock.GetComponent<Renderer>().material.color}");
+            //Debug.Log($"Добавляю новый цвет {selectedBlock.GetComponent<Renderer>().material.color} для блока {selectedBlock.name}");
             
             UpdateMassive();
 
             Destroy(selectedBlock.gameObject);
         }
 
-        else if(inventory.ContainsKey(selectedBlock.name.Replace("(Clone)", "")))
+        else if(inventory.ContainsKey(selectedBlock.name))
         {
             inventory[selectedBlock.name.Replace("(Clone)", "")] += 1;
 
-            foreach(Dictionary<Color, int> dictionary in materialsCount[selectedBlock.name.Replace("(Clone)", "")])
+            foreach(Dictionary<Color, int> dictionary in materialsCount[selectedBlock.name])
             {
                 foreach(var value in dictionary)
                 {
@@ -279,10 +279,10 @@ public class InventoryManager : MonoBehaviour
                         return;
                     }
                     
-                    if(count == materialsCount[selectedBlock.name.Replace("(Clone)", "")].Count)
+                    if(count == materialsCount[selectedBlock.name].Count)
                     {
                         //Debug.Log($"Такого цвета нет, добавляю его как новый {selectedBlock.GetComponent<Renderer>().material.color}");
-                        materialsCount[selectedBlock.name.Replace("(Clone)", "")].Add(new Dictionary<Color, int>()  { { selectedBlock.GetComponent<Renderer>().material.color, 1 } });
+                        materialsCount[selectedBlock.name].Add(new Dictionary<Color, int>()  { { selectedBlock.GetComponent<Renderer>().material.color, 1 } });
                         UpdateMassive();
                         count = 0;
                         Destroy(selectedBlock.gameObject);

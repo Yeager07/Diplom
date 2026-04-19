@@ -15,6 +15,8 @@ public class LevelStepManager : MonoBehaviour
     private bool stepCompleted = true; // текущий шаг выполнен (все детали использованы)
     private bool isSpawning = false;
 
+    private HashSet<int> completedSteps = new HashSet<int>();
+
     void Start()
     {
         pdfViewer = GameObject.FindGameObjectWithTag("Player").transform.Find("PdfViewer").GetComponent<PdfInstructionViewer>();
@@ -67,7 +69,7 @@ public class LevelStepManager : MonoBehaviour
     private void OnPageChanged(int pageNumber)
     {
         Debug.Log($"OnPageChanged: page={pageNumber}, currentStepPage={currentStepPage}, stepCompleted={stepCompleted}, remainingCount={remainingForCurrentStep.Count}");
-
+        
         if(isSpawning)
         return;
 
@@ -99,6 +101,14 @@ public class LevelStepManager : MonoBehaviour
             return;
         }
 
+        if(completedSteps.Contains(pageNumber))
+        {
+            Debug.Log($"Шаг для страницы {pageNumber} уже завершён, генерация пропущена.");
+            currentStepPage = pageNumber;
+            stepCompleted = true;
+            return;
+        }
+
         // Переход на новый шаг (другую страницу)
         // Проверяем, есть ли блоки в зоне подбора
         if(AreThereBlocksInPickupZone())
@@ -114,7 +124,15 @@ public class LevelStepManager : MonoBehaviour
             return;
         }
 
+        if(step.blocks.Count == 0)
+        {
+            Debug.Log($"На данном шаге нет деталей, переход дальше.");
+            currentStepPage = pageNumber;
+            stepCompleted = true;
+            return;
+        }
         // Генерируем новый шаг
+        else
         StartCoroutine(SpawnStepWithDelay(step, pageNumber));
     }
 
@@ -189,6 +207,7 @@ public class LevelStepManager : MonoBehaviour
         {
             stepCompleted = true;
             Debug.Log("Шаг выполнен! Можно переходить к следующей странице.");
+            completedSteps.Add(currentStepPage);
         }
     }
 

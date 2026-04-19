@@ -28,6 +28,8 @@ MonoBehaviour:
     - block: {fileID: 11400000, guid: cf272db5f82e7a540927e818faf11dc6, type: 2}
       color: {r: 1, g: 0.906075, b: 0, a: 1}
       count: 3
+  - pageNumber: 4
+    blocks: []
   - pageNumber: 5
     blocks:
     - block: {fileID: 11400000, guid: 930f986ffae42c545ad6d9b070cff356, type: 2}
@@ -39,7 +41,13 @@ MonoBehaviour:
     - block: {fileID: 11400000, guid: ba689b6103f4f0c4baf713df1ee1b832, type: 2}
       color: {r: 1, g: 0, b: 0.561501, a: 1}
       count: 2
-  - pageNumber: 4
-    blocks: []
-  - pageNumber: 5
+  - pageNumber: 6
+    blocks:
+    - block: {fileID: 11400000, guid: d0776618423b6774d8efd290417d9178, type: 2}
+      color: {r: 0, g: 0, b: 0, a: 1}
+      count: 1
+    - block: {fileID: 11400000, guid: 356c6e05d29d939468de9d6b4814bb80, type: 2}
+      color: {r: 1, g: 0.3582275, b: 0, a: 1}
+      count: 1
+  - pageNumber: 7
     blocks: []

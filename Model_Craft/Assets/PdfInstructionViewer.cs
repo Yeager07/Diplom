@@ -26,7 +26,7 @@ public class PdfInstructionViewer : MonoBehaviour
     void Start()
     {
         pdfViewer = GetComponent<PdfViewerUI>();
-        if (pdfViewer == null)
+        if(pdfViewer == null)
         {
             Debug.LogError("PdfViewerUI не найден на объекте!");
             return;
@@ -50,7 +50,7 @@ public class PdfInstructionViewer : MonoBehaviour
         // Асинхронно открываем диалог выбора файла
         StandaloneFileBrowser.OpenFilePanelAsync("Выберите файл инструкции", "", extensions, false, (string[] paths) => {
             // Этот код выполнится после того, как пользователь выберет файл
-            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
+            if(paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
             {
                 string selectedPath = paths[0];
                 Debug.Log($"Пользователь выбрал файл: {selectedPath}");
@@ -65,8 +65,8 @@ public class PdfInstructionViewer : MonoBehaviour
     private IEnumerator CopyAndLoadExternalPdf(string filePath)
     {
         // Показываем сообщение о загрузке (опционально)
-        if (pageNumberText != null)
-            pageNumberText.text = "Загрузка...";
+        if(pageNumberText != null)
+        pageNumberText.text = "Загрузка...";
 
         // Даём кадр, чтобы текст обновился
         yield return null;
@@ -78,7 +78,7 @@ public class PdfInstructionViewer : MonoBehaviour
             string destinationPath = Path.Combine(Application.streamingAssetsPath, fileName);
 
             // 2. Удаляем старый файл с таким же именем, если он есть
-            if (File.Exists(destinationPath))
+            if(File.Exists(destinationPath))
             {
                 File.Delete(destinationPath);
                 Debug.Log($"Старый файл {fileName} удалён.");
@@ -100,8 +100,9 @@ public class PdfInstructionViewer : MonoBehaviour
         catch (System.Exception e)
         {
             Debug.LogError($"Ошибка при копировании файла: {e.Message}");
-            if (pageNumberText != null)
-                pageNumberText.text = "Ошибка загрузки";
+            
+            if(pageNumberText != null)
+            pageNumberText.text = "Ошибка загрузки";
         }
     }
 
