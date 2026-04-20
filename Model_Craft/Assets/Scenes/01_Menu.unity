@@ -12307,6 +12307,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8145ee5869156014c8e944f2d9e2c85c, type: 2}
   - {fileID: 11400000, guid: 89fcdb69ccd6c5f4a8d3f8ff6be7da54, type: 2}
   - {fileID: 11400000, guid: 7aaab0308bafc3149a9c15f059d3493b, type: 2}
+  - {fileID: 11400000, guid: aeb05ce42fe6a0743a05e0f0e1055dbd, type: 2}
+  - {fileID: 11400000, guid: 5c9f557485bb6ac43917e91dd8a9b224, type: 2}
+  - {fileID: 11400000, guid: de56d6f65e9f801429e3254951379538, type: 2}
+  - {fileID: 11400000, guid: 65c751b32a5f1c14e80ca04b892af38b, type: 2}
+  - {fileID: 11400000, guid: 8d1def6b3d4cfb54e9d426ec30c13e6f, type: 2}
+  - {fileID: 11400000, guid: 491a5da075d98144f80e60fc6d042fea, type: 2}
   colorSelector: {fileID: 852454822}
   scrollRect: {fileID: 2142034779}
 --- !u!224 &1940471573
