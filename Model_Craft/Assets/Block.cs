@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using static System.Math;
 
+using System.Linq;
+
 public class Block : MonoBehaviour
 {
     private InventoryManager inventoryManager;
@@ -127,7 +129,7 @@ public class Block : MonoBehaviour
         FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.y = hollowPosition.y % (4 * bulgeWidth / 10);
 
         if(hollowPosition.z % bulgeWidth != 0)
-        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.z = hollowPosition.z % bulgeWidth;    
+        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.z = hollowPosition.z % bulgeWidth;
     }
 
     private void CalculateMoveVector(float distance, Transform movingObject, Vector3 moveSide, Vector3 moveHeight)
@@ -216,7 +218,7 @@ public class Block : MonoBehaviour
         {   
             curPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
             movingObject.position = Camera.main.ScreenToWorldPoint(curPosition);
-            PlaceObjectCorrectly(movingObject);
+            //PlaceObjectCorrectly(movingObject);
         }
 
         else
@@ -257,6 +259,8 @@ public class Block : MonoBehaviour
             else
                 blockScript.zDistance += Input.GetAxis("Mouse Y");
         }
+
+        PlaceObjectCorrectly(movingObject);
     }
 
     void OnMouseDrag()
@@ -362,7 +366,9 @@ public class Block : MonoBehaviour
             CalculateDistance(currentBlock, place, currentBlock.GetComponent<Block>().hollowChild, place.GetComponent<Block>().bulgeChild);
             
             if(Vector3.Dot(currentBlock.GetComponent<Block>().hollowChild[0].up, currentBlock.GetComponent<Block>().nearestBulge.up) > 0.99f)
-            {   
+            {
+                currentBlock.GetComponent<Block>().isFree = false;
+                
                 if(place.name.Split(" ")[0] == "Tile" && currentBlock.name.Split(" ")[0] == "Tile")
                 return;
 
@@ -378,11 +384,11 @@ public class Block : MonoBehaviour
                     currentBlock.transform.position = currentBlock.GetComponent<Block>().placeHollowPosition - currentBlock.transform.TransformVector(currentBlock.GetComponent<Block>().localBulgePosition);
                         
                     else
-                    currentBlock.transform.position = currentBlock.GetComponent<Block>().bulgePosition - currentBlock.transform.TransformVector(localHollowPosition);
+                        currentBlock.transform.position = currentBlock.GetComponent<Block>().bulgePosition - currentBlock.transform.TransformVector(localHollowPosition);
                 }
-                
-                currentBlock.GetComponent<Block>().isFree = false;
             }
+            
+            //currentBlock.GetComponent<Block>().isFree = false;
         }
 
         place.GetComponent<Block>().blockChild.Add(currentBlock.transform);
@@ -390,7 +396,7 @@ public class Block : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {        
-        if(playerScript.isBuildMode && !isMagnetic && gameObject == playerScript.movedObject)
+        if(playerScript.isBuildMode /*&& !isMagnetic*/ && gameObject == playerScript.movedObject)
         {
             if(other.CompareTag("Selectable"))
             {
@@ -492,16 +498,19 @@ public class Block : MonoBehaviour
 
             if(isFree && playerScript.movedObject == gameObject)
             {
-                FindMainParent(transform).position -= FindMainParent(transform).gameObject.GetComponent<Block>().moveVector;
-                FindMainParent(transform).gameObject.GetComponent<Block>().moveVector = new Vector3(0.0f, 0.0f, 0.0f);
+                playerScript.movedObject.GetComponent<Block>().FindMainParent(transform).position -= FindMainParent(transform).gameObject.GetComponent<Block>().moveVector;
+                playerScript.movedObject.GetComponent<Block>().FindMainParent(transform).gameObject.GetComponent<Block>().moveVector = new Vector3(0.0f, 0.0f, 0.0f);                
                 playerScript.movedObject = null;
             }
 
             if(!isFree)
             {
                 isMagnetic = true;
+                
+                if(place != null)
                 transform.SetParent(place.transform);
-                playerScript.movedObject = null;
+                
+                //playerScript.movedObject = null;
             }
 
             if(previousBlock.Count != 1)
