@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4245313435432617894}
+  - component: {fileID: 4614419433719929008}
   m_Layer: 0
   m_Name: Bulge
   m_TagString: Point
@@ -31,6 +32,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4126095485202209281}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4614419433719929008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234749496014200177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cc35793fd5c4874f9ce8e4d9f7e0a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isFree: 1
 --- !u!1 &766087579451077793
 GameObject:
   m_ObjectHideFlags: 0
@@ -40,6 +54,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6429727948609941102}
+  - component: {fileID: 79238627131626772}
   m_Layer: 0
   m_Name: Hollow
   m_TagString: Point
@@ -62,6 +77,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4126095485202209281}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &79238627131626772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 766087579451077793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cc35793fd5c4874f9ce8e4d9f7e0a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isFree: 1
 --- !u!1 &2104393304339353774
 GameObject:
   m_ObjectHideFlags: 0
@@ -71,6 +99,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1246970058272239340}
+  - component: {fileID: 8087156835840131334}
   m_Layer: 0
   m_Name: Bulge
   m_TagString: Point
@@ -93,6 +122,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4126095485202209281}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8087156835840131334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104393304339353774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cc35793fd5c4874f9ce8e4d9f7e0a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isFree: 1
 --- !u!1 &2527002838456675831
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,6 +144,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 976755059163897133}
+  - component: {fileID: 932503466021142814}
   m_Layer: 0
   m_Name: Bulge
   m_TagString: Point
@@ -124,6 +167,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4126095485202209281}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &932503466021142814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2527002838456675831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cc35793fd5c4874f9ce8e4d9f7e0a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isFree: 1
 --- !u!1 &3669976854520194950
 GameObject:
   m_ObjectHideFlags: 0
@@ -133,6 +189,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5148413242874329184}
+  - component: {fileID: 3299381922012196086}
   m_Layer: 0
   m_Name: Hollow
   m_TagString: Point
@@ -155,6 +212,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4126095485202209281}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3299381922012196086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3669976854520194950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cc35793fd5c4874f9ce8e4d9f7e0a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isFree: 1
 --- !u!1 &5506111170539956223
 GameObject:
   m_ObjectHideFlags: 0
@@ -164,6 +234,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6030356458856287673}
+  - component: {fileID: 7895545049735515003}
   m_Layer: 0
   m_Name: Hollow
   m_TagString: Point
@@ -186,6 +257,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4126095485202209281}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7895545049735515003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5506111170539956223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cc35793fd5c4874f9ce8e4d9f7e0a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isFree: 1
 --- !u!1 &7096108754670251529
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,6 +279,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 652118185490541294}
+  - component: {fileID: 4158784116447587072}
   m_Layer: 0
   m_Name: Hollow
   m_TagString: Point
@@ -217,6 +302,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4126095485202209281}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4158784116447587072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7096108754670251529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cc35793fd5c4874f9ce8e4d9f7e0a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isFree: 1
 --- !u!1 &8094146629304170969
 GameObject:
   m_ObjectHideFlags: 0
@@ -350,6 +448,7 @@ MonoBehaviour:
   isMagnetic: 0
   isPlaced: 0
   blockType: 
+  countPoint: 0
 --- !u!54 &3677296366310520136
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -407,6 +506,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5118207662400355010}
+  - component: {fileID: 5922552909165903878}
   m_Layer: 0
   m_Name: Bulge
   m_TagString: Point
@@ -429,3 +529,16 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4126095485202209281}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5922552909165903878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8584442869231432164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cc35793fd5c4874f9ce8e4d9f7e0a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isFree: 1

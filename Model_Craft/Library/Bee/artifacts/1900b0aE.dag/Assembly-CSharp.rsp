@@ -411,6 +411,7 @@
 "Assets/BlockCard.cs"
 "Assets/BlockCatalog.cs"
 "Assets/BlockData.cs"
+"Assets/BlockPoint.cs"
 "Assets/BuildSceneScript.cs"
 "Assets/ColorPicker.cs"
 "Assets/ColorSelector.cs"

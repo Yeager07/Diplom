@@ -21,6 +21,7 @@ public class Block : MonoBehaviour
     private Vector3 localHollowPosition;
     private Vector3 localBulgePosition;
     private Vector3 placeHollowPosition;
+    private Material mainBlockMaterial;
     public Vector3 moveVector = new Vector3(0.0f, 0.0f, 0.0f);
     public Vector3 curPosition;
     public Vector3 previousPosition;
@@ -32,7 +33,7 @@ public class Block : MonoBehaviour
     private Vector3 moveY = new Vector3(0.0f, 0.16f, 0.0f);
     private Vector3 moveZ = new Vector3(0.0f, 0.0f, 0.16f);
     private Vector3 playerRotation;
-    public Vector3 spaceBetweenBlockCursor;
+    //public Vector3 spaceBetweenBlockCursor;
     public float xDistance = 0.0f;
     public float zDistance = 0.0f;
     public List<Transform> hollowChild;
@@ -48,9 +49,8 @@ public class Block : MonoBehaviour
     public List<Vector3> positionHistory = new List<Vector3>();
     public bool isFree = true;
     public bool isMagnetic = false;
-    public bool isPlaced = false;
-    public string blockType;
-    private Material mainBlockMaterial;
+    public int countPoint = 0; //Число занятых вершин
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -99,6 +99,100 @@ public class Block : MonoBehaviour
                 childRotation.Add(transform.localRotation.eulerAngles);
                 massiveChild.Add(child);
             }
+        }
+    }
+
+    private void CalculatePointCount(GameObject currentBlock, GameObject place)
+    {
+        List<Transform> currentHollow = currentBlock.GetComponent<Block>().hollowChild;
+        List<Transform> currentBulge = currentBlock.GetComponent<Block>().bulgeChild;
+        List<Transform> placeHollow = place.GetComponent<Block>().hollowChild;
+        List<Transform> placeBulge = place.GetComponent<Block>().bulgeChild;
+
+        //Изменение статуса свободы вершин
+        foreach(Transform hollow in currentHollow)
+        {
+            foreach(Transform bulge in placeBulge)
+            {
+                if(hollow.position == bulge.position)
+                {
+                    hollow.gameObject.GetComponent<BlockPoint>().isFree = false;
+                    break;
+                }
+
+                else
+                hollow.gameObject.GetComponent<BlockPoint>().isFree = true;
+            }
+        }
+
+        foreach(Transform bulge in currentBulge)
+        {
+            foreach(Transform hollow in placeHollow)
+            {
+                if(bulge.position == hollow.position)
+                {
+                    bulge.gameObject.GetComponent<BlockPoint>().isFree = false;
+                    break;
+                }
+
+                else
+                bulge.gameObject.GetComponent<BlockPoint>().isFree = true;
+            }
+        }
+
+        foreach(Transform hollow in placeHollow)
+        {
+            foreach(Transform bulge in currentBulge)
+            {
+                if(hollow.position == bulge.position)
+                {
+                    hollow.gameObject.GetComponent<BlockPoint>().isFree = false;
+                    break;
+                }
+
+                else
+                hollow.gameObject.GetComponent<BlockPoint>().isFree = true;
+            }
+        }
+
+        foreach(Transform bulge in placeBulge)
+        {
+            foreach(Transform hollow in currentHollow)
+            {
+                if(bulge.position == hollow.position)
+                {
+                    bulge.gameObject.GetComponent<BlockPoint>().isFree = false;
+                    break;
+                }
+
+                else
+                bulge.gameObject.GetComponent<BlockPoint>().isFree = true;
+            }
+        }
+        
+        //Вычисление числа занятых вершин
+        foreach(Transform bulge in currentBulge)
+        {
+            if(!bulge.gameObject.GetComponent<BlockPoint>().isFree)
+            currentBlock.GetComponent<Block>().countPoint++;
+        }
+        
+        foreach(Transform hollow in currentHollow)
+        {
+            if(!hollow.gameObject.GetComponent<BlockPoint>().isFree)
+            currentBlock.GetComponent<Block>().countPoint++;
+        }
+
+        foreach(Transform bulge in placeBulge)
+        {
+            if(!bulge.gameObject.GetComponent<BlockPoint>().isFree)
+            place.GetComponent<Block>().countPoint++;
+        }
+        
+        foreach(Transform hollow in placeHollow)
+        {
+            if(!hollow.gameObject.GetComponent<BlockPoint>().isFree)
+            place.GetComponent<Block>().countPoint++;
         }
     }
 
@@ -284,7 +378,7 @@ public class Block : MonoBehaviour
                     Move(playerScript.distance, gameObject);
 
                     else
-                    {   
+                    {       
                         if(!FindMainParent(transform).gameObject.GetComponent<Block>().isFree)
                         {
                             FindMainParent(transform).gameObject.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
@@ -395,7 +489,7 @@ public class Block : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other)
-    {        
+    {
         if(playerScript.isBuildMode /*&& !isMagnetic*/ && gameObject == playerScript.movedObject)
         {
             if(other.CompareTag("Selectable"))
@@ -445,16 +539,33 @@ public class Block : MonoBehaviour
             isFree = true;
 
             if(blockChild.Count != 0)
-            blockChild.RemoveAt(0);
+            blockChild.Remove(playerScript.movedObject.transform);
         }
 
         isMagnetic = false;
         
+        foreach(Transform hollow in hollowChild)
+        hollow.gameObject.GetComponent<BlockPoint>().isFree = true;
+
+        foreach(Transform bulge in bulgeChild)
+        bulge.gameObject.GetComponent<BlockPoint>().isFree = true;
+
+        if(playerScript.isBuildMode && blockChild.Count != 0)
+        {
+            countPoint = 0;
+            foreach(Transform block in blockChild)
+            {
+                block.gameObject.GetComponent<Block>().countPoint = 0;
+                Debug.Log($"Прошёлся по блокам {gameObject.name} текущий {block.gameObject.name}");
+                CalculatePointCount(gameObject, block.gameObject);
+            }
+        }
+
         if(previousBlock.Count != 0)
         previousBlock.RemoveAt(0);
 
         if(blockChild.Count != 0)
-        blockChild.RemoveAt(0);
+        blockChild.Remove(playerScript.movedObject.transform);
     }
 
     private void Rotation(Transform currentObject)
@@ -473,15 +584,6 @@ public class Block : MonoBehaviour
 
         rotateDirection = currentObject.rotation.eulerAngles;
     }
-
-    /*private void MoveSpawnedObject()
-    {
-        if(Input.GetMouseButtonUp(0))
-        Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().isPlaced = true;
-        
-        else
-        Camera.main.GetComponent<MainScript>().newBlock.GetComponent<Block>().Move(playerScript.distance, Camera.main.GetComponent<MainScript>().newBlock);
-    }*/
 
     /*void FixedUpdate()
     {   
@@ -525,6 +627,20 @@ public class Block : MonoBehaviour
                         block.GetComponent<Block>().isMagnetic = true;
                         previousPosition = transform.localPosition;
                     }
+                }
+            }
+
+            FindChildPoint("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
+            FindChildPoint("Bulge", bulgeChildCoordinat, bulgeChildRotation, transform, bulgeChild);
+
+            if(playerScript.isBuildMode && blockChild.Count != 0)
+            {
+                countPoint = 0;
+                foreach(Transform block in blockChild)
+                {
+                    block.gameObject.GetComponent<Block>().countPoint = 0;
+                    Debug.Log($"Прошёлся по блокам {gameObject.name} текущий {block.gameObject.name}");
+                    CalculatePointCount(gameObject, block.gameObject);
                 }
             }
 
