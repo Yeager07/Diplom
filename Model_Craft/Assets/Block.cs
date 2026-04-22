@@ -33,7 +33,6 @@ public class Block : MonoBehaviour
     private Vector3 moveY = new Vector3(0.0f, 0.16f, 0.0f);
     private Vector3 moveZ = new Vector3(0.0f, 0.0f, 0.16f);
     private Vector3 playerRotation;
-    //public Vector3 spaceBetweenBlockCursor;
     public float xDistance = 0.0f;
     public float zDistance = 0.0f;
     public List<Transform> hollowChild;
@@ -484,7 +483,7 @@ public class Block : MonoBehaviour
                 place = null;
 
                 if(blockChild.Count != 0)
-                blockChild.RemoveAt(0);
+                blockChild.Remove(playerScript.movedObject.transform);
             }
         }
 
@@ -591,7 +590,9 @@ public class Block : MonoBehaviour
 
             if(playerScript.isBuildMode && blockChild.Count != 0)
             {
+                if(transform.parent == null)
                 countPoint = 0;
+                
                 foreach(Transform block in blockChild)
                 {
                     block.gameObject.GetComponent<Block>().countPoint = 0;
