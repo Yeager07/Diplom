@@ -22,7 +22,7 @@ public class Block : MonoBehaviour
     public Vector3 localBulgePosition;
     public Vector3 placeHollowPosition;
     private Material mainBlockMaterial;
-    private Vector3 offset;
+    public Vector3 offset;
     private float distance;
     public Vector3 moveVector = new Vector3(0.0f, 0.0f, 0.0f);
     public Vector3 curPosition;
@@ -269,9 +269,13 @@ public class Block : MonoBehaviour
 
         if(blockScript.isFree)
         {   
-            curPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
-            movingObject.position = Camera.main.ScreenToWorldPoint(curPosition) + movingObject.GetComponent<Block>().offset;
-            //PlaceObjectCorrectly(movingObject);
+            blockScript.curPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
+            
+            if(playerScript.isBuildMode)
+            movingObject.position = Camera.main.ScreenToWorldPoint(curPosition) + blockScript.offset;
+
+            else
+            movingObject.position = Camera.main.ScreenToWorldPoint(curPosition);
         }
 
         else
@@ -316,10 +320,19 @@ public class Block : MonoBehaviour
         PlaceObjectCorrectly(movingObject);
     }
 
+    private void CalculateOffset(GameObject movingObject)
+    {
+        if(movingObject.GetComponent<Block>().offset == new Vector3(0.0f, 0.0f, 0.0f))
+        {
+            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance));
+            movingObject.GetComponent<Block>().offset = movingObject.transform.position - mouseWorldPos;        
+        }
+    }
+
     void OnMouseDown()
     {
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance));
-        offset = transform.position - mouseWorldPos;
+        if(FindMainParent(transform) == transform && playerScript.isBuildMode)
+        CalculateOffset(gameObject);
     }
 
     void OnMouseDrag()
@@ -336,23 +349,24 @@ public class Block : MonoBehaviour
             {   
                 if(!Input.GetKey(KeyCode.R))
                 {
-                    if(FindMainParent(transform) == null)
+                    if(FindMainParent(transform) == transform)
                     Move(playerScript.distance, gameObject);
 
                     else
                     {       
-                        if(!FindMainParent(transform).gameObject.GetComponent<Block>().isFree)
-                        {
-                            FindMainParent(transform).gameObject.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
-
-                            if(FindMainParent(transform).GetComponent<Block>().blockChild.Count == 0)
-                            mainScript.FindAllChild(FindMainParent(transform), FindMainParent(transform).GetComponent<Block>().blockChild);
-
-                            foreach(Transform child in FindMainParent(transform).GetComponent<Block>().blockChild)
-                            child.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
-                        }
-
+                        CalculateOffset(FindMainParent(transform).gameObject);
                         Move(playerScript.distance, FindMainParent(transform).gameObject);
+                    }
+
+                    if(!FindMainParent(transform).gameObject.GetComponent<Block>().isFree)
+                    {
+                        FindMainParent(transform).gameObject.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
+
+                        if(FindMainParent(transform).GetComponent<Block>().blockChild.Count == 0)
+                        mainScript.FindAllChild(FindMainParent(transform), FindMainParent(transform).GetComponent<Block>().blockChild);
+
+                        foreach(Transform child in FindMainParent(transform).GetComponent<Block>().blockChild)
+                        child.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
                     }
                 }
             }
@@ -376,8 +390,6 @@ public class Block : MonoBehaviour
         
         if(playerScript.isBuildMode)
         playerScript.target = new Vector3(0.0f, 0.0f, 0.0f);
-
-        //FindMainParent(transform).GetComponent<Block>().blockChild.Clear();
     }
 
     private void CalculateDistance(GameObject currentBlock, GameObject place, List<Transform> hollows, List<Transform> bulges)
@@ -557,6 +569,9 @@ public class Block : MonoBehaviour
     {   
         Camera.main.GetComponent<MainScript>().MakeObjectGravity(gameObject);
 
+        if(gameObject == playerScript.movedObject && Input.GetMouseButton(0) && offset != new Vector3 (0.0f, 0.0f, 0.0f))
+        Move(playerScript.distance, gameObject);
+
         if(Input.GetMouseButtonUp(0) && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {   
             offset = new Vector3(0.0f, 0.0f, 0.0f);
@@ -576,8 +591,6 @@ public class Block : MonoBehaviour
                 
                 if(place != null)
                 transform.SetParent(place.transform);
-                
-                //playerScript.movedObject = null;
             }
 
             if(previousBlock.Count != 1)
