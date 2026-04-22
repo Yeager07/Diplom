@@ -22,6 +22,8 @@ public class Block : MonoBehaviour
     public Vector3 localBulgePosition;
     public Vector3 placeHollowPosition;
     private Material mainBlockMaterial;
+    private Vector3 offset;
+    private float distance;
     public Vector3 moveVector = new Vector3(0.0f, 0.0f, 0.0f);
     public Vector3 curPosition;
     public Vector3 previousPosition;
@@ -268,7 +270,7 @@ public class Block : MonoBehaviour
         if(blockScript.isFree)
         {   
             curPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
-            movingObject.position = Camera.main.ScreenToWorldPoint(curPosition);
+            movingObject.position = Camera.main.ScreenToWorldPoint(curPosition) + movingObject.GetComponent<Block>().offset;
             //PlaceObjectCorrectly(movingObject);
         }
 
@@ -312,6 +314,12 @@ public class Block : MonoBehaviour
         }
 
         PlaceObjectCorrectly(movingObject);
+    }
+
+    void OnMouseDown()
+    {
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance));
+        offset = transform.position - mouseWorldPos;
     }
 
     void OnMouseDrag()
@@ -551,6 +559,8 @@ public class Block : MonoBehaviour
 
         if(Input.GetMouseButtonUp(0) && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {   
+            offset = new Vector3(0.0f, 0.0f, 0.0f);
+            
             GetComponent<MeshRenderer>().material = mainBlockMaterial;
 
             if(isFree && playerScript.movedObject == gameObject)
