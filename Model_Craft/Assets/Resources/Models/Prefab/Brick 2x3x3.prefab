@@ -170,17 +170,17 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7894743460821642417}
-  - {fileID: 7756003921330674094}
   - {fileID: 9149727095435500493}
+  - {fileID: 7756003921330674094}
   - {fileID: 5921534992365585649}
-  - {fileID: 3531498655294039309}
   - {fileID: 8175080215943401802}
+  - {fileID: 3531498655294039309}
   - {fileID: 9031997542479299638}
-  - {fileID: 1591620958318406548}
   - {fileID: 1401316914519903678}
+  - {fileID: 1591620958318406548}
   - {fileID: 853797074981875282}
-  - {fileID: 7591207773747019079}
   - {fileID: 3209525887700755417}
+  - {fileID: 7591207773747019079}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3565765833950359213
@@ -248,13 +248,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde1ead9e0d071843ad2ee3c9d86dc3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulgePosition: {x: 0, y: 0, z: 0}
+  localHollowPosition: {x: 0, y: 0, z: 0}
+  localBulgePosition: {x: 0, y: 0, z: 0}
+  placeHollowPosition: {x: 0, y: 0, z: 0}
   moveVector: {x: 0, y: 0, z: 0}
   curPosition: {x: 0, y: 0, z: 0}
   previousPosition: {x: 0, y: 0, z: 0}
   colorChoosePanel: {fileID: 0}
   place: {fileID: 0}
   blockHeight: 0.064
-  spaceBetweenBlockCursor: {x: 0, y: 0, z: 0}
   xDistance: 0
   zDistance: 0
   hollowChild: []
@@ -270,8 +273,6 @@ MonoBehaviour:
   positionHistory: []
   isFree: 1
   isMagnetic: 0
-  isPlaced: 0
-  blockType: 
   countPoint: 0
 --- !u!54 &269185499128940580
 Rigidbody:
@@ -377,7 +378,7 @@ GameObject:
   - component: {fileID: 3531498655294039309}
   - component: {fileID: 8684586060554607238}
   m_Layer: 0
-  m_Name: 'Bulge '
+  m_Name: Bulge
   m_TagString: Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -512,7 +513,7 @@ GameObject:
   - component: {fileID: 7756003921330674094}
   - component: {fileID: 7539195567795324652}
   m_Layer: 0
-  m_Name: 'Bulge '
+  m_Name: Bulge
   m_TagString: Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
