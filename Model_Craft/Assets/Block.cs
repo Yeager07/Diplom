@@ -103,7 +103,7 @@ public class Block : MonoBehaviour
         }
     }
 
-    private void CalculatePointCount(GameObject currentBlock, GameObject place)
+    /*private void CalculatePointCount(GameObject currentBlock, GameObject place)
     {
         List<Transform> currentHollow = currentBlock.GetComponent<Block>().hollowChild;
         List<Transform> currentBulge = currentBlock.GetComponent<Block>().bulgeChild;
@@ -118,6 +118,7 @@ public class Block : MonoBehaviour
                 if(hollow.position == bulge.position)
                 {
                     hollow.gameObject.GetComponent<BlockPoint>().isFree = false;
+                    bulge.gameObject.GetComponent<BlockPoint>().isFree = false;
                     break;
                 }
 
@@ -133,6 +134,7 @@ public class Block : MonoBehaviour
                 if(bulge.position == hollow.position)
                 {
                     bulge.gameObject.GetComponent<BlockPoint>().isFree = false;
+                    hollow.gameObject.GetComponent<BlockPoint>().isFree = false;
                     break;
                 }
 
@@ -152,6 +154,110 @@ public class Block : MonoBehaviour
         {
             if(!hollow.gameObject.GetComponent<BlockPoint>().isFree)
             currentBlock.GetComponent<Block>().countPoint++;
+        }
+    }
+
+    /*private void CallCountPoint(GameObject currentBlock)
+    {
+        foreach(Transform block in currentBlock.GetComponent<Block>().blockChild)
+        {
+            if(block.GetComponent<Block>().blockChild.Count == 0)
+            {
+                block.gameObject.GetComponent<Block>().countPoint = 0;
+                CalculatePointCount(currentBlock, block.gameObject);
+                CalculatePointCount(block.gameObject, currentBlock);
+            }
+
+            else
+            {
+                foreach(Transform childBlock in block.GetComponent<Block>().blockChild)
+                {
+                    CallCountPoint(childBlock.gameObject);
+                }
+            }
+        }
+    }*/
+
+    private int CountOccupiedPointsBetween(GameObject blockA, GameObject blockB)
+    {
+        int occupied = 0;
+        // Проверка соединений шипов A с впадинами B
+        foreach(Transform bulge in blockA.GetComponent<Block>().bulgeChild)
+        {
+            foreach(Transform hollow in blockB.GetComponent<Block>().hollowChild)
+            {
+                if(bulge.position == hollow.position)
+                occupied++;
+            }
+        }
+        // Проверка соединений шипов B с впадинами A
+        foreach(Transform bulge in blockB.GetComponent<Block>().bulgeChild)
+        {
+            foreach(Transform hollow in blockA.GetComponent<Block>().hollowChild)
+            {
+                if(bulge.position == hollow.position)
+                occupied++;
+            }
+        }
+        return occupied;
+    }
+
+    public void RecalculateAllPoints()
+    {
+        // Находим корень текущей группы (блок без родителя)
+        GameObject root = FindMainParent(transform).gameObject;
+        
+        if(root == null)
+        return;
+    
+        HashSet<GameObject> visited = new HashSet<GameObject>();
+
+        // Очищаем счётчики у всех блоков в группе (рекурсивно)
+        ResetCounters(root, visited);
+    
+        visited.Clear();
+        
+        // Подсчитываем пары и накапливаем счётчики
+        AccumulatePoints(root, visited);
+    }
+
+    private void ResetCounters(GameObject block, HashSet<GameObject> visited)
+    {
+        if(visited.Contains(block))
+        return;
+        
+        visited.Add(block);
+
+        block.GetComponent<Block>().countPoint = 0;
+        
+        foreach(Transform child in block.GetComponent<Block>().blockChild)
+        {
+            if(child != null)
+            ResetCounters(child.gameObject, visited);
+        }
+    }
+
+    private void AccumulatePoints(GameObject parent, HashSet<GameObject> visited)
+    {
+        if(visited.Contains(parent))
+        return;
+
+        visited.Add(parent);
+
+        foreach(Transform childTrans in parent.GetComponent<Block>().blockChild)
+        {
+            GameObject child = childTrans.gameObject;
+            
+            if(child == null)
+            continue;
+        
+            // Считаем количество занятых вершин между parent и child
+            int points = CountOccupiedPointsBetween(parent, child);
+            parent.GetComponent<Block>().countPoint += points;
+            child.GetComponent<Block>().countPoint += points;
+        
+            // Рекурсивно идём дальше
+            AccumulatePoints(child, visited);
         }
     }
 
@@ -427,6 +533,20 @@ public class Block : MonoBehaviour
         }
     }
 
+    private bool IsChildRecursively(GameObject potentialParent, GameObject potentialChild)
+    {
+        while (potentialParent != null)
+        {
+            if(potentialParent == potentialChild)
+            return true;
+            
+            potentialParent = potentialParent.transform.parent != null ?
+            potentialParent.transform.parent.GetComponent<Block>().gameObject : null;
+        }
+        
+        return false;
+    }
+
     private void MakeConnection(GameObject currentBlock, GameObject place)
     {
         if(currentBlock.GetComponent<Block>().bulgeChildCoordinat.Count != 0)
@@ -459,6 +579,7 @@ public class Block : MonoBehaviour
             //currentBlock.GetComponent<Block>().isFree = false;
         }
 
+        if(!IsChildRecursively(place, currentBlock))
         place.GetComponent<Block>().blockChild.Add(currentBlock.transform);
     }
 
@@ -503,7 +624,7 @@ public class Block : MonoBehaviour
                 place = null;
 
                 if(blockChild.Count != 0)
-                blockChild.Remove(playerScript.movedObject.transform);
+                blockChild.Remove(other.transform);
             }
         }
 
@@ -512,8 +633,10 @@ public class Block : MonoBehaviour
             transform.parent = null;
             isFree = true;
 
+            other.gameObject.GetComponent<Block>().blockChild.Remove(transform);
+
             if(blockChild.Count != 0)
-            blockChild.Remove(playerScript.movedObject.transform);
+            blockChild.Remove(other.transform);
         }
 
         isMagnetic = false;
@@ -524,23 +647,31 @@ public class Block : MonoBehaviour
         foreach(Transform bulge in bulgeChild)
         bulge.gameObject.GetComponent<BlockPoint>().isFree = true;
 
-        if(playerScript.isBuildMode && blockChild.Count != 0)
+        /*if(playerScript.isBuildMode && blockChild.Count != 0)
         {
+            if(transform.parent == null)
             countPoint = 0;
+            
             foreach(Transform block in blockChild)
             {
+                if(block.GetComponent<Block>().blockChild.Count == 0)
                 block.gameObject.GetComponent<Block>().countPoint = 0;
+            
                 Debug.Log($"Прошёлся по блокам {gameObject.name} текущий {block.gameObject.name}");
                 CalculatePointCount(gameObject, block.gameObject);
                 CalculatePointCount(block.gameObject, gameObject);
             }
-        }
+            CallCountPoint(gameObject);
+        }*/
 
         if(previousBlock.Count != 0)
         previousBlock.RemoveAt(0);
 
         if(blockChild.Count != 0)
-        blockChild.Remove(playerScript.movedObject.transform);
+        blockChild.Remove(other.transform);
+
+        if(FindMainParent(transform) != null)
+        FindMainParent(transform).gameObject.GetComponent<Block>().RecalculateAllPoints();
     }
 
     private void Rotation(Transform currentObject)
@@ -611,19 +742,34 @@ public class Block : MonoBehaviour
             FindChildPoint("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
             FindChildPoint("Bulge", bulgeChildCoordinat, bulgeChildRotation, transform, bulgeChild);
 
-            if(playerScript.isBuildMode && blockChild.Count != 0)
+            /*if(playerScript.isBuildMode && blockChild.Count != 0)
             {
                 if(transform.parent == null)
-                countPoint = 0;
-                
-                foreach(Transform block in blockChild)
                 {
+                    Debug.Log($"Обнулил количество для {gameObject.name}");
+                    countPoint = 0;
+                }
+                
+                /*foreach(Transform block in blockChild)
+                {
+                    if(block.GetComponent<Block>().blockChild.Count == 0)
                     block.gameObject.GetComponent<Block>().countPoint = 0;
+
+                    /*else
+                    {
+                        foreach(Transform childBlock in block.GetComponent<Block>().blockChild)
+                    }
+
                     Debug.Log($"Прошёлся по блокам {gameObject.name} текущий {block.gameObject.name}");
                     CalculatePointCount(gameObject, block.gameObject);
                     CalculatePointCount(block.gameObject, gameObject);
                 }
-            }
+
+                CallCountPoint(gameObject);
+            }*/
+
+            if(FindMainParent(transform) != null)
+            FindMainParent(transform).gameObject.GetComponent<Block>().RecalculateAllPoints();
 
             if(transform.position != previousPosition)
             {
