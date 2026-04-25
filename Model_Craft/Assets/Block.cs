@@ -3,9 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using static System.Math;
-
 using System.Linq;
 
 public class Block : MonoBehaviour
@@ -14,29 +11,17 @@ public class Block : MonoBehaviour
     private Player playerScript;
     private MainScript mainScript;
     private GameObject player;
-    private Vector3 pointScreen;
-    private List<Vector3> previousRotate = new List<Vector3>();
-    private Vector3 rotateDirection = new Vector3(0.0f, 0.0f, 0.0f);
-    public Vector3 bulgePosition;
-    public Vector3 localHollowPosition;
-    public Vector3 localBulgePosition;
-    public Vector3 placeHollowPosition;
+
     private Material mainBlockMaterial;
     public Vector3 offset;
-    private float distance;
-    public Vector3 moveVector = new Vector3(0.0f, 0.0f, 0.0f);
     public Vector3 curPosition;
     public Vector3 previousPosition;
     public GameObject colorChoosePanel;
     public GameObject place;
     private float bulgeWidth = 0.16f;
     public float blockHeight = 0.064f;
-    private Vector3 moveX = new Vector3(0.16f, 0.0f, 0.0f);
-    private Vector3 moveY = new Vector3(0.0f, 0.16f, 0.0f);
-    private Vector3 moveZ = new Vector3(0.0f, 0.0f, 0.16f);
+
     private Vector3 playerRotation;
-    public float xDistance = 0.0f;
-    public float zDistance = 0.0f;
     public List<Transform> hollowChild;
     public List<Transform> bulgeChild;
     public List<Vector3> hollowChildCoordinat = new List<Vector3>();
@@ -44,36 +29,48 @@ public class Block : MonoBehaviour
     public List<Vector3> hollowChildRotation = new List<Vector3>();
     public List<Vector3> bulgeChildRotation = new List<Vector3>();
     public Transform nearestBulge;
-    public List<Transform> blockChild;
+    public Transform nearestHollow;
+    //public List<Transform> blockChild;
     public List<GameObject> previousBlock = new List<GameObject>();
     public bool isActive = false;
     public List<Vector3> positionHistory = new List<Vector3>();
     public bool isFree = true;
     public bool isMagnetic = false;
-    public int countPoint = 0; //Число занятых вершин
+    public int countPoint = 0;               // число занятых вершин
     public static List<Connection> connections = new List<Connection>();
+    public Vector3 moveVector = new Vector3(0.0f, 0.0f, 0.0f);
+    public Vector3 bulgePosition;
+    public Vector3 localHollowPosition;
+    public Vector3 localBulgePosition;
+    public Vector3 placeHollowPosition;
+    public bool useBulgeForConnection;
 
-    private Vector3 pendingSnapPosition;
-    private Transform pendingSnapParent;
+    private Vector3 pendingRootOffset;       // смещение для корня сборки
+    private Transform pendingSnapParent;     // блок, к которому присоединяем
+    private Transform pendingSnapBlock;      // конкретный блок сборки, который участвует в соединении
+    private Transform pendingSnapRoot;
     private int pendingSnapPoints;
     private bool hasPendingConnection;
+    private BlockPoint pendingSnapBlockPoint; // точка на блоке сборки (шип или впадина)
+    private BlockPoint pendingSnapOtherPoint; // точка на целевом блоке
+    private bool isProcessingConnection = false;   // Флаг, что уже идёт обработка соединения для этой сборки
+    private Transform lastProcessedPlace = null;   // Чтобы не обрабатывать один и тот же place дважды
 
-    private Vector2 lastMouseScreenPos; // последняя позиция мыши в экранных координатах
-    private bool hasStoredMousePos;     // флаг, что позиция сохранена
+    private Vector2 lastMouseScreenPos;
+    private bool hasStoredMousePos;
 
+    private List<Vector3> previousRotate = new List<Vector3>();
+    private Vector3 rotateDirection = new Vector3(0f, 0f, 0f);
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         mainScript = Camera.main.GetComponent<MainScript>();
 
         GameObject inventory = GameObject.FindGameObjectWithTag("InventoryManager");
-        if(inventory != null)
-        inventoryManager = inventory.GetComponent<InventoryManager>();
+        if (inventory != null) inventoryManager = inventory.GetComponent<InventoryManager>();
 
-        if (player != null)
-        playerScript = player.GetComponent<Player>();
+        if (player != null) playerScript = player.GetComponent<Player>();
 
         previousPosition = transform.position;
         positionHistory.Add(transform.position);
@@ -83,16 +80,6 @@ public class Block : MonoBehaviour
         FindChildPoint("Bulge", bulgeChildCoordinat, bulgeChildRotation, transform, bulgeChild);
 
         mainBlockMaterial = gameObject.GetComponent<Renderer>().material;
-    }
-
-    private Transform FindMainParent(Transform currentObject)
-    {
-        while(currentObject.parent != null)
-        {
-            currentObject = currentObject.parent;
-        }
-        
-        return currentObject;
     }
 
     private void FindChildPoint(string childName, List<Vector3> childCoordinat, List<Vector3> childRotation, Transform objectTransform, List<Transform> massiveChild)
@@ -112,293 +99,12 @@ public class Block : MonoBehaviour
         }
     }
 
-    private int CountOccupiedPointsBetween(GameObject blockA, GameObject blockB)
+    private Transform FindMainParent(Transform currentObject)
     {
-        int occupied = 0;
+        while(currentObject.parent != null)
+        currentObject = currentObject.parent;
         
-        foreach(Transform bulge in blockA.GetComponent<Block>().bulgeChild)
-        {
-            foreach(Transform hollow in blockB.GetComponent<Block>().hollowChild)
-            {
-                if(bulge.position == hollow.position)
-                occupied++;
-            }
-        }
-        foreach(Transform bulge in blockB.GetComponent<Block>().bulgeChild)
-        {
-            foreach(Transform hollow in blockA.GetComponent<Block>().hollowChild)
-            {
-                if(bulge.position == hollow.position)
-                occupied++;
-            }
-        }
-        return occupied;
-    }
-
-    public void RecalculateAllPoints()
-    {
-        HashSet<Block> allBlocks = new HashSet<Block>();
-        
-        foreach(var conn in connections)
-        {
-            allBlocks.Add(conn.blockA);
-            allBlocks.Add(conn.blockB);
-        }
-        
-        // Добавляем текущий блок в список, чтобы обнулить его счётчик (даже если он без соединений)
-        if(!allBlocks.Contains(this))
-        allBlocks.Add(this);
-    
-        foreach(Block b in allBlocks)
-        b.countPoint = 0;
-    
-        foreach(var conn in connections)
-        {
-            conn.blockA.countPoint += conn.occupiedPoints;
-            conn.blockB.countPoint += conn.occupiedPoints;
-        }
-
-        Debug.Log($"=== Recalculated {connections.Count} connections ===");
-        // Выводим только блоки с ненулевыми очками (чтобы не засорять консоль)
-        foreach (Block b in allBlocks)
-        {
-            if(b.countPoint > 0)
-            Debug.Log($"{b.name}: {b.countPoint} points");
-        }
-    }
-
-    void SavePosition(Vector3 position)
-    {
-        positionHistory.Add(position);
-
-        if(positionHistory.Count > 100)
-        positionHistory.RemoveAt(0);
-    }
-
-    void PlaceObjectCorrectly(Transform movingObject)
-    {
-        List<Transform> transformHollows = new List<Transform>();
-
-        foreach(Transform child in movingObject)
-        {
-            if(child.name == "Hollow")
-            transformHollows.Add(child);
-        }
-
-        Vector3 hollowPosition = transformHollows[0].position;
-        
-        if(hollowPosition.x % bulgeWidth != 0)
-        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.x = hollowPosition.x % bulgeWidth;
-
-        if(hollowPosition.y % blockHeight != 0)
-        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.y = hollowPosition.y % (4 * bulgeWidth / 10);
-
-        if(hollowPosition.z % bulgeWidth != 0)
-        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.z = hollowPosition.z % bulgeWidth;
-    }
-
-    private void CalculateMoveVector(float distance, Transform movingObject, Vector3 moveSide, Vector3 moveHeight)
-    {
-        if(distance > 0)
-        {
-            if(distance == movingObject.gameObject.GetComponent<Block>().xDistance)
-            {
-                if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
-                    movingObject.position += moveSide;
-                
-                else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
-                    movingObject.position -= moveHeight;
-                
-                else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
-                    movingObject.position -= moveSide;
-                
-                else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
-                    movingObject.position += moveHeight;
-
-                movingObject.gameObject.GetComponent<Block>().xDistance = 0.0f;
-            }
-            
-            else if(distance == movingObject.gameObject.GetComponent<Block>().zDistance)
-            {
-                if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
-                    movingObject.position += moveHeight;
-                
-                else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
-                    movingObject.position += moveSide;
-                
-                else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
-                    movingObject.position -= moveHeight;
-                
-                else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
-                    movingObject.position -= moveSide;
-                
-                movingObject.gameObject.GetComponent<Block>().zDistance = 0.0f;
-            }
-        }
-
-        else if (distance < 0)
-        {
-            if(distance == movingObject.gameObject.GetComponent<Block>().xDistance)
-            {
-                if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
-                    movingObject.position -= moveSide;
-                
-                else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
-                    movingObject.position += moveHeight;
-                
-                else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
-                    movingObject.position += moveSide;
-                
-                else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
-                    movingObject.position -= moveHeight;
-
-                movingObject.gameObject.GetComponent<Block>().xDistance = 0.0f;
-            }
-            
-            else if(distance == movingObject.gameObject.GetComponent<Block>().zDistance)
-            {
-                if((playerRotation.y >= 315.0f && playerRotation.y <= 360.0f) || (playerRotation.y >= 0.0f && playerRotation.y <= 45.0f))
-                    movingObject.position -= moveHeight;
-                
-                else if(playerRotation.y >= 45.0f && playerRotation.y <= 135.0f)
-                    movingObject.position -= moveSide;
-                
-                else if(playerRotation.y >= 135.0f && playerRotation.y <= 225.0f)
-                    movingObject.position += moveHeight;
-                
-                else if(playerRotation.y >= 225.0f && playerRotation.y <= 315.0f)
-                    movingObject.position += moveSide;
-
-                movingObject.gameObject.GetComponent<Block>().zDistance = 0.0f;
-            }
-        }
-    }
-    
-    public void Move(float distance, GameObject currentObject)
-    {
-        Transform movingObject = currentObject.transform;
-        Block blockScript = currentObject.GetComponent<Block>();
-
-        if(blockScript.isFree)
-        {   
-            blockScript.curPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
-            
-            if(playerScript.isBuildMode)
-            movingObject.position = Camera.main.ScreenToWorldPoint(curPosition) + blockScript.offset;
-
-            else
-            movingObject.position = Camera.main.ScreenToWorldPoint(curPosition);
-        }
-
-        else
-        {
-            playerRotation = playerScript.transform.rotation.eulerAngles;
-            
-            // Шаговое перемещение с привязкой к перемещению мыши
-            if(!hasStoredMousePos)
-            {
-                lastMouseScreenPos = Input.mousePosition;
-                hasStoredMousePos = true;
-            }
-
-            Vector2 currentMousePos = Input.mousePosition;
-            Vector2 delta = currentMousePos - lastMouseScreenPos;
-            float threshold = 75f; // пикселей для одного шага (настройте под ваши ощущения)
-
-            bool moved = false;
-            
-            // Обработка горизонтального перемещения (влияет на X или Z в зависимости от поворота камеры)
-            if(Mathf.Abs(delta.x) >= threshold)
-            {
-                int dir = delta.x > 0 ? 1 : -1;
-                ApplyStepMove(movingObject, dir, threshold, ref delta, true);
-                moved = true;
-            }
-            
-            // Обработка вертикального перемещения (если нужно)
-            if(Mathf.Abs(delta.y) >= threshold)
-            {
-                int dir = delta.y > 0 ? 1 : -1;
-                ApplyStepMove(movingObject, dir, threshold, ref delta, false);
-                moved = true;
-            }
-
-            // Корректируем накопленное положение мыши, оставляя остаток
-            if(moved)
-            lastMouseScreenPos = currentMousePos - delta;
-        }
-
-        PlaceObjectCorrectly(movingObject);
-    }
-
-    private void ApplyStepMove(Transform movingObject, int direction, float threshold, ref Vector2 delta, bool isHorizontal)
-    {
-        float stepSize = bulgeWidth; // 0.16
-        Vector3 move = Vector3.zero;
-        float angle = playerRotation.y;
-        // Нормализуем угол в диапазон [0, 360)
-        angle = (angle % 360 + 360) % 360;
-
-        if (isHorizontal)
-        {
-            // Горизонтальное перемещение мыши -> влево/вправо относительно камеры
-            if (angle >= 315 || angle <= 45)
-            move = Vector3.right * direction;
-    
-            else if (angle >= 45 && angle <= 135)
-            move = Vector3.forward * direction;
-            
-            else if (angle >= 135 && angle <= 225)
-            move = Vector3.left * direction;
-            
-            else // 225..315
-            move = Vector3.back * direction;
-        }
-    
-        else
-        {
-            // Вертикальное перемещение мыши -> вперёд/назад относительно камеры
-            // Определяем горизонтальную ось так же, как выше
-            Vector3 horizAxis;
-        
-            if (angle >= 315 || angle <= 45)
-            horizAxis = Vector3.right;
-    
-            else if (angle >= 45 && angle <= 135)
-            horizAxis = Vector3.forward;
-        
-            else if (angle >= 135 && angle <= 225)
-            horizAxis = Vector3.left;
-            
-            else
-            horizAxis = Vector3.back;
-
-            // Поворачиваем горизонтальную ось на 90° вокруг глобальной оси Y, получаем вертикальную ось
-            // Например, из right получим forward, из forward -> left, и т.д.
-            Vector3 vertAxis = Quaternion.Euler(0, 90, 0) * horizAxis;
-            move = vertAxis * -direction;
-        }
-
-        movingObject.position += move * stepSize;
-        
-        if(hasPendingConnection)
-        pendingSnapPosition = movingObject.position;
-
-        // Корректируем накопленное движение мыши
-        if (isHorizontal)
-        delta.x -= direction * threshold;
-        
-        else
-        delta.y -= direction * threshold;
-    }
-
-    private void CalculateOffset(GameObject movingObject)
-    {
-        if(movingObject.GetComponent<Block>().offset == new Vector3(0.0f, 0.0f, 0.0f))
-        {
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance));
-            movingObject.GetComponent<Block>().offset = movingObject.transform.position - mouseWorldPos;        
-        }
+        return currentObject;
     }
 
     private bool IsChildRecursively(GameObject potentialParent, GameObject potentialChild)
@@ -416,17 +122,396 @@ public class Block : MonoBehaviour
         return false;
     }
 
+    private int CountOccupiedPointsBetween(GameObject blockA, GameObject blockB)
+    {
+        int occupied = 0;
+        
+        foreach(Transform bulge in blockA.GetComponent<Block>().bulgeChild)
+        {
+            foreach(Transform hollow in blockB.GetComponent<Block>().hollowChild)
+            {
+                if(bulge.position == hollow.position)
+                occupied++;
+            }
+        }
+
+        foreach(Transform bulge in blockB.GetComponent<Block>().bulgeChild)
+        {
+            foreach(Transform hollow in blockA.GetComponent<Block>().hollowChild)
+            {
+                if(bulge.position == hollow.position)
+                occupied++;
+            }
+        }
+
+        return occupied;
+    }
+
+    // Пересчёт всех точек на основе списка connections
+    public void RecalculateAllPoints()
+    {
+        HashSet<Block> allBlocks = new HashSet<Block>();
+        
+        foreach(var conn in connections)
+        {
+            allBlocks.Add(conn.blockA);
+            allBlocks.Add(conn.blockB);
+        }
+        
+        if(!allBlocks.Contains(this))
+        allBlocks.Add(this);
+
+        foreach(Block b in allBlocks)
+        b.countPoint = 0;
+
+        foreach(var conn in connections)
+        {
+            conn.blockA.countPoint += conn.occupiedPoints;
+            conn.blockB.countPoint += conn.occupiedPoints;
+        }
+
+        Debug.Log($"=== Recalculated {connections.Count} connections ===");
+        
+        foreach(Block b in allBlocks)
+        {
+            if(b.countPoint > 0)
+            Debug.Log($"{b.name}: {b.countPoint} points");
+        }
+    }
+
+    public void Move(float distance, GameObject currentObject)
+    {
+        Transform movingObject = currentObject.transform;
+        Block blockScript = currentObject.GetComponent<Block>();
+
+        if(blockScript.isFree)
+        {
+            blockScript.curPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
+            
+            if(playerScript.isBuildMode)
+            movingObject.position = Camera.main.ScreenToWorldPoint(curPosition) + blockScript.offset;
+            
+            else
+            movingObject.position = Camera.main.ScreenToWorldPoint(curPosition);
+        }
+        
+        else
+        {
+            playerRotation = playerScript.transform.rotation.eulerAngles;
+
+            if(!hasStoredMousePos)
+            {
+                lastMouseScreenPos = Input.mousePosition;
+                hasStoredMousePos = true;
+            }
+
+            Vector2 currentMousePos = Input.mousePosition;
+            Vector2 delta = currentMousePos - lastMouseScreenPos;
+            float threshold = 25f; // чувствительность
+
+            bool moved = false;
+            
+            if(Mathf.Abs(delta.x) >= threshold)
+            {
+                int dir = delta.x > 0 ? 1 : -1;
+                ApplyStepMove(movingObject, dir, threshold, ref delta, true);
+                moved = true;
+            }
+            
+            if(Mathf.Abs(delta.y) >= threshold)
+            {
+                int dir = delta.y > 0 ? 1 : -1;
+                ApplyStepMove(movingObject, dir, threshold, ref delta, false);
+                moved = true;
+            }
+
+            if(moved)
+            lastMouseScreenPos = currentMousePos - delta;
+        }
+
+        PlaceObjectCorrectly(movingObject);
+    }
+
+    private void ApplyStepMove(Transform movingObject, int direction, float threshold, ref Vector2 delta, bool isHorizontal)
+    {
+        float stepSize = bulgeWidth;
+        Vector3 move = Vector3.zero;
+        float angle = playerRotation.y;
+        angle = (angle % 360 + 360) % 360;
+
+        if(isHorizontal)
+        {
+            if(angle >= 315 || angle <= 45)
+            move = Vector3.right * direction;
+            
+            else if(angle >= 45 && angle <= 135)
+            move = Vector3.forward * direction;
+            
+            else if(angle >= 135 && angle <= 225)
+            move = Vector3.left * direction;
+            
+            else
+            move = Vector3.back * direction;
+        }
+        
+        else
+        {
+            // Вертикальное перемещение мыши – двигаем перпендикулярно горизонтальной оси
+            Vector3 horizAxis;
+        
+            if(angle >= 315 || angle <= 45)
+            horizAxis = Vector3.right;
+            
+            else if(angle >= 45 && angle <= 135)
+            horizAxis = Vector3.forward;
+            
+            else if(angle >= 135 && angle <= 225)
+            horizAxis = Vector3.left;
+            
+            else
+            horizAxis = Vector3.back;
+
+            Vector3 vertAxis = Quaternion.Euler(0, 90, 0) * horizAxis;
+            move = vertAxis * -direction;
+        }
+
+        movingObject.position += move * stepSize;
+
+        if(isHorizontal)
+        delta.x -= direction * threshold;
+        
+        else
+        delta.y -= direction * threshold;
+    }
+
+    private void PlaceObjectCorrectly(Transform movingObject)
+    {
+        List<Transform> transformHollows = new List<Transform>();
+        
+        foreach(Transform child in movingObject)
+        {
+            if(child.name == "Hollow")
+            transformHollows.Add(child);
+        }
+
+        if(transformHollows.Count == 0)
+        return;
+        
+        Vector3 hollowPosition = transformHollows[0].position;
+
+        if(hollowPosition.x % bulgeWidth != 0)
+        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.x = hollowPosition.x % bulgeWidth;
+        
+        if(hollowPosition.y % blockHeight != 0)
+        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.y = hollowPosition.y % (4 * bulgeWidth / 10);
+        
+        if(hollowPosition.z % bulgeWidth != 0)
+        FindMainParent(movingObject).gameObject.GetComponent<Block>().moveVector.z = hollowPosition.z % bulgeWidth;
+    }
+
+    private void CalculateOffset(GameObject movingObject)
+    {
+        if(movingObject.GetComponent<Block>().offset == Vector3.zero)
+        {
+            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, playerScript.distance));
+            movingObject.GetComponent<Block>().offset = movingObject.transform.position - mouseWorldPos;
+        }
+    }
+
+    private void CalculateDistance(GameObject currentBlock, GameObject place)
+    {
+        float minDistance = 100.0f;
+        Block current = currentBlock.GetComponent<Block>();
+        Block target = place.GetComponent<Block>();
+
+        // Сбрасываем
+        nearestBulge = null;
+        nearestHollow = null;
+        useBulgeForConnection = false;
+
+        // Определяем, выше или ниже currentBlock относительно place (по центру)
+        bool isCurrentAbove = currentBlock.transform.position.y > place.transform.position.y;
+
+        if(isCurrentAbove)
+        {
+            // Соединение сверху: ищем шип на currentBlock + впадину на place
+            foreach(Transform bulge in current.bulgeChild)
+            {
+                foreach(Transform hollow in target.hollowChild)
+                {
+                    float dist = Vector3.Distance(bulge.position, hollow.position);
+                    
+                    if(dist < minDistance)
+                    {
+                        minDistance = dist;
+                        nearestBulge = bulge;
+                        nearestHollow = hollow;
+                        useBulgeForConnection = true;
+                        localBulgePosition = bulge.localPosition;
+                        localHollowPosition = Vector3.zero;
+                        bulgePosition = bulge.position;
+                        placeHollowPosition = hollow.position; // впадина на place
+                    }
+                }
+            }
+        }
+        
+        else
+        {
+            // Соединение снизу: ищем впадину на currentBlock + шип на place
+            foreach(Transform hollow in current.hollowChild)
+            {
+                foreach(Transform bulge in target.bulgeChild)
+                {
+                    float dist = Vector3.Distance(hollow.position, bulge.position);
+                    
+                    if(dist < minDistance)
+                    {
+                        minDistance = dist;
+                        nearestBulge = bulge;
+                        nearestHollow = hollow;
+                        useBulgeForConnection = false;
+                        localHollowPosition = hollow.localPosition;
+                        localBulgePosition = Vector3.zero;
+                        bulgePosition = bulge.position;
+                        placeHollowPosition = hollow.position; // впадина на currentBlock
+                    }
+                }
+            }
+        }
+    }
+
+    private void PrepareGroupConnection(GameObject currentBlock, GameObject place, Transform rootGroup)
+    {
+        if (rootGroup == null && currentBlock != null)
+            rootGroup = FindMainParent(currentBlock.transform);
+        if (rootGroup == null) return;
+
+        Block current = currentBlock.GetComponent<Block>();
+        Block target = place.GetComponent<Block>();
+        if (current == null || target == null) return;
+        if (IsChildRecursively(place, currentBlock)) return;
+
+        // Находим ближайшие точки между currentBlock и place
+        float minDistance = 100f;
+        Transform nearestBulge = null;
+        Transform nearestHollow = null;
+        Vector3 localBulgePos = Vector3.zero;
+        Vector3 localHollowPos = Vector3.zero;
+        Vector3 bulgeWorldPos = Vector3.zero;
+        Vector3 placeHollowPos = Vector3.zero;
+
+        // 1) Впадина на current + шип на place
+        foreach (Transform hollow in current.hollowChild)
+        {
+            foreach (Transform bulge in target.bulgeChild)
+            {
+                float d = Vector3.Distance(hollow.position, bulge.position);
+                if (d < minDistance)
+                {
+                    minDistance = d;
+                    nearestBulge = bulge;
+                    nearestHollow = hollow;
+                    localHollowPos = hollow.localPosition;
+                    bulgeWorldPos = bulge.position;
+                    placeHollowPos = hollow.position;
+                }
+            }
+        }
+        // 2) Шип на current + впадина на place
+        foreach (Transform bulge in current.bulgeChild)
+        {
+            foreach (Transform hollow in target.hollowChild)
+            {
+                float d = Vector3.Distance(bulge.position, hollow.position);
+                if (d < minDistance)
+                {
+                    minDistance = d;
+                    nearestBulge = bulge;
+                    nearestHollow = hollow;
+                    localBulgePos = bulge.localPosition;
+                    bulgeWorldPos = bulge.position;
+                    placeHollowPos = hollow.position;
+                }
+            }
+        }
+
+        if (nearestBulge == null || nearestHollow == null) return;
+
+        // Проверка свободных точек
+        if (!nearestBulge.GetComponent<BlockPoint>().isFree || !nearestHollow.GetComponent<BlockPoint>().isFree)
+        {
+            Debug.Log("Cannot connect – point already occupied");
+            return;
+        }
+
+        // Проверка сонаправленности осей
+        if (Vector3.Dot(current.hollowChild[0].up, target.bulgeChild[0].up) <= 0.99f)
+        {
+            Debug.Log("Axes not aligned");
+            return;
+        }
+
+        // Определяем, сверху или снизу currentBlock относительно place
+        float yCurrent = current.bulgeChild.Count > 0 ? current.bulgeChild[0].position.y : current.transform.position.y;
+        float yPlace = target.bulgeChild.Count > 0 ? target.bulgeChild[0].position.y : place.transform.position.y;
+        bool isCurrentAbove = yCurrent > yPlace;
+
+        Vector3 newPosition;
+        if (isCurrentAbove)
+        {
+            // current сверху – используем впадину current и шип place
+            newPosition = bulgeWorldPos - currentBlock.transform.TransformVector(localHollowPos);
+        }
+        else
+        {
+            // current снизу – используем шип current и впадину place
+            newPosition = placeHollowPos - currentBlock.transform.TransformVector(localBulgePos);
+        }
+
+        // Применяем смещение к корню
+        Vector3 offset = newPosition - currentBlock.transform.position;
+        if (rootGroup != null)
+        {
+            rootGroup.position += offset;
+            rootGroup.GetComponent<Block>().isFree = false;
+        }
+
+        // Сохраняем данные для фиксации
+        pendingSnapParent = place.transform;
+        pendingSnapBlock = currentBlock.transform;
+        pendingSnapPoints = CountOccupiedPointsBetween(currentBlock, place);
+        pendingSnapBlockPoint = isCurrentAbove ? nearestHollow.GetComponent<BlockPoint>() : nearestBulge.GetComponent<BlockPoint>();
+        pendingSnapOtherPoint = isCurrentAbove ? nearestBulge.GetComponent<BlockPoint>() : nearestHollow.GetComponent<BlockPoint>();
+        hasPendingConnection = true;
+        pendingSnapRoot = rootGroup;
+
+        Debug.Log($"PrepareGroupConnection: {currentBlock.name} with {place.name}, offset={offset}");
+    }
+
+    private bool CheckAxesAligned(Block blockA, Block blockB)
+    {
+        // Если у обоих есть шипы, сравниваем их
+        if (blockA.bulgeChild.Count > 0 && blockB.bulgeChild.Count > 0)
+        return Vector3.Dot(blockA.bulgeChild[0].up, blockB.bulgeChild[0].up) > 0.99f;
+        // Если у какого-то нет шипов, считаем оси сонаправленными (например, тайл)
+        return true;
+    }
+
     void OnMouseDown()
     {
         hasStoredMousePos = false;
         hasPendingConnection = false;
+        pendingSnapRoot = null;
+        isProcessingConnection = false;
+        lastProcessedPlace = null;
 
-        if(FindMainParent(transform) == transform && playerScript.isBuildMode)
+        if(playerScript.isBuildMode)
         CalculateOffset(gameObject);
     }
 
     void OnMouseDrag()
-    {   
+    {
         if((playerScript.colorChoosePanel == null || !playerScript.colorChoosePanel.gameObject.activeInHierarchy) &&
         !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
@@ -434,38 +519,38 @@ public class Block : MonoBehaviour
             playerScript.movedObject = FindMainParent(transform).gameObject;
 
             playerScript.distance += Input.GetAxis("Mouse ScrollWheel") * 4.0f;
-    
+
             if(playerScript.isBuildMode)
-            {   
+            {
                 if(!Input.GetKey(KeyCode.R))
                 {
                     if(FindMainParent(transform) == transform)
                     Move(playerScript.distance, gameObject);
-
+                    
                     else
-                    {       
+                    {
                         CalculateOffset(FindMainParent(transform).gameObject);
                         Move(playerScript.distance, FindMainParent(transform).gameObject);
                     }
 
+                    // Визуальное выделение при соединении
                     if(!FindMainParent(transform).gameObject.GetComponent<Block>().isFree)
                     {
                         FindMainParent(transform).gameObject.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
-
-                        FindMainParent(transform).gameObject.GetComponent<Block>().blockChild.Clear();
-
-                        foreach(Transform child in FindMainParent(transform))
+                        //FindMainParent(transform).gameObject.GetComponent<Block>().blockChild.Clear();
+                      
+                        Block rootBlock = FindMainParent(transform).GetComponent<Block>();
+                        rootBlock.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
+                    
+                        foreach (Block child in rootBlock.GetComponentsInChildren<Block>())
                         {
-                            if(child.GetComponent<Block>() != null)
-                            {
-                                FindMainParent(transform).gameObject.GetComponent<Block>().blockChild.Add(child);
-                                child.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
-                            }
+                            if (child != rootBlock)
+                            child.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
                         }
                     }
                 }
             }
-    
+            
             else
             Move(playerScript.minDistance, gameObject);
         }
@@ -474,9 +559,9 @@ public class Block : MonoBehaviour
     void OnMouseEnter()
     {
         isActive = true;
-
+        
         if(playerScript.isBuildMode)
-        playerScript.target = transform.position + new Vector3(0.0f, -0.4f, 0.0f);
+        playerScript.target = transform.position + new Vector3(0f, -0.4f, 0f);
     }
 
     void OnMouseExit()
@@ -484,342 +569,128 @@ public class Block : MonoBehaviour
         isActive = false;
         
         if(playerScript.isBuildMode)
-        playerScript.target = new Vector3(0.0f, 0.0f, 0.0f);
-    }
-
-    private void CalculateDistance(GameObject currentBlock, GameObject place, List<Transform> hollows, List<Transform> bulges)
-    {
-        float minDistance = 100.0f;
-        List<Transform> transformBulges = new List<Transform>();
-        
-        foreach(Transform child in currentBlock.transform)
-        transformBulges.Add(child);
-
-        int jterator = 0;
-        
-        while(jterator < hollows.Count)
-        {
-            int iterator = 0;
-            
-            while(iterator < bulges.Count)
-            {
-                float distance = (float)Sqrt(Pow(hollows[jterator].position.x - bulges[iterator].position.x, 2) + Pow(hollows[jterator].position.y - bulges[iterator].position.y, 2) + Pow(hollows[jterator].position.z - bulges[iterator].position.z, 2));
-                
-                if(distance < minDistance)
-                {
-                    minDistance = distance;
-                    currentBlock.GetComponent<Block>().localHollowPosition = hollows[jterator].localPosition;
-                    currentBlock.GetComponent<Block>().localBulgePosition = transformBulges[jterator].localPosition;
-                    currentBlock.GetComponent<Block>().bulgePosition = bulges[iterator].position;
-                    currentBlock.GetComponent<Block>().nearestBulge = bulges[iterator];
-                    currentBlock.GetComponent<Block>().placeHollowPosition = place.transform.GetComponent<Block>().hollowChild[iterator].position;
-                }
-
-                iterator += 1;
-            }
-
-            jterator += 1;
-        }
-    }
-
-    /*private void MakeConnection(GameObject currentBlock, GameObject place)
-    {
-        Block currentBlockScript = currentBlock.GetComponent<Block>();
-        Block placeBlockScript = place.GetComponent<Block>();
-
-        // Проверка на циклическую ссылку (чтобы не создать петлю в иерархии)
-        if(IsChildRecursively(place, currentBlock))
-        {
-            Debug.LogWarning($"Cannot connect {currentBlock.name} to {place.name} – would create a cycle.");
-            return;
-        }
-
-        if(currentBlockScript.bulgeChildCoordinat.Count != 0 || currentBlockScript.hollowChildCoordinat.Count != 0)
-        {
-            CalculateDistance(currentBlock, place, currentBlockScript.hollowChild, placeBlockScript.bulgeChild);
-
-            if(currentBlockScript.nearestBulge != null && Vector3.Dot(currentBlockScript.hollowChild[0].up, currentBlockScript.nearestBulge.up) > 0.99f)
-            {
-                currentBlockScript.isFree = false;
-
-                // Вычисляем новую позицию
-                Vector3 newPosition;
-            
-                if(place.name.Split(" ")[0] == "Tile" && currentBlock.name.Split(" ")[0] == "Tile")
-                return;
-                
-                else if(place.name.Split(" ")[0] == "Tile")
-                newPosition = currentBlockScript.placeHollowPosition - currentBlock.transform.TransformVector(currentBlockScript.localBulgePosition);
-                
-                else if(currentBlock.name.Split(" ")[0] == "Tile")
-                newPosition = currentBlockScript.bulgePosition - currentBlock.transform.TransformVector(currentBlockScript.localHollowPosition);
-                
-                else
-                {
-                    if(currentBlockScript.bulgeChild[0].position.y < placeBlockScript.bulgeChild[0].position.y)
-                    newPosition = currentBlockScript.placeHollowPosition - currentBlock.transform.TransformVector(currentBlockScript.localBulgePosition);
-                    
-                    else
-                    newPosition = currentBlockScript.bulgePosition - currentBlock.transform.TransformVector(currentBlockScript.localHollowPosition);
-                }
-
-                currentBlock.transform.position = newPosition;
-                currentBlock.transform.SetParent(place.transform);
-
-                int points = CountOccupiedPointsBetween(currentBlock, place);
-                Connection newConn = new Connection
-                {
-                    blockA = currentBlockScript,
-                    blockB = placeBlockScript,
-                    occupiedPoints = points
-                };
-
-                if(!connections.Exists(c => (c.blockA == currentBlockScript && c.blockB == placeBlockScript) ||
-                (c.blockA == placeBlockScript && c.blockB == currentBlockScript)))
-                {
-                    connections.Add(newConn);
-                    Debug.Log($"Connection added between {currentBlock.name} and {place.name}, points={points}");
-                }
-
-                // Обновляем вспомогательный список blockChild (если нужен для других целей)
-                if(!placeBlockScript.blockChild.Contains(currentBlock.transform))
-                placeBlockScript.blockChild.Add(currentBlock.transform);
-            }
-        }
-    }*/
-
-    private void PrepareConnection(GameObject currentBlock, GameObject place)
-    {
-        Block currentBlockScript = currentBlock.GetComponent<Block>();
-        Block placeBlockScript = place.GetComponent<Block>();
-
-        if(IsChildRecursively(place, currentBlock))
-        return;
-
-        if(currentBlockScript.bulgeChildCoordinat.Count != 0 || currentBlockScript.hollowChildCoordinat.Count != 0)
-        {
-            CalculateDistance(currentBlock, place, currentBlockScript.hollowChild, placeBlockScript.bulgeChild);
-
-            if(currentBlockScript.nearestBulge != null && Vector3.Dot(currentBlockScript.hollowChild[0].up, currentBlockScript.nearestBulge.up) > 0.99f)
-            {
-                Debug.Log($"PrepareConnection: {currentBlock.name} with {place.name}, points={pendingSnapPoints}");
-                // Вычисляем новую позицию
-                Vector3 newPosition;
-    
-                if(place.name.Split(" ")[0] == "Tile" && currentBlock.name.Split(" ")[0] == "Tile")
-                return;
-        
-                else if(place.name.Split(" ")[0] == "Tile")
-                newPosition = currentBlockScript.placeHollowPosition - currentBlock.transform.TransformVector(currentBlockScript.localBulgePosition);
-            
-                else if(currentBlock.name.Split(" ")[0] == "Tile")
-                newPosition = currentBlockScript.bulgePosition - currentBlock.transform.TransformVector(currentBlockScript.localHollowPosition);
-                
-                else
-                {
-                    if(currentBlockScript.bulgeChild[0].position.y < placeBlockScript.bulgeChild[0].position.y)
-                    newPosition = currentBlockScript.placeHollowPosition - currentBlock.transform.TransformVector(currentBlockScript.localBulgePosition);
-            
-                    else
-                    newPosition = currentBlockScript.bulgePosition - currentBlock.transform.TransformVector(currentBlockScript.localHollowPosition);
-                }
-
-                // Мгновенно перемещаем деталь в примагниченную позицию
-                currentBlock.transform.position = newPosition;
-                // Включаем шаговое перемещение
-                currentBlockScript.isFree = false;
-
-                // Запоминаем данные для фиксации после отпускания мыши
-                pendingSnapPosition = newPosition;
-                pendingSnapParent = place.transform;
-                pendingSnapPoints = CountOccupiedPointsBetween(currentBlock, place);
-                hasPendingConnection = true;
-            }
-        }
+        playerScript.target = Vector3.zero;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(playerScript.isBuildMode /*&& !isMagnetic*/ && gameObject == playerScript.movedObject)
+        if (playerScript.isBuildMode && playerScript.movedObject != null && gameObject == playerScript.movedObject)
         {
-            if(other.CompareTag("Selectable"))
+            if (other.CompareTag("Selectable"))
             {
                 place = other.gameObject;
-                
-                if(!previousBlock.Contains(place))
-                previousBlock.Add(place);
+                if (!previousBlock.Contains(place))
+                    previousBlock.Add(place);
 
-                if(FindMainParent(transform) != null)
-                PrepareConnection(FindMainParent(transform).gameObject, place);
-            
-                else
-                PrepareConnection(gameObject, place);
+                Transform root = playerScript.movedObject.transform;
+                PrepareGroupConnection(gameObject, place, root);
             }
         }
-
-        else if(isFree && Input.GetMouseButtonUp(0))
-        PrepareConnection(gameObject, other.gameObject);
+        else if (isFree && Input.GetMouseButtonUp(0))
+        {
+            PrepareGroupConnection(gameObject, other.gameObject, null);
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if(!isMagnetic && transform.parent == null)
+        if (!isMagnetic && transform.parent == null)
         {
-            if(other.gameObject == place || other.gameObject == pendingSnapParent?.gameObject)
+            if (other.gameObject == place || other.gameObject == pendingSnapParent?.gameObject)
             {
                 hasPendingConnection = false;
                 pendingSnapParent = null;
-                isFree = true;  // <--- возвращаем свободное перемещение
+                isProcessingConnection = false;   // сброс
+                lastProcessedPlace = null;
+                isFree = true;
                 hasStoredMousePos = false;
                 GetComponent<MeshRenderer>().material = mainBlockMaterial;
 
-                foreach(Transform child in FindMainParent(transform))
+                foreach (Transform child in FindMainParent(transform))
                 {
-                    if(child.GetComponent<Block>() != null)
-                    child.GetComponent<MeshRenderer>().material = child.GetComponent<Block>().mainBlockMaterial;
+                    Block childBlock = child.GetComponent<Block>();
+                    if (childBlock != null)
+                        child.GetComponent<MeshRenderer>().material = childBlock.mainBlockMaterial;
                 }
 
                 place = null;
                 Block thisBlock = GetComponent<Block>();
                 Block otherBlock = other.GetComponent<Block>();
                 connections.RemoveAll(c => (c.blockA == thisBlock && c.blockB == otherBlock) || (c.blockA == otherBlock && c.blockB == thisBlock));
-                otherBlock.blockChild.Remove(transform);
             }
         }
-    
-        else if(other.gameObject == place)
+        else if (other.gameObject == place)
         {
             hasPendingConnection = false;
             pendingSnapParent = null;
+            isProcessingConnection = false;   // сброс
+            lastProcessedPlace = null;
             transform.parent = null;
             isFree = true;
             hasStoredMousePos = false;
             place = null;
-            
+
             Block thisBlock = GetComponent<Block>();
             Block otherBlock = other.GetComponent<Block>();
             connections.RemoveAll(c => (c.blockA == thisBlock && c.blockB == otherBlock) || (c.blockA == otherBlock && c.blockB == thisBlock));
-            otherBlock.blockChild.Remove(transform);
         }
 
         isMagnetic = false;
 
-        foreach(Transform hollow in hollowChild)
-        hollow.gameObject.GetComponent<BlockPoint>().isFree = true;
-        
-        foreach(Transform bulge in bulgeChild)
-        bulge.gameObject.GetComponent<BlockPoint>().isFree = true;
+        foreach (Transform hollow in hollowChild)
+            hollow.gameObject.GetComponent<BlockPoint>().isFree = true;
+        foreach (Transform bulge in bulgeChild)
+            bulge.gameObject.GetComponent<BlockPoint>().isFree = true;
 
-        if(previousBlock.Count != 0)
-        previousBlock.RemoveAt(0);
+        if (previousBlock.Count != 0)
+            previousBlock.RemoveAt(0);
 
         Transform root = FindMainParent(transform);
-
-        if(root != null)
-        root.GetComponent<Block>().RecalculateAllPoints();
-        
+        if (root != null)
+            root.GetComponent<Block>().RecalculateAllPoints();
         else
-        RecalculateAllPoints();
+            RecalculateAllPoints();
+
+        pendingSnapRoot = null;
     }
-
-    /*private void OnTriggerExit(Collider other)
-    {
-        if(!isMagnetic && transform.parent == null)
-        {   
-            if(other.gameObject == place)
-            {
-                GetComponent<MeshRenderer>().material = mainBlockMaterial;
-
-                if(FindMainParent(transform).GetComponent<Block>().blockChild.Count == 0)
-                mainScript.FindAllChild(FindMainParent(transform), FindMainParent(transform).GetComponent<Block>().blockChild);
-
-                foreach(Transform child in FindMainParent(transform))
-                {
-                    if(child.GetComponent<Block>() != null)
-                    child.GetComponent<MeshRenderer>().material = child.GetComponent<Block>().mainBlockMaterial;
-                }
-                
-                isFree = true;
-                place = null;
-
-                /*if(blockChild.Count != 0)
-                blockChild.Remove(other.transform);
-            }
-        }
-
-        else if(other.gameObject == place)
-        {
-            transform.parent = null;
-            isFree = true;
-
-            other.gameObject.GetComponent<Block>().blockChild.Remove(transform);
-
-            /*if(blockChild.Count != 0)
-            blockChild.Remove(other.transform);
-        }
-
-        isMagnetic = false;
-        
-        foreach(Transform hollow in hollowChild)
-        hollow.gameObject.GetComponent<BlockPoint>().isFree = true;
-
-        foreach(Transform bulge in bulgeChild)
-        bulge.gameObject.GetComponent<BlockPoint>().isFree = true;
-
-        if(previousBlock.Count != 0)
-        previousBlock.RemoveAt(0);
-
-        /*if(blockChild.Count != 0)
-        blockChild.Remove(other.transform);
-
-        Block thisBlock = GetComponent<Block>();
-        Block otherBlock = other.GetComponent<Block>();
-        connections.RemoveAll(c => (c.blockA == thisBlock && c.blockB == otherBlock) || (c.blockA == otherBlock && c.blockB == thisBlock));
-
-        FindMainParent(transform).GetComponent<Block>().RecalculateAllPoints();
-    }*/
 
     private void Rotation(Transform currentObject)
     {
         if(Input.GetKeyUp(KeyCode.UpArrow))
-        currentObject.Rotate(Vector3.right * 90.0f, Space.World);
-            
+        currentObject.Rotate(Vector3.right * 90f, Space.World);
+        
         if(Input.GetKeyUp(KeyCode.DownArrow))
-        currentObject.Rotate(Vector3.right * (-90.0f), Space.World);
-            
+        currentObject.Rotate(Vector3.right * -90f, Space.World);
+        
         if(Input.GetKeyUp(KeyCode.LeftArrow))
-        currentObject.Rotate(Vector3.up * (-90.0f), Space.World);
-
+        currentObject.Rotate(Vector3.up * -90f, Space.World);
+        
         if(Input.GetKeyUp(KeyCode.RightArrow))
-        currentObject.Rotate(Vector3.up * 90.0f, Space.World);
-
+        currentObject.Rotate(Vector3.up * 90f, Space.World);
+        
         rotateDirection = currentObject.rotation.eulerAngles;
     }
 
-    /*void FixedUpdate()
-    {   
-    }*/
-
-    // Update is called once per frame
     void Update()
-    {   
-        Camera.main.GetComponent<MainScript>().MakeObjectGravity(gameObject);
+    {
+        mainScript.MakeObjectGravity(gameObject);
 
-        if(gameObject == playerScript.movedObject && Input.GetMouseButton(0) && offset != new Vector3 (0.0f, 0.0f, 0.0f))
+        if(gameObject == playerScript.movedObject && Input.GetMouseButton(0) && offset != Vector3.zero)
         Move(playerScript.distance, gameObject);
 
         if(Input.GetMouseButtonUp(0) && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
-        {  
+        {
             hasStoredMousePos = false;
-            
-            offset = new Vector3(0.0f, 0.0f, 0.0f);
-            
+            offset = Vector3.zero;
+
             GetComponent<MeshRenderer>().material = mainBlockMaterial;
 
             if(isFree && playerScript.movedObject == gameObject)
             {
-                playerScript.movedObject.GetComponent<Block>().FindMainParent(transform).position -= FindMainParent(transform).gameObject.GetComponent<Block>().moveVector;
-                playerScript.movedObject.GetComponent<Block>().FindMainParent(transform).gameObject.GetComponent<Block>().moveVector = new Vector3(0.0f, 0.0f, 0.0f);                
+                playerScript.movedObject.GetComponent<Block>().FindMainParent(transform).position -=
+                FindMainParent(transform).gameObject.GetComponent<Block>().moveVector;
+                
+                playerScript.movedObject.GetComponent<Block>().FindMainParent(transform).gameObject.GetComponent<Block>().moveVector = Vector3.zero;
                 playerScript.movedObject = null;
             }
 
@@ -829,79 +700,82 @@ public class Block : MonoBehaviour
                 
                 if(place != null)
                 {
-                    transform.SetParent(place.transform);
-                    // Проверяем, есть ли уже соединение между этим блоком и newParent
-                    Block parentBlock = place.GetComponent<Block>();
-                    
-                    if(parentBlock != null && !connections.Exists(c => (c.blockA == this && c.blockB == parentBlock) || (c.blockA == parentBlock && c.blockB == this)))
+                    if(hasPendingConnection && pendingSnapParent != null && playerScript.movedObject != null)
                     {
-                        int points = CountOccupiedPointsBetween(gameObject, place);
-                        connections.Add(new Connection { blockA = this, blockB = parentBlock, occupiedPoints = points });
-                        Debug.Log($"Forced connection added between {name} and {place.name}, points={points}");
+                        // Смещение уже было применено в PrepareGroupConnection, поэтому не нужно.
+                        // Делаем корень (который мы перемещали) дочерним по отношению к pendingSnapParent
+                        if (pendingSnapRoot != null)
+                        pendingSnapRoot.SetParent(pendingSnapParent);
+                        
+                        else
+                        playerScript.movedObject.transform.SetParent(pendingSnapParent);
+
+                        Block blockA = pendingSnapBlock.GetComponent<Block>();
+                        Block blockB = pendingSnapParent.GetComponent<Block>();
+                        if(blockA != null && blockB != null)
+                        {
+                            Connection newConn = new Connection
+                            {
+                                blockA = blockA,
+                                blockB = blockB,
+                                occupiedPoints = pendingSnapPoints
+                            };
+                            if(!connections.Exists(c => (c.blockA == blockA && c.blockB == blockB) || (c.blockA == blockB && c.blockB == blockA)))
+                            {
+                                connections.Add(newConn);
+                                Debug.Log($"Connection fixed between {blockA.name} and {blockB.name}, points={pendingSnapPoints}");
+                            }
+                            if(pendingSnapBlockPoint != null) pendingSnapBlockPoint.isFree = false;
+                            if(pendingSnapOtherPoint != null) pendingSnapOtherPoint.isFree = false;
+                        }
+                        hasPendingConnection = false;
+                        pendingSnapRoot = null;
+                        isProcessingConnection = false;
+                        lastProcessedPlace = null;
                     }
-                    // Пересчитываем очки для всей сборки (корня)
-                    Transform root = FindMainParent(transform);
-                    
-                    if(root != null)
-                    root.GetComponent<Block>().RecalculateAllPoints();
-                    
                     else
-                    RecalculateAllPoints();
+                    {
+                        // Fallback (одиночный блок)
+                        transform.SetParent(place.transform);
+                        Block parentBlock = place.GetComponent<Block>();
+                        if(parentBlock != null && !connections.Exists(c => (c.blockA == this && c.blockB == parentBlock) || (c.blockA == parentBlock && c.blockB == this)))
+                        {
+                            int points = CountOccupiedPointsBetween(gameObject, place);
+                            connections.Add(new Connection { blockA = this, blockB = parentBlock, occupiedPoints = points });
+                            Debug.Log($"Forced connection added between {name} and {place.name}, points={points}");
+                        }
+                    }
+                    Transform rootAfter = FindMainParent(transform);
+                    if(rootAfter != null) rootAfter.GetComponent<Block>().RecalculateAllPoints();
+                    else RecalculateAllPoints();
                 }
             }
 
-            if (previousBlock.Count != 1)
+            // Обработка вторичных присоединений (например, когда несколько блоков одновременно)
+            if(previousBlock.Count != 1)
             {
-                foreach (GameObject block in previousBlock)
+                foreach(GameObject block in previousBlock)
                 {
-                    if (block != null && block != transform.parent && !IsChildRecursively(block, gameObject))
+                    if(block != null && block != transform.parent && !IsChildRecursively(block, gameObject))
                     {
                         block.transform.SetParent(transform);
-                        // blockChild мы больше не используем для подсчёта, но если он нужен для других целей, оставьте
-                        // blockChild.Add(block.transform);
+                        // blockChild не используется для соединений, но можно обновить
                         block.GetComponent<Block>().place = gameObject;
                         block.GetComponent<Block>().isMagnetic = true;
                         previousPosition = transform.localPosition;
                     }
                 }
             }
-            
+
             FindChildPoint("Hollow", hollowChildCoordinat, hollowChildRotation, transform, hollowChild);
             FindChildPoint("Bulge", bulgeChildCoordinat, bulgeChildRotation, transform, bulgeChild);
-
-            if(hasPendingConnection && pendingSnapParent != null)
-            {
-                Debug.Log($"Fixing connection between {name} and {pendingSnapParent.name}, points={pendingSnapPoints}");
-                transform.position = pendingSnapPosition;
-                transform.SetParent(pendingSnapParent);
-                Connection newConn = new Connection
-                {
-                    blockA = this,
-                    blockB = pendingSnapParent.GetComponent<Block>(),
-                    occupiedPoints = pendingSnapPoints
-                };
-                
-                if(!connections.Exists(c => (c.blockA == this && c.blockB == pendingSnapParent.GetComponent<Block>()) ||
-                (c.blockA == pendingSnapParent.GetComponent<Block>() && c.blockB == this)))
-                {
-                    connections.Add(newConn);
-                    Debug.Log($"Connection fixed between {name} and {pendingSnapParent.name}, points={pendingSnapPoints}");
-                }
-                
-                if(!pendingSnapParent.GetComponent<Block>().blockChild.Contains(transform))
-                pendingSnapParent.GetComponent<Block>().blockChild.Add(transform);
-            
-                hasPendingConnection = false;
-                //place = null;
-                RecalculateAllPoints();
-            }
 
             if(transform.position != previousPosition)
             {
                 SavePosition(previousPosition);
                 previousPosition = transform.localPosition;
             }
-
+            
             else
             SavePosition(transform.localPosition);
         }
@@ -910,18 +784,14 @@ public class Block : MonoBehaviour
         {
             if(isActive)
             {
-        
                 if(isMagnetic)
                 {
                     isMagnetic = false;
-                    // Запоминаем старого родителя до отсоединения
                     Transform oldParent = transform.parent;
-                    // Удаляем все соединения, где участвует этот блок
                     connections.RemoveAll(c => c.blockA == this || c.blockB == this);
                     transform.parent = null;
-                    // Обнуляем счётчик этого блока
                     countPoint = 0;
-                    // Обнуляем счётчики всех его дочерних блоков
+                  
                     foreach(Transform child in transform)
                     {
                         Block childBlock = child.GetComponent<Block>();
@@ -929,7 +799,7 @@ public class Block : MonoBehaviour
                         if(childBlock != null)
                         childBlock.countPoint = 0;
                     }
-                    // Пересчитываем очки для старого родителя, если он существует и является блоком
+                    
                     if(oldParent != null)
                     {
                         Block parentBlock = oldParent.GetComponent<Block>();
@@ -937,11 +807,9 @@ public class Block : MonoBehaviour
                         if(parentBlock != null)
                         parentBlock.RecalculateAllPoints();
                     }
+                    
                     else
-                    {
-                        // Если у блока не было родителя, то пересчитать его самого (хотя соединений нет)
-                        RecalculateAllPoints();
-                    }
+                    RecalculateAllPoints();
                 }
                 
                 else
@@ -961,12 +829,11 @@ public class Block : MonoBehaviour
             previousRotate.Add(new Vector3(rotateDirection.x % 360, rotateDirection.y % 360, rotateDirection.z));
         }
 
-        else if(Input.GetKey(KeyCode.R) && isActive &&
-        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        else if(Input.GetKey(KeyCode.R) && isActive && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         Rotation(FindMainParent(transform));
 
-        else if(isActive && Input.GetKeyUp(KeyCode.E) && blockChild.Count == 0 &&
-        transform.parent == null && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        else if(isActive && Input.GetKeyUp(KeyCode.E) && transform.parent == null &&
+        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
             if(inventoryManager.inventory.Count != 0)
             {
@@ -982,7 +849,7 @@ public class Block : MonoBehaviour
             else
             inventoryManager.AddToInventory(transform);
             
-            playerScript.target = new Vector3(0.0f, 0.0f, 0.0f);
+            playerScript.target = Vector3.zero;
         }
 
         else if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.I) &&
@@ -997,30 +864,36 @@ public class Block : MonoBehaviour
                         transform.rotation = Quaternion.Euler(positionHistory[positionHistory.Count - 1]);
                         rotateDirection = positionHistory[positionHistory.Count - 1];
                     }
-
+                    
                     previousRotate.RemoveAt(previousRotate.Count - 1);
                 }
-
+                
                 else
                 {
                     if(Math.Abs(positionHistory[positionHistory.Count - 1].x) < 0.1f)
                     transform.localPosition = positionHistory[positionHistory.Count - 1];
-
+                    
                     else
                     {
                         transform.parent = null;
                         transform.localPosition = positionHistory[positionHistory.Count - 1];
                     }
                 }
-
+                
                 if(positionHistory.Count > 1)
                 positionHistory.RemoveAt(positionHistory.Count - 1);
-
+                
                 previousPosition = transform.position;
-
-                return;
             }
         }
+    }
+
+    private void SavePosition(Vector3 position)
+    {
+        positionHistory.Add(position);
+        
+        if(positionHistory.Count > 100)
+        positionHistory.RemoveAt(0);
     }
 }
 
