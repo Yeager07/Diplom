@@ -138,24 +138,31 @@ public class Block : MonoBehaviour
     public void RecalculateAllPoints()
     {
         HashSet<Block> allBlocks = new HashSet<Block>();
-        foreach (var conn in connections)
+        
+        foreach(var conn in connections)
         {
             allBlocks.Add(conn.blockA);
             allBlocks.Add(conn.blockB);
         }
         
-        foreach (Block b in allBlocks)
+        // Добавляем текущий блок в список, чтобы обнулить его счётчик (даже если он без соединений)
+        if(!allBlocks.Contains(this))
+        allBlocks.Add(this);
+    
+        foreach(Block b in allBlocks)
         b.countPoint = 0;
-        
-        foreach (var conn in connections)
+    
+        foreach(var conn in connections)
         {
             conn.blockA.countPoint += conn.occupiedPoints;
             conn.blockB.countPoint += conn.occupiedPoints;
         }
+
         Debug.Log($"=== Recalculated {connections.Count} connections ===");
+        // Выводим только блоки с ненулевыми очками (чтобы не засорять консоль)
         foreach (Block b in allBlocks)
         {
-            if (b.countPoint > 0)
+            if(b.countPoint > 0)
             Debug.Log($"{b.name}: {b.countPoint} points");
         }
     }
@@ -373,6 +380,9 @@ public class Block : MonoBehaviour
         }
 
         movingObject.position += move * stepSize;
+        
+        if(hasPendingConnection)
+        pendingSnapPosition = movingObject.position;
 
         // Корректируем накопленное движение мыши
         if (isHorizontal)
