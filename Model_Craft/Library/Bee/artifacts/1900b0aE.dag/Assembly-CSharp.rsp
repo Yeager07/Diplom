@@ -413,6 +413,7 @@
 "Assets/BlockData.cs"
 "Assets/BlockPoint.cs"
 "Assets/BuildSceneScript.cs"
+"Assets/CameraMovement.cs"
 "Assets/ColorPicker.cs"
 "Assets/ColorSelector.cs"
 "Assets/InstructionChangeSize.cs"
@@ -422,6 +423,7 @@
 "Assets/LevelData.cs"
 "Assets/LevelGenerator.cs"
 "Assets/LevelLoader.cs"
+"Assets/LevelPreviewClicker.cs"
 "Assets/LevelStepManager.cs"
 "Assets/MainManager.cs"
 "Assets/MainMenu.cs"
@@ -473,6 +475,8 @@
 "Assets/TextMesh Pro/Examples & Extras/Scripts/VertexZoom.cs"
 "Assets/TextMesh Pro/Examples & Extras/Scripts/WarpTextExample.cs"
 "Assets/UI.cs"
+"Assets/ZoneManager.cs"
+"Assets/ZoneTrigger.cs"
 -langversion:9.0
 /deterministic
 /optimize+
