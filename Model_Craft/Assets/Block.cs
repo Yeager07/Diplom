@@ -43,9 +43,7 @@ public class Block : MonoBehaviour
     public Vector3 localHollowPosition;
     public Vector3 localBulgePosition;
     public Vector3 placeHollowPosition;
-    public bool useBulgeForConnection;
 
-    private Vector3 pendingRootOffset;       // смещение для корня сборки
     private Transform pendingSnapParent;     // блок, к которому присоединяем
     private Transform pendingSnapBlock;      // конкретный блок сборки, который участвует в соединении
     private Transform pendingSnapRoot;
@@ -53,8 +51,8 @@ public class Block : MonoBehaviour
     private bool hasPendingConnection;
     private BlockPoint pendingSnapBlockPoint; // точка на блоке сборки (шип или впадина)
     private BlockPoint pendingSnapOtherPoint; // точка на целевом блоке
-    private bool isProcessingConnection = false;   // Флаг, что уже идёт обработка соединения для этой сборки
     private Transform lastProcessedPlace = null;   // Чтобы не обрабатывать один и тот же place дважды
+    private Vector3 originalRootPosition;
 
     private Vector2 lastMouseScreenPos;
     private bool hasStoredMousePos;
@@ -68,9 +66,12 @@ public class Block : MonoBehaviour
         mainScript = Camera.main.GetComponent<MainScript>();
 
         GameObject inventory = GameObject.FindGameObjectWithTag("InventoryManager");
-        if (inventory != null) inventoryManager = inventory.GetComponent<InventoryManager>();
+        
+        if(inventory != null)
+        inventoryManager = inventory.GetComponent<InventoryManager>();
 
-        if (player != null) playerScript = player.GetComponent<Player>();
+        if(player != null)
+        playerScript = player.GetComponent<Player>();
 
         previousPosition = transform.position;
         positionHistory.Add(transform.position);
@@ -181,6 +182,9 @@ public class Block : MonoBehaviour
 
     public void Move(float distance, GameObject currentObject)
     {
+        if(hasPendingConnection)
+        return;
+
         Transform movingObject = currentObject.transform;
         Block blockScript = currentObject.GetComponent<Block>();
 
@@ -207,7 +211,7 @@ public class Block : MonoBehaviour
 
             Vector2 currentMousePos = Input.mousePosition;
             Vector2 delta = currentMousePos - lastMouseScreenPos;
-            float threshold = 25f; // чувствительность
+            float threshold = 70f; // чувствительность
 
             bool moved = false;
             
@@ -318,163 +322,128 @@ public class Block : MonoBehaviour
         }
     }
 
-    private void CalculateDistance(GameObject currentBlock, GameObject place)
+    private bool FindNearestConnectionPoints(Block current, Block target, 
+    out Transform nearestBulge, out Transform nearestHollow,
+    out Vector3 localBulgePos, out Vector3 localHollowPos,
+    out Vector3 targetWorldPoint)
     {
-        float minDistance = 100.0f;
-        Block current = currentBlock.GetComponent<Block>();
-        Block target = place.GetComponent<Block>();
-
-        // Сбрасываем
         nearestBulge = null;
         nearestHollow = null;
-        useBulgeForConnection = false;
+        localBulgePos = Vector3.zero;
+        localHollowPos = Vector3.zero;
+        targetWorldPoint = Vector3.zero;
 
-        // Определяем, выше или ниже currentBlock относительно place (по центру)
-        bool isCurrentAbove = currentBlock.transform.position.y > place.transform.position.y;
-
-        if(isCurrentAbove)
-        {
-            // Соединение сверху: ищем шип на currentBlock + впадину на place
-            foreach(Transform bulge in current.bulgeChild)
-            {
-                foreach(Transform hollow in target.hollowChild)
-                {
-                    float dist = Vector3.Distance(bulge.position, hollow.position);
-                    
-                    if(dist < minDistance)
-                    {
-                        minDistance = dist;
-                        nearestBulge = bulge;
-                        nearestHollow = hollow;
-                        useBulgeForConnection = true;
-                        localBulgePosition = bulge.localPosition;
-                        localHollowPosition = Vector3.zero;
-                        bulgePosition = bulge.position;
-                        placeHollowPosition = hollow.position; // впадина на place
-                    }
-                }
-            }
-        }
-        
-        else
-        {
-            // Соединение снизу: ищем впадину на currentBlock + шип на place
-            foreach(Transform hollow in current.hollowChild)
-            {
-                foreach(Transform bulge in target.bulgeChild)
-                {
-                    float dist = Vector3.Distance(hollow.position, bulge.position);
-                    
-                    if(dist < minDistance)
-                    {
-                        minDistance = dist;
-                        nearestBulge = bulge;
-                        nearestHollow = hollow;
-                        useBulgeForConnection = false;
-                        localHollowPosition = hollow.localPosition;
-                        localBulgePosition = Vector3.zero;
-                        bulgePosition = bulge.position;
-                        placeHollowPosition = hollow.position; // впадина на currentBlock
-                    }
-                }
-            }
-        }
-    }
-
-    private void PrepareGroupConnection(GameObject currentBlock, GameObject place, Transform rootGroup)
-    {
-        if (rootGroup == null && currentBlock != null)
-            rootGroup = FindMainParent(currentBlock.transform);
-        if (rootGroup == null) return;
-
-        Block current = currentBlock.GetComponent<Block>();
-        Block target = place.GetComponent<Block>();
-        if (current == null || target == null) return;
-        if (IsChildRecursively(place, currentBlock)) return;
-
-        // Находим ближайшие точки между currentBlock и place
         float minDistance = 100f;
-        Transform nearestBulge = null;
-        Transform nearestHollow = null;
-        Vector3 localBulgePos = Vector3.zero;
-        Vector3 localHollowPos = Vector3.zero;
-        Vector3 bulgeWorldPos = Vector3.zero;
-        Vector3 placeHollowPos = Vector3.zero;
 
-        // 1) Впадина на current + шип на place
-        foreach (Transform hollow in current.hollowChild)
+        // 1) Впадина на current + шип на target
+        foreach(Transform hollow in current.hollowChild)
         {
-            foreach (Transform bulge in target.bulgeChild)
+            foreach(Transform bulge in target.bulgeChild)
             {
                 float d = Vector3.Distance(hollow.position, bulge.position);
-                if (d < minDistance)
+                
+                if(d < minDistance)
                 {
                     minDistance = d;
                     nearestBulge = bulge;
                     nearestHollow = hollow;
                     localHollowPos = hollow.localPosition;
-                    bulgeWorldPos = bulge.position;
-                    placeHollowPos = hollow.position;
+                    targetWorldPoint = bulge.position;
                 }
             }
         }
-        // 2) Шип на current + впадина на place
-        foreach (Transform bulge in current.bulgeChild)
+
+        // 2) Шип на current + впадина на target
+        foreach(Transform bulge in current.bulgeChild)
         {
-            foreach (Transform hollow in target.hollowChild)
+            foreach(Transform hollow in target.hollowChild)
             {
                 float d = Vector3.Distance(bulge.position, hollow.position);
-                if (d < minDistance)
+                
+                if(d < minDistance)
                 {
                     minDistance = d;
                     nearestBulge = bulge;
                     nearestHollow = hollow;
                     localBulgePos = bulge.localPosition;
-                    bulgeWorldPos = bulge.position;
-                    placeHollowPos = hollow.position;
+                    targetWorldPoint = hollow.position;
                 }
             }
         }
 
-        if (nearestBulge == null || nearestHollow == null) return;
+        return nearestBulge != null && nearestHollow != null;
+    }
+
+    private void PrepareGroupConnection(GameObject currentBlock, GameObject place, Transform rootGroup)
+    {
+        if(rootGroup == null && currentBlock != null)
+        rootGroup = FindMainParent(currentBlock.transform);
+        
+        if(rootGroup == null)
+        return;
+
+        Block rootBlock = rootGroup.GetComponent<Block>();
+        
+        if(rootBlock == null)
+        return;
+
+        // Блокируем повторные вызовы
+        if(rootBlock.lastProcessedPlace == place.transform)
+        return;
+
+        Block current = currentBlock.GetComponent<Block>();
+        Block target = place.GetComponent<Block>();
+        
+        if(current == null || target == null)
+        return;
+        
+        if(IsChildRecursively(place, currentBlock))
+        return;
+
+        // Поиск ближайших точек
+        if(!FindNearestConnectionPoints(current, target, out Transform nearestBulge, out Transform nearestHollow,
+        out Vector3 localBulgePos, out Vector3 localHollowPos, out Vector3 targetWorldPoint))
+        return;
 
         // Проверка свободных точек
-        if (!nearestBulge.GetComponent<BlockPoint>().isFree || !nearestHollow.GetComponent<BlockPoint>().isFree)
+        if(!nearestBulge.GetComponent<BlockPoint>().isFree || !nearestHollow.GetComponent<BlockPoint>().isFree)
         {
             Debug.Log("Cannot connect – point already occupied");
             return;
         }
-
-        // Проверка сонаправленности осей
-        if (Vector3.Dot(current.hollowChild[0].up, target.bulgeChild[0].up) <= 0.99f)
+        
+        if(Vector3.Dot(current.hollowChild[0].up, target.bulgeChild[0].up) <= 0.99f)
         {
             Debug.Log("Axes not aligned");
             return;
         }
 
-        // Определяем, сверху или снизу currentBlock относительно place
+        // Определяем, сверху или снизу
         float yCurrent = current.bulgeChild.Count > 0 ? current.bulgeChild[0].position.y : current.transform.position.y;
         float yPlace = target.bulgeChild.Count > 0 ? target.bulgeChild[0].position.y : place.transform.position.y;
         bool isCurrentAbove = yCurrent > yPlace;
 
-        Vector3 newPosition;
-        if (isCurrentAbove)
-        {
-            // current сверху – используем впадину current и шип place
-            newPosition = bulgeWorldPos - currentBlock.transform.TransformVector(localHollowPos);
-        }
+        Vector3 currentSourceWorld;
+        
+        if(isCurrentAbove)
+        currentSourceWorld = currentBlock.transform.TransformPoint(localHollowPos);
+        
         else
-        {
-            // current снизу – используем шип current и впадину place
-            newPosition = placeHollowPos - currentBlock.transform.TransformVector(localBulgePos);
-        }
+        currentSourceWorld = currentBlock.transform.TransformPoint(localBulgePos);
 
-        // Применяем смещение к корню
-        Vector3 offset = newPosition - currentBlock.transform.position;
-        if (rootGroup != null)
+        Vector3 offset = targetWorldPoint - currentSourceWorld;
+
+        originalRootPosition = rootGroup.position;
+
+        // Применяем смещение
+        rootGroup.position += offset;
+        rootGroup.GetComponent<Block>().isFree = false;
+
+        // Сбрасываем накопленное движение мыши у всех блоков сборки
+        foreach(Block b in rootGroup.GetComponentsInChildren<Block>())
         {
-            rootGroup.position += offset;
-            rootGroup.GetComponent<Block>().isFree = false;
+            b.hasStoredMousePos = false;
+            b.lastMouseScreenPos = Vector2.zero;
         }
 
         // Сохраняем данные для фиксации
@@ -486,28 +455,9 @@ public class Block : MonoBehaviour
         hasPendingConnection = true;
         pendingSnapRoot = rootGroup;
 
-        Debug.Log($"PrepareGroupConnection: {currentBlock.name} with {place.name}, offset={offset}");
-    }
+        rootBlock.lastProcessedPlace = place.transform;
 
-    private bool CheckAxesAligned(Block blockA, Block blockB)
-    {
-        // Если у обоих есть шипы, сравниваем их
-        if (blockA.bulgeChild.Count > 0 && blockB.bulgeChild.Count > 0)
-        return Vector3.Dot(blockA.bulgeChild[0].up, blockB.bulgeChild[0].up) > 0.99f;
-        // Если у какого-то нет шипов, считаем оси сонаправленными (например, тайл)
-        return true;
-    }
-
-    void OnMouseDown()
-    {
-        hasStoredMousePos = false;
-        hasPendingConnection = false;
-        pendingSnapRoot = null;
-        isProcessingConnection = false;
-        lastProcessedPlace = null;
-
-        if(playerScript.isBuildMode)
-        CalculateOffset(gameObject);
+        Debug.Log($"PrepareGroupConnection: {currentBlock.name} -> {place.name}, offset={offset}");
     }
 
     void OnMouseDrag()
@@ -542,9 +492,9 @@ public class Block : MonoBehaviour
                         Block rootBlock = FindMainParent(transform).GetComponent<Block>();
                         rootBlock.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
                     
-                        foreach (Block child in rootBlock.GetComponentsInChildren<Block>())
+                        foreach(Block child in rootBlock.GetComponentsInChildren<Block>())
                         {
-                            if (child != rootBlock)
+                            if(child != rootBlock)
                             child.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
                         }
                     }
@@ -574,43 +524,81 @@ public class Block : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (playerScript.isBuildMode && playerScript.movedObject != null && gameObject == playerScript.movedObject)
+        if(hasPendingConnection)
+        return; // не обрабатываем новое соединение, пока старое не завершено
+
+        if(playerScript.isBuildMode && playerScript.movedObject != null)
         {
-            if (other.CompareTag("Selectable"))
+            Transform currentRoot = FindMainParent(transform);
+            
+            if(currentRoot == playerScript.movedObject.transform)
             {
-                place = other.gameObject;
-                if (!previousBlock.Contains(place))
+                if(other.CompareTag("Selectable"))
+                {
+                    place = other.gameObject;
+                    
+                    if(!previousBlock.Contains(place))
                     previousBlock.Add(place);
 
-                Transform root = playerScript.movedObject.transform;
-                PrepareGroupConnection(gameObject, place, root);
+                    Transform root = playerScript.movedObject.transform;
+                    PrepareGroupConnection(gameObject, place, root);
+                }
             }
         }
-        else if (isFree && Input.GetMouseButtonUp(0))
-        {
-            PrepareGroupConnection(gameObject, other.gameObject, null);
-        }
+        
+        else if(isFree && Input.GetMouseButtonUp(0))
+        PrepareGroupConnection(gameObject, other.gameObject, null);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (!isMagnetic && transform.parent == null)
+        // Если вышли из триггера, сбрасываем флаг у корня
+        Transform root = FindMainParent(transform);
+
+        if(root != null)
         {
-            if (other.gameObject == place || other.gameObject == pendingSnapParent?.gameObject)
+            Block rootBlock = root.GetComponent<Block>();
+            
+            if(rootBlock != null)
+            rootBlock.lastProcessedPlace = null;
+        }
+
+        // Если вышли из триггера до фиксации – откатываем позицию корня
+        if(hasPendingConnection && pendingSnapRoot != null)
+        {
+            pendingSnapRoot.position = originalRootPosition;
+            pendingSnapRoot.GetComponent<Block>().isFree = true;
+        }
+
+        // Сбрасываем флаги обработки
+        lastProcessedPlace = null;
+        hasPendingConnection = false;
+        pendingSnapParent = null;
+        pendingSnapRoot = null;
+
+        if(!isMagnetic && transform.parent == null)
+        {
+            if(other.gameObject == place || other.gameObject == pendingSnapParent?.gameObject)
             {
                 hasPendingConnection = false;
                 pendingSnapParent = null;
-                isProcessingConnection = false;   // сброс
                 lastProcessedPlace = null;
                 isFree = true;
                 hasStoredMousePos = false;
                 GetComponent<MeshRenderer>().material = mainBlockMaterial;
 
-                foreach (Transform child in FindMainParent(transform))
+                moveVector = Vector3.zero;
+                Transform parentRoot = FindMainParent(transform);
+                
+                if(parentRoot != null)
+                parentRoot.GetComponent<Block>().moveVector = Vector3.zero;
+
+                foreach(Transform child in FindMainParent(transform))
                 {
                     Block childBlock = child.GetComponent<Block>();
-                    if (childBlock != null)
-                        child.GetComponent<MeshRenderer>().material = childBlock.mainBlockMaterial;
+                    
+                    if(childBlock != null)
+                    child.GetComponent<MeshRenderer>().material = childBlock.mainBlockMaterial;
                 }
 
                 place = null;
@@ -619,16 +607,21 @@ public class Block : MonoBehaviour
                 connections.RemoveAll(c => (c.blockA == thisBlock && c.blockB == otherBlock) || (c.blockA == otherBlock && c.blockB == thisBlock));
             }
         }
-        else if (other.gameObject == place)
+        
+        else if(other.gameObject == place)
         {
             hasPendingConnection = false;
             pendingSnapParent = null;
-            isProcessingConnection = false;   // сброс
             lastProcessedPlace = null;
-            transform.parent = null;
             isFree = true;
             hasStoredMousePos = false;
             place = null;
+
+            moveVector = Vector3.zero;
+            Transform parentRoot = FindMainParent(transform);
+            
+            if(parentRoot != null)
+            parentRoot.GetComponent<Block>().moveVector = Vector3.zero;
 
             Block thisBlock = GetComponent<Block>();
             Block otherBlock = other.GetComponent<Block>();
@@ -637,19 +630,20 @@ public class Block : MonoBehaviour
 
         isMagnetic = false;
 
-        foreach (Transform hollow in hollowChild)
-            hollow.gameObject.GetComponent<BlockPoint>().isFree = true;
-        foreach (Transform bulge in bulgeChild)
-            bulge.gameObject.GetComponent<BlockPoint>().isFree = true;
+        foreach(Transform hollow in hollowChild)    
+        hollow.gameObject.GetComponent<BlockPoint>().isFree = true;
+        
+        foreach(Transform bulge in bulgeChild)
+        bulge.gameObject.GetComponent<BlockPoint>().isFree = true;
 
-        if (previousBlock.Count != 0)
-            previousBlock.RemoveAt(0);
+        if(previousBlock.Count != 0)
+        previousBlock.RemoveAt(0);
 
-        Transform root = FindMainParent(transform);
-        if (root != null)
-            root.GetComponent<Block>().RecalculateAllPoints();
+        if(root != null)
+        root.GetComponent<Block>().RecalculateAllPoints();
+        
         else
-            RecalculateAllPoints();
+        RecalculateAllPoints();
 
         pendingSnapRoot = null;
     }
@@ -704,7 +698,7 @@ public class Block : MonoBehaviour
                     {
                         // Смещение уже было применено в PrepareGroupConnection, поэтому не нужно.
                         // Делаем корень (который мы перемещали) дочерним по отношению к pendingSnapParent
-                        if (pendingSnapRoot != null)
+                        if(pendingSnapRoot != null)
                         pendingSnapRoot.SetParent(pendingSnapParent);
                         
                         else
@@ -712,6 +706,7 @@ public class Block : MonoBehaviour
 
                         Block blockA = pendingSnapBlock.GetComponent<Block>();
                         Block blockB = pendingSnapParent.GetComponent<Block>();
+                        
                         if(blockA != null && blockB != null)
                         {
                             Connection newConn = new Connection
@@ -720,24 +715,40 @@ public class Block : MonoBehaviour
                                 blockB = blockB,
                                 occupiedPoints = pendingSnapPoints
                             };
+                        
                             if(!connections.Exists(c => (c.blockA == blockA && c.blockB == blockB) || (c.blockA == blockB && c.blockB == blockA)))
                             {
                                 connections.Add(newConn);
                                 Debug.Log($"Connection fixed between {blockA.name} and {blockB.name}, points={pendingSnapPoints}");
                             }
-                            if(pendingSnapBlockPoint != null) pendingSnapBlockPoint.isFree = false;
-                            if(pendingSnapOtherPoint != null) pendingSnapOtherPoint.isFree = false;
+                        
+                            if(pendingSnapBlockPoint != null)
+                            pendingSnapBlockPoint.isFree = false;
+                        
+                            if(pendingSnapOtherPoint != null)
+                            pendingSnapOtherPoint.isFree = false;
                         }
+                        
                         hasPendingConnection = false;
+    
+                        if(pendingSnapRoot != null)
+                        {
+                            Block rootBlock = pendingSnapRoot.GetComponent<Block>();
+                            
+                            if(rootBlock != null)
+                            rootBlock.lastProcessedPlace = null;
+                        }
+    
                         pendingSnapRoot = null;
-                        isProcessingConnection = false;
                         lastProcessedPlace = null;
                     }
+                    
                     else
                     {
                         // Fallback (одиночный блок)
                         transform.SetParent(place.transform);
                         Block parentBlock = place.GetComponent<Block>();
+                        
                         if(parentBlock != null && !connections.Exists(c => (c.blockA == this && c.blockB == parentBlock) || (c.blockA == parentBlock && c.blockB == this)))
                         {
                             int points = CountOccupiedPointsBetween(gameObject, place);
@@ -745,9 +756,14 @@ public class Block : MonoBehaviour
                             Debug.Log($"Forced connection added between {name} and {place.name}, points={points}");
                         }
                     }
+                    
                     Transform rootAfter = FindMainParent(transform);
-                    if(rootAfter != null) rootAfter.GetComponent<Block>().RecalculateAllPoints();
-                    else RecalculateAllPoints();
+                    
+                    if(rootAfter != null)
+                    rootAfter.GetComponent<Block>().RecalculateAllPoints();
+                    
+                    else
+                    RecalculateAllPoints();
                 }
             }
 
@@ -791,6 +807,15 @@ public class Block : MonoBehaviour
                     connections.RemoveAll(c => c.blockA == this || c.blockB == this);
                     transform.parent = null;
                     countPoint = 0;
+
+                    moveVector = Vector3.zero;
+                    foreach(Transform child in transform)
+                    {
+                        Block childBlock = child.GetComponent<Block>();
+                        
+                        if(childBlock != null)
+                        childBlock.moveVector = Vector3.zero;
+                    }
                   
                     foreach(Transform child in transform)
                     {
