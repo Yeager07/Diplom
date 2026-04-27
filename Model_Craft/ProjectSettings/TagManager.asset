@@ -12,6 +12,11 @@ TagManager:
   - Instruction
   - InventoryManager
   - Pause
+  - Center
+  - Table
+  - Cabinet
+  - Settings
+  - Exit
   layers:
   - Default
   - TransparentFX

@@ -10,7 +10,7 @@ public class UI : MonoBehaviour
 {
     private Player playerScript;
     private InventoryManager inventoryManager;
-    public GameObject pauseMenu;
+    //public GameObject pauseMenu;
     public GameObject instructionBlock;
     public GameObject blocksCatalog;
     private GameObject cursor;
@@ -103,64 +103,9 @@ public class UI : MonoBehaviour
         }
     }
 
-    public void OpenMainMenu()
-    {
-        Time.timeScale = 1;
-        Cursor.lockState = CursorLockMode.None;
-        pauseMenu.SetActive(false);
-        blocksCatalog.SetActive(false);
-        blockList.gameObject.SetActive(false);
-        playerScript.transform.Find("UI").gameObject.SetActive(false);
-        playerScript.transform.Find("UI").transform.Find("Instruction").gameObject.SetActive(false);
-
-        inventoryManager.inventory.Clear();
-        inventoryManager.materialsCount.Clear();
-        
-        for(int iterator = 0; iterator < inventoryManager.keys.Length; iterator++)
-        {
-            inventoryManager.keys[iterator] = "";
-            inventoryManager.values[iterator] = "";
-        }
-
-        inventoryManager.UpdateInventoryView();
-
-        Camera.main.GetComponent<MainScript>().PlacePlayerZero();
-
-
-        if(playerScript.isBuildMode)
-        playerScript.isBuildMode = false;
-
-        playerScript.typeGame = "MainMenu";
-    
-        SceneManager.LoadScene("01_Menu");
-    }
-
-    public void OpenClosePauseMenu()
-    {
-        if(pauseMenu.activeInHierarchy)
-        {
-            Time.timeScale = 1;
-            
-            if(playerScript.isBuildMode)
-            Cursor.lockState = CursorLockMode.None;
-            
-            else
-            Cursor.lockState = CursorLockMode.Locked;
-
-            pauseMenu.SetActive(false);
-        }
-
-        else
-        {
-            Time.timeScale = 0;
-            Cursor.lockState = CursorLockMode.None;
-            pauseMenu.SetActive(true);
-        }
-    }
-
     void FixedUpdate()
     {
-        if(playerScript.isBuildMode)
+        if(playerScript.isBuildMode || playerScript.typeGame == "MainMenu" || playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         cursor.gameObject.SetActive(false);
         
         else
@@ -169,30 +114,11 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Transform colorChoosePanel = transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
-        
-        if(Input.GetKeyUp(KeyCode.B) && playerScript.typeGame == "CareerMode" &&
-        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
-        {   
-            if(colorChoosePanel == null || !colorChoosePanel.gameObject.activeInHierarchy)
-            {
-                if(blockList.gameObject.activeInHierarchy)
-                {
-                    blockList.gameObject.SetActive(false);
-                    blocksCatalog.SetActive(false);
-                }
-            
-                else
-                blockList.gameObject.SetActive(true);
-            }
-
-            else
-            return;
-        }
+        /*Transform colorChoosePanel = transform.Find("AdvancesColorPickerPanelPrefab(Clone)");
 
         if(playerScript.typeGame != "MainMenu" && Input.GetKeyUp(KeyCode.Escape))
         {
             OpenClosePauseMenu();
-        }
+        }*/
     }
 }

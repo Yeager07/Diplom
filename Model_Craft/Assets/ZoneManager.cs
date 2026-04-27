@@ -7,26 +7,22 @@ public class ZoneManager : MonoBehaviour
 {
     public static ZoneManager Instance;
 
-    [Header("Zone Panels")]
     public GameObject tableUIPanel;
     public GameObject cabinetUIPanel;
     public GameObject settingsUIPanel;
     public GameObject exitUIPanel;
 
-    [Header("Table Zone")]
     public GameObject[] levelPreviews;          // массив префабов (кубы с текстом)
     public Transform previewSpawnPoint;
     public Button nextLevelButton;
     public Button prevLevelButton;
-    public Button careerModeButton;
+//    public Button careerModeButton;
     public Button freeModeButton;
 
-    [Header("Settings Zone")]
     public Slider volumeSlider;
     public Button languageButton;               // кнопка переключения языка
     public TMP_Text languageButtonText;         // текст на кнопке
 
-    [Header("Exit Zone")]
     public Button confirmExitButton;
     public Button cancelExitButton;
 
@@ -36,37 +32,89 @@ public class ZoneManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if(Instance == null)
+        Instance = this;
+        
+        else
+        Destroy(gameObject);
+        
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Player player = FindFirstObjectByType<Player>();
+     
+        if(player != null && player.typeGame == "MainMenu")
+        {
+            enabled = true;
+            HideAllPanels();
+        }
+        
+        else
+        enabled = false;
     }
 
     void Start()
     {
-        camMovement = Camera.main.GetComponent<CameraMovement>();
+
+        Player player = FindFirstObjectByType<Player>();
+        
+        if(player == null || player.typeGame != "MainMenu")
+        {
+            Debug.Log("ZoneManager: Not in main menu, disabling.");
+            enabled = false;
+            return;
+        }
+
+        camMovement = Camera.main?.GetComponent<CameraMovement>();
+
         HideAllPanels();
 
         // Подписки
-        if (nextLevelButton) nextLevelButton.onClick.AddListener(NextLevel);
-        if (prevLevelButton) prevLevelButton.onClick.AddListener(PreviousLevel);
-        if (careerModeButton) careerModeButton.onClick.AddListener(StartCareerMode);
-        if (freeModeButton) freeModeButton.onClick.AddListener(StartFreeMode);
-        if (volumeSlider) volumeSlider.onValueChanged.AddListener(ChangeVolume);
-        if (languageButton) languageButton.onClick.AddListener(ChangeLanguage);
-        if (confirmExitButton) confirmExitButton.onClick.AddListener(ExitGame);
-        if (cancelExitButton) cancelExitButton.onClick.AddListener(() => exitUIPanel.SetActive(false));
+        if(nextLevelButton)
+        nextLevelButton.onClick.AddListener(NextLevel);
+        
+        if(prevLevelButton)
+        prevLevelButton.onClick.AddListener(PreviousLevel);
+        
+        if(freeModeButton)
+        freeModeButton.onClick.AddListener(StartFreeMode);
+        
+        if(volumeSlider)
+        volumeSlider.onValueChanged.AddListener(ChangeVolume);
+        
+        if(languageButton)
+        languageButton.onClick.AddListener(ChangeLanguage);
+        
+        if(confirmExitButton)
+        confirmExitButton.onClick.AddListener(ExitGame);
+        
+        if(cancelExitButton)
+        cancelExitButton.onClick.AddListener(() => exitUIPanel.SetActive(false));
     }
 
-    private void HideAllPanels()
+    public void HideAllPanels()
     {
-        if (tableUIPanel) tableUIPanel.SetActive(false);
-        if (cabinetUIPanel) cabinetUIPanel.SetActive(false);
-        if (settingsUIPanel) settingsUIPanel.SetActive(false);
-        if (exitUIPanel) exitUIPanel.SetActive(false);
+        if(tableUIPanel != null && tableUIPanel.activeSelf)
+        ClearTablePreview();
+
+        if(tableUIPanel)
+        tableUIPanel.SetActive(false);
+        
+        if(cabinetUIPanel)
+        cabinetUIPanel.SetActive(false);
+        
+        if(settingsUIPanel)
+        settingsUIPanel.SetActive(false);
+        
+        if(exitUIPanel)
+        exitUIPanel.SetActive(false);
     }
 
     public void OnCameraArrived(int zoneIndex)
     {
-        HideAllPanels();
+        //HideAllPanels();
         switch (zoneIndex)
         {
             case 1: ShowTableUI(); break;
@@ -80,6 +128,7 @@ public class ZoneManager : MonoBehaviour
     private void ShowTableUI()
     {
         tableUIPanel.SetActive(true);
+        ClearTablePreview();
         UpdateLevelPreview();
     }
 
@@ -91,14 +140,18 @@ public class ZoneManager : MonoBehaviour
 
     private void ShowSettingsUI()
     {
+        if(settingsUIPanel)
         settingsUIPanel.SetActive(true);
-        // Загружаем текущие настройки громкости, языка
+        
+        if(volumeSlider)
         volumeSlider.value = AudioListener.volume;
+        
         UpdateLanguageButtonText();
     }
 
     private void ShowExitUI()
     {
+        if(exitUIPanel)
         exitUIPanel.SetActive(true);
     }
 
@@ -106,22 +159,35 @@ public class ZoneManager : MonoBehaviour
 
     private void UpdateLevelPreview()
     {
-        if (currentPreviewInstance != null) Destroy(currentPreviewInstance);
-        if (levelPreviews.Length > currentLevelIndex && previewSpawnPoint != null)
+        if(currentPreviewInstance != null)
+        Destroy(currentPreviewInstance);
+
+        if(levelPreviews.Length > currentLevelIndex && previewSpawnPoint != null)
         {
             currentPreviewInstance = Instantiate(levelPreviews[currentLevelIndex], previewSpawnPoint.position, previewSpawnPoint.rotation);
-            // Добавляем обработчик клика на модель
             LevelPreviewClick click = currentPreviewInstance.AddComponent<LevelPreviewClick>();
             click.levelIndex = currentLevelIndex;
         }
-        // Обновляем активность стрелок
-        if (prevLevelButton) prevLevelButton.interactable = (currentLevelIndex > 0);
-        if (nextLevelButton) nextLevelButton.interactable = (currentLevelIndex < levelPreviews.Length - 1);
+
+        if(prevLevelButton)
+        prevLevelButton.interactable = (currentLevelIndex > 0);
+        
+        if(nextLevelButton)
+        nextLevelButton.interactable = (currentLevelIndex < levelPreviews.Length - 1);
+    }
+
+    private void ClearTablePreview()
+    {
+        if(currentPreviewInstance != null)
+        {
+            Destroy(currentPreviewInstance);
+            currentPreviewInstance = null;
+        }
     }
 
     private void NextLevel()
     {
-        if (currentLevelIndex < levelPreviews.Length - 1)
+        if(currentLevelIndex < levelPreviews.Length - 1)
         {
             currentLevelIndex++;
             UpdateLevelPreview();
@@ -130,7 +196,7 @@ public class ZoneManager : MonoBehaviour
 
     private void PreviousLevel()
     {
-        if (currentLevelIndex > 0)
+        if(currentLevelIndex > 0)
         {
             currentLevelIndex--;
             UpdateLevelPreview();
@@ -139,14 +205,23 @@ public class ZoneManager : MonoBehaviour
 
     private void StartCareerMode()
     {
+        CameraMovement camMove = Camera.main.GetComponent<CameraMovement>();
+        
+        if(camMove != null)
+        {
+            camMove.transform.position = camMove.cameraPoints[0].position;
+            camMove.transform.rotation = camMove.cameraPoints[0].rotation;
+        }
+
         // Получаем LevelData для выбранного уровня
         LevelData levelData = GetLevelDataByIndex(currentLevelIndex);
         LevelLoader.SelectedLevel = levelData;
 
         // Настройка игрока и сцены
+        Cursor.lockState = CursorLockMode.Locked;
         Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         player.typeGame = "CareerMode";
-        player.isBuildMode = true;
+        player.isBuildMode = false;
         player.transform.Find("UI").gameObject.SetActive(true);
         player.transform.Find("UI").transform.Find("Instruction").transform.Find("InstructionDownload").gameObject.SetActive(false);
         Camera.main.GetComponent<MainScript>().PlacePlayerZero();
@@ -156,6 +231,7 @@ public class ZoneManager : MonoBehaviour
 
     private void StartFreeMode()
     {
+
         Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         player.typeGame = "FreeMode";
         player.isBuildMode = true;
@@ -172,8 +248,6 @@ public class ZoneManager : MonoBehaviour
         return Camera.main.GetComponent<MainScript>().levelDatas[index];
     }
 
-    // ==================== Зона настроек ====================
-
     private void ChangeVolume(float value)
     {
         AudioListener.volume = value;
@@ -182,10 +256,12 @@ public class ZoneManager : MonoBehaviour
     private void ChangeLanguage()
     {
         Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        if (player.language == "En")
-            player.language = "Ru";
+        
+        if(player.language == "En")
+        player.language = "Ru";
+        
         else
-            player.language = "En";
+        player.language = "En";
 
         UpdateLanguageButtonText();
         // Здесь можно обновить тексты всех UI элементов в зонах (например, кнопок)
@@ -193,7 +269,9 @@ public class ZoneManager : MonoBehaviour
 
     private void UpdateLanguageButtonText()
     {
-        if (languageButtonText == null) return;
+        if(languageButtonText == null)
+        return;
+        
         Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         languageButtonText.text = player.language == "En" ? "Русский" : "English";
     }
@@ -204,6 +282,14 @@ public class ZoneManager : MonoBehaviour
         StartCareerMode();
     }
 
+    public void MoveToCenter()
+    {
+        if(camMovement != null)
+        camMovement.MoveToPoint(0); // 0 – индекс центральной позиции
+
+        HideAllPanels();
+    }
+
     // ==================== Зона выхода ====================
 
     private void ExitGame()
@@ -212,5 +298,11 @@ public class ZoneManager : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    void OnDestroy()
+    {
+        ClearTablePreview();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ZoneTrigger : MonoBehaviour
 {
@@ -13,7 +14,15 @@ public class ZoneTrigger : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (camMove != null)
-            camMove.MoveToPoint(zoneIndex);
+        if(EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        return;
+
+        Player player = FindFirstObjectByType<Player>();
+        
+        if(player != null && player.typeGame != "MainMenu")
+        return;
+        
+        if(camMove != null)
+        camMove.MoveToPoint(zoneIndex);
     }
 }

@@ -429,6 +429,7 @@
 "Assets/MainMenu.cs"
 "Assets/MainScript.cs"
 "Assets/OutlineSelection.cs"
+"Assets/PauseMenuController.cs"
 "Assets/PdfInstructionViewer.cs"
 "Assets/Player.cs"
 "Assets/PresetButton.cs"
