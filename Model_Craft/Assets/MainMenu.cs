@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -120,4 +120,4 @@ public class MainMenu : MonoBehaviour
         if(levelList.transform.localPosition != targetPosition)
         levelList.transform.localPosition = Vector3.MoveTowards(levelList.transform.localPosition, targetPosition, speed);
     }
-}
+}*/
