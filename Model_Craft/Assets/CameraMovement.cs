@@ -8,6 +8,8 @@ public class CameraMovement : MonoBehaviour
     public float rotationSpeed = 1.0f;
 
     private int currentTargetIndex = 0;
+    public int CurrentTargetIndex => currentTargetIndex;
+    
     private bool isMoving = false;
     private bool isInitialized = false;
 
@@ -24,6 +26,11 @@ public class CameraMovement : MonoBehaviour
     void OnDestroy()
     {
         UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    public int GetCurrentIndex()
+    {
+        return currentTargetIndex;
     }
 
     private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)

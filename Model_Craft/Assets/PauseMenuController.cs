@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class PauseMenuController : MonoBehaviour
 {
@@ -9,8 +10,7 @@ public class PauseMenuController : MonoBehaviour
 
     public Button resumeButton;
     public Button mainMenuButton;
-    public Button controlsButton;            // кнопка открытия инструкции
-    //public Button closeControlsButton;      // кнопка закрытия инструкции (если есть)
+    public Button controlsButton;
 
     private bool isPaused = false;
     private bool isControlsOpen = false;
@@ -37,9 +37,27 @@ public class PauseMenuController : MonoBehaviour
         
         if(controlsButton)
         controlsButton.onClick.AddListener(ToggleControls);
+
+        if(LocalizationManager.Instance != null)
+        LocalizationManager.Instance.OnLanguageChanged += RefreshUI;
+    }
+
+    void OnDestroy()
+    {
+        if(LocalizationManager.Instance != null)
+        LocalizationManager.Instance.OnLanguageChanged -= RefreshUI;
+    }
+
+    private void RefreshUI()
+    {
+        if(resumeButton != null)
+        resumeButton.GetComponentInChildren<TMP_Text>().text = LocalizationManager.Instance.GetText("resume");
         
-        /*if(closeControlsButton)
-        closeControlsButton.onClick.AddListener(CloseControls);*/
+        if(mainMenuButton != null)
+        mainMenuButton.GetComponentInChildren<TMP_Text>().text = LocalizationManager.Instance.GetText("menu");
+        
+        if(controlsButton != null)
+        controlsButton.GetComponentInChildren<TMP_Text>().text = LocalizationManager.Instance.GetText("controls");
     }
 
     void Update()
@@ -83,17 +101,24 @@ public class PauseMenuController : MonoBehaviour
         Time.timeScale = 1.0f;
         
         // Возвращаем курсор в состояние для игры (заблокирован, невидим)
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if(player.isBuildMode)
+        Cursor.lockState = CursorLockMode.None;
+
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     void GoToMainMenu()
     {
         Cursor.lockState = CursorLockMode.None;
-//        Player player = FindFirstObjectByType<Player>();
 
         InventoryManager inventoryManager = GameObject.FindFirstObjectByType<InventoryManager>();
         
+        pausePanel.SetActive(false);
+        isPaused = false;
         Time.timeScale = 1.0f;
 
         player.transform.Find("UI").transform.Find("BlockCatalog").gameObject.SetActive(false);

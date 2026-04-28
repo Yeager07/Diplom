@@ -2,11 +2,15 @@ using UnityEngine;
 
 public class LevelPreviewClick : MonoBehaviour
 {
-    public int levelIndex; // устанавливается из ZoneManager
+    public int levelIndex;
 
     void OnMouseDown()
     {
-        // Загружаем карьерный режим для выбранного уровня
-        ZoneManager.Instance.StartCareerModeByIndex(levelIndex);
+        CameraMovement cam = Camera.main?.GetComponent<CameraMovement>();
+        
+        if(cam == null || cam.CurrentTargetIndex != 1)
+        return;
+
+        ZoneManager.Instance?.StartCareerModeByIndex(levelIndex);
     }
 }

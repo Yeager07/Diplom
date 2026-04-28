@@ -41,6 +41,17 @@ public class Player : MonoBehaviour
         GameObject inventory = GameObject.FindGameObjectWithTag("InventoryManager");
         if(inventory != null)
         inventoryManager = inventory.GetComponent<InventoryManager>();
+
+        if(LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.SetLanguage(language);
+            LocalizationManager.Instance.OnLanguageChanged += RefreshAllUI;
+        }
+    }
+
+    void RefreshAllUI()
+    {
+        
     }
 
     void Move()

@@ -16,12 +16,10 @@ public class ZoneManager : MonoBehaviour
     public Transform previewSpawnPoint;
     public Button nextLevelButton;
     public Button prevLevelButton;
-//    public Button careerModeButton;
-    public Button freeModeButton;
 
     public Slider volumeSlider;
     public Button languageButton;               // кнопка переключения языка
-    public TMP_Text languageButtonText;         // текст на кнопке
+    //public TMP_Text languageButtonText;         // текст на кнопке
 
     public Button confirmExitButton;
     public Button cancelExitButton;
@@ -71,15 +69,11 @@ public class ZoneManager : MonoBehaviour
 
         HideAllPanels();
 
-        // Подписки
         if(nextLevelButton)
         nextLevelButton.onClick.AddListener(NextLevel);
         
         if(prevLevelButton)
         prevLevelButton.onClick.AddListener(PreviousLevel);
-        
-        if(freeModeButton)
-        freeModeButton.onClick.AddListener(StartFreeMode);
         
         if(volumeSlider)
         volumeSlider.onValueChanged.AddListener(ChangeVolume);
@@ -114,7 +108,6 @@ public class ZoneManager : MonoBehaviour
 
     public void OnCameraArrived(int zoneIndex)
     {
-        //HideAllPanels();
         switch (zoneIndex)
         {
             case 1: ShowTableUI(); break;
@@ -135,7 +128,6 @@ public class ZoneManager : MonoBehaviour
     private void ShowCabinetUI()
     {
         cabinetUIPanel.SetActive(true);
-        // TODO: загрузка списка собранных моделей
     }
 
     private void ShowSettingsUI()
@@ -145,8 +137,6 @@ public class ZoneManager : MonoBehaviour
         
         if(volumeSlider)
         volumeSlider.value = AudioListener.volume;
-        
-        UpdateLanguageButtonText();
     }
 
     private void ShowExitUI()
@@ -154,8 +144,6 @@ public class ZoneManager : MonoBehaviour
         if(exitUIPanel)
         exitUIPanel.SetActive(true);
     }
-
-    // ==================== Зона стола ====================
 
     private void UpdateLevelPreview()
     {
@@ -165,6 +153,12 @@ public class ZoneManager : MonoBehaviour
         if(levelPreviews.Length > currentLevelIndex && previewSpawnPoint != null)
         {
             currentPreviewInstance = Instantiate(levelPreviews[currentLevelIndex], previewSpawnPoint.position, previewSpawnPoint.rotation);
+            
+            RotateObject rot = currentPreviewInstance.GetComponent<RotateObject>();
+            
+            if(rot == null)
+            rot = currentPreviewInstance.AddComponent<RotateObject>();
+            
             LevelPreviewClick click = currentPreviewInstance.AddComponent<LevelPreviewClick>();
             click.levelIndex = currentLevelIndex;
         }
@@ -224,19 +218,28 @@ public class ZoneManager : MonoBehaviour
         player.isBuildMode = false;
         player.transform.Find("UI").gameObject.SetActive(true);
         player.transform.Find("UI").transform.Find("Instruction").transform.Find("InstructionDownload").gameObject.SetActive(false);
+        player.transform.Find("UI").transform.Find("Instruction").gameObject.SetActive(true);
         Camera.main.GetComponent<MainScript>().PlacePlayerZero();
 
         SceneManager.LoadScene("02_TestScene");
     }
 
-    private void StartFreeMode()
+    public void StartFreeMode()
     {
-
+        CameraMovement camMove = Camera.main.GetComponent<CameraMovement>();
+        
+        if(camMove != null)
+        {
+            camMove.transform.position = camMove.cameraPoints[0].position;
+            camMove.transform.rotation = camMove.cameraPoints[0].rotation;
+        }
+        
         Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         player.typeGame = "FreeMode";
         player.isBuildMode = true;
         player.transform.Find("UI").gameObject.SetActive(true);
         player.transform.Find("UI").transform.Find("Instruction").transform.Find("InstructionDownload").gameObject.SetActive(true);
+        player.transform.Find("UI").transform.Find("Instruction").gameObject.SetActive(false);
         player.transform.Find("UI").Find("BlocksIcon").gameObject.SetActive(true);
 
         SceneManager.LoadScene("04_FreeMode");
@@ -244,7 +247,6 @@ public class ZoneManager : MonoBehaviour
 
     private LevelData GetLevelDataByIndex(int index)
     {
-        // Здесь нужно взять список LevelData из вашего MainScript или другого хранилища
         return Camera.main.GetComponent<MainScript>().levelDatas[index];
     }
 
@@ -263,17 +265,7 @@ public class ZoneManager : MonoBehaviour
         else
         player.language = "En";
 
-        UpdateLanguageButtonText();
-        // Здесь можно обновить тексты всех UI элементов в зонах (например, кнопок)
-    }
-
-    private void UpdateLanguageButtonText()
-    {
-        if(languageButtonText == null)
-        return;
-        
-        Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        languageButtonText.text = player.language == "En" ? "Русский" : "English";
+        LocalizationManager.Instance.SetLanguage(player.language);
     }
 
     public void StartCareerModeByIndex(int index)
@@ -289,8 +281,6 @@ public class ZoneManager : MonoBehaviour
 
         HideAllPanels();
     }
-
-    // ==================== Зона выхода ====================
 
     private void ExitGame()
     {
