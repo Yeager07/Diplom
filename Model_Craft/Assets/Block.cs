@@ -60,6 +60,8 @@ public class Block : MonoBehaviour
     private List<Vector3> previousRotate = new List<Vector3>();
     private Vector3 rotateDirection = new Vector3(0f, 0f, 0f);
 
+    public BlockData blockData;
+
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");

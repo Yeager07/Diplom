@@ -16,3 +16,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: c697c0a2e1983a547a097c30fa67a732, type: 3}
   prefab: {fileID: 3546747462830277688, guid: a6103ed13ac58c2488b27b1dab654f91, type: 3}
   type: 0
+  blockID: Brick_1x2x3

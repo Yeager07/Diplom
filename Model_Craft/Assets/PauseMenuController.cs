@@ -113,6 +113,8 @@ public class PauseMenuController : MonoBehaviour
 
     void GoToMainMenu()
     {
+        SaveManager.Instance.SaveFreeMode();
+
         Cursor.lockState = CursorLockMode.None;
 
         InventoryManager inventoryManager = GameObject.FindFirstObjectByType<InventoryManager>();

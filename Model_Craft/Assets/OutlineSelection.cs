@@ -7,7 +7,6 @@ public class OutlineSelection : MonoBehaviour
 {
     public Transform highlight;
     private RaycastHit raycastHit;
-    public List<Transform> blockChild;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -40,15 +39,13 @@ public class OutlineSelection : MonoBehaviour
         {
             RemoveOutline(highlight);
             
-            foreach(Transform child in blockChild)
+            foreach(Transform child in highlight.transform)
             {
-                if(child.gameObject.GetComponent<Outline>() != null)
-                {
-                    RemoveOutline(child);
-                }
+                Block childBlock = child.GetComponent<Block>();
+                    
+                if(childBlock != null && child.gameObject.GetComponent<Outline>() != null)
+                RemoveOutline(child);
             }
-            
-            blockChild.Clear();
 
             highlight = null;
         }
@@ -62,13 +59,12 @@ public class OutlineSelection : MonoBehaviour
             if(highlight.CompareTag("Selectable"))
             {
                 SetOutline(highlight);
-                
-                if(blockChild.Count == 0)
-                Camera.main.GetComponent<MainScript>().FindAllChild(highlight, blockChild);
 
-                foreach(Transform child in blockChild)
+                foreach(Transform child in highlight.transform)
                 {
-                    if(child != null && child.gameObject.GetComponent<Outline>() != null)
+                    Block childBlock = child.GetComponent<Block>();
+                        
+                    if(childBlock != null && child.gameObject.GetComponent<Outline>() != null)
                     SetOutline(child);
                 }
             }

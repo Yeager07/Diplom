@@ -28,55 +28,6 @@ public class InventoryManager : MonoBehaviour
         cell[i].transform.Find("Count").gameObject.SetActive(false);
     }
 
-    /*public void RemoveBlockfromInventory(int selectedItem, int previousSelectedItem, Color color)
-    {
-        LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
-
-        if(stepManager != null)
-        {
-            string blockName = keys[selectedItem - 1];
-            stepManager.OnBlockRemoved(blockName, color, 1);
-        }
-
-        if(keys[selectedItem - 1] != "")
-        {
-            if(inventory[keys[selectedItem - 1]] != 1)
-            {
-                inventory[keys[selectedItem - 1]] -= 1;
-                values[selectedItem - 1] = (int.Parse(values[selectedItem - 1]) - 1).ToString();
-                
-                foreach(Dictionary<Color, int> dictionary in materialsCount[keys[selectedItem - 1]])
-                {
-                    foreach(var value in dictionary)
-                    {
-                        if(value.Value == 0)
-                        {
-                            materialsCount[keys[selectedItem - 1]].Remove(dictionary);
-                            UpdateInventoryView();
-                            return;
-                        }
-                    }
-                }
-            }
-
-            else
-            {
-                inventory.Remove(keys[selectedItem-1]);
-                materialsCount.Remove(keys[selectedItem - 1]);                
-                keys[selectedItem - 1] = "";
-                values[selectedItem - 1] = "";
-                previousSelectedItem = selectedItem;
-                selectedItem = 0;
-                GameObject.FindGameObjectWithTag("UI").GetComponent<UI>().MakeNone(cell[previousSelectedItem - 1].transform);
-                colorListPanel.GetComponent<InventoryCatalog>().ClosePanel();
-            }
-
-            UpdateInventoryView();
-        }
-        else
-        return;
-    }*/
-
     private bool RemoveBlockData(int selectedItem, Color color, out string blockName)
     {
         blockName = keys[selectedItem - 1];
@@ -138,11 +89,9 @@ public class InventoryManager : MonoBehaviour
     {
         if(RemoveBlockData(selectedItem, color, out string blockName))
         {
-        // Ничего не делаем, просто удалили
         }
     }
 
-// Удаление с уведомлением (используется в DeleteBLock)
     public void RemoveBlockFromInventoryWithNotify(int selectedItem, Color color)
     {
         if(RemoveBlockData(selectedItem, color, out string blockName))
@@ -251,8 +200,6 @@ public class InventoryManager : MonoBehaviour
                 
             materialsCount.Add(selectedBlock.name, new List<Dictionary<Color, int>>()
             { new Dictionary<Color, int>()  { { selectedBlock.GetComponent<Renderer>().material.color, 1 } }});
-
-            //Debug.Log($"Добавляю новый цвет {selectedBlock.GetComponent<Renderer>().material.color} для блока {selectedBlock.name}");
             
             UpdateMassive();
 
@@ -271,7 +218,6 @@ public class InventoryManager : MonoBehaviour
                     
                     if(value.Key == selectedBlock.GetComponent<Renderer>().material.color)
                     {
-                        //Debug.Log($"Такой материал есть, увеличиваю количество для {selectedBlock.GetComponent<Renderer>().material.color}");
                         dictionary[selectedBlock.GetComponent<Renderer>().material.color] += 1;
                         UpdateMassive();
                         count = 0;
@@ -281,7 +227,6 @@ public class InventoryManager : MonoBehaviour
                     
                     if(count == materialsCount[selectedBlock.name].Count)
                     {
-                        //Debug.Log($"Такого цвета нет, добавляю его как новый {selectedBlock.GetComponent<Renderer>().material.color}");
                         materialsCount[selectedBlock.name].Add(new Dictionary<Color, int>()  { { selectedBlock.GetComponent<Renderer>().material.color, 1 } });
                         UpdateMassive();
                         count = 0;

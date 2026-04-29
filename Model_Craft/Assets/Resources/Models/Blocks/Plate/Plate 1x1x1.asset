@@ -16,3 +16,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: bd873b87a3b0cee4d9b74a07286c1bd2, type: 3}
   prefab: {fileID: 8012953238331507001, guid: 3b6040ec325b26e43bc2e09a2438390c, type: 3}
   type: 1
+  blockID: Plate_1x1x1

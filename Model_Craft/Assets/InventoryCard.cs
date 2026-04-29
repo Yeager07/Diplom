@@ -83,7 +83,7 @@ public class InventoryCard : MonoBehaviour
             Camera.main.transform.position + Camera.main.transform.forward * playerScript.distance,
             blockName,
             Camera.main.GetComponent<MainScript>().blockPrefabs[blockName.Split(" ")[0]],
-            applyMaterial);
+            applyMaterial, new Vector3 (0.0f, 0.0f, 0.0f));
 
         // Уведомляем StepManager, что блок использован
         if(stepManager != null && playerScript.typeGame == "CareerMode")
@@ -96,37 +96,7 @@ public class InventoryCard : MonoBehaviour
     
     public void DeleteBLock()
     {
-        /*if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
-        {
-            foreach(Dictionary<Color, int> dictionary in inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]])
-            {
-                foreach(var value in dictionary)
-                {
-                    if(value.Key == iconColor.GetComponent<Image>().color)
-                    {
-                        if(value.Value != 0)
-                        {
-                            dictionary[value.Key] -= 1;
-                            inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem, value.Key);
-                            ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
-                            
-                            return;
-                        }
-                    
-                        else
-                        {
-                            inventoryManager.materialsCount[inventoryManager.keys[playerScript.selectedItem - 1]].Remove(dictionary);
-                            inventoryManager.RemoveBlockfromInventory(playerScript.selectedItem, playerScript.previousSelectedItem, value.Key);
-                            ui.transform.Find("ColorListPanel").GetComponent<InventoryCatalog>().RefreshCatalog();
-                            
-                            return;
-                        }
-                    }
-                }
-            }
-        }*/
-
-        if (!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        if(!playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
             Color blockColor = iconColor.GetComponent<Image>().color;
             string blockName = inventoryManager.keys[playerScript.selectedItem - 1];

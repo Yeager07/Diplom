@@ -16,3 +16,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 7f09ff08411414e488f203ccdcebd809, type: 3}
   prefab: {fileID: 6258241199478746581, guid: 15be60d10aa89e54cbdf9a88c65f5ab9, type: 3}
   type: 2
+  blockID: Tile_RoundPLate_2x2x1

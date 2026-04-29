@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine.SceneManagement;
 
@@ -12,14 +15,13 @@ public class ZoneManager : MonoBehaviour
     public GameObject settingsUIPanel;
     public GameObject exitUIPanel;
 
-    public GameObject[] levelPreviews;          // массив префабов (кубы с текстом)
+    public GameObject[] levelPreviews;
     public Transform previewSpawnPoint;
     public Button nextLevelButton;
     public Button prevLevelButton;
 
     public Slider volumeSlider;
-    public Button languageButton;               // кнопка переключения языка
-    //public TMP_Text languageButtonText;         // текст на кнопке
+    public Button languageButton;
 
     public Button confirmExitButton;
     public Button cancelExitButton;
@@ -27,6 +29,12 @@ public class ZoneManager : MonoBehaviour
     private int currentLevelIndex = 0;
     private GameObject currentPreviewInstance;
     private CameraMovement camMovement;
+
+    public GameObject confirmLoadPanel;
+    public Button continueButton;
+    public Button newGameButton;
+
+    public static FreeModeSaveData PendingFreeModeSave;
 
     void Awake()
     {
@@ -226,23 +234,74 @@ public class ZoneManager : MonoBehaviour
 
     public void StartFreeMode()
     {
-        CameraMovement camMove = Camera.main.GetComponent<CameraMovement>();
+        if(SaveManager.Instance.HasFreeModeSave())
+        ShowFreeModeLoadDialog();
         
+        else    
+        StartFreeModeNewGame();
+    }
+
+    private void ShowFreeModeLoadDialog()
+    {
+        confirmLoadPanel.SetActive(true);
+        continueButton.onClick.RemoveAllListeners();
+        newGameButton.onClick.RemoveAllListeners();
+        
+        continueButton.onClick.AddListener(() => {
+            confirmLoadPanel.SetActive(false);
+            StartFreeModeContinue();
+        });
+        
+        newGameButton.onClick.AddListener(() => {
+            confirmLoadPanel.SetActive(false);
+            StartFreeModeNewGame();
+        });
+    }
+
+    private void ClearAllBlocks()
+    {
+        GameObject[] blocks = GameObject.FindGameObjectsWithTag("Selectable");
+        
+        foreach(GameObject block in blocks)
+        Destroy(block);
+
+        Block.connections.Clear();
+    }
+
+    private void StartFreeModeContinue()
+    {
+        PendingFreeModeSave = SaveManager.Instance.LoadFreeMode();
+        SetupPlayerForFreeMode();
+        SceneManager.LoadScene("04_FreeMode");
+    }
+    
+    public void StartFreeModeNewGame()
+    {
+        SaveManager.Instance.DeleteFreeModeSave();
+        PendingFreeModeSave = null;
+        SetupPlayerForFreeMode();
+        SceneManager.LoadScene("04_FreeMode");
+    }
+
+    private void SetupPlayerForFreeMode()
+    {
+        Player player = FindFirstObjectByType<Player>();
+        player.typeGame = "FreeMode";
+        player.isBuildMode = true;
+        
+        Transform ui = player.transform.Find("UI");
+        ui.gameObject.SetActive(true);
+        ui.Find("Instruction").Find("InstructionDownload").gameObject.SetActive(true);
+        ui.Find("Instruction").gameObject.SetActive(false);
+        ui.Find("BlocksIcon").gameObject.SetActive(true);
+        
+        CameraMovement camMove = Camera.main.GetComponent<CameraMovement>();
+     
         if(camMove != null)
         {
             camMove.transform.position = camMove.cameraPoints[0].position;
             camMove.transform.rotation = camMove.cameraPoints[0].rotation;
         }
-        
-        Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        player.typeGame = "FreeMode";
-        player.isBuildMode = true;
-        player.transform.Find("UI").gameObject.SetActive(true);
-        player.transform.Find("UI").transform.Find("Instruction").transform.Find("InstructionDownload").gameObject.SetActive(true);
-        player.transform.Find("UI").transform.Find("Instruction").gameObject.SetActive(false);
-        player.transform.Find("UI").Find("BlocksIcon").gameObject.SetActive(true);
-
-        SceneManager.LoadScene("04_FreeMode");
     }
 
     private LevelData GetLevelDataByIndex(int index)

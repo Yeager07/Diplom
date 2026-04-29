@@ -16,3 +16,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 98700b46e074a1f47bde1c8cda870071, type: 3}
   prefab: {fileID: 7396865574954924197, guid: 792f9bdcf3a78b147b443ac303e063b9, type: 3}
   type: 2
+  blockID: Tile_Corner_2x2x1

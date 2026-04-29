@@ -74,7 +74,7 @@ public class MainScript : MonoBehaviour
         children.RemoveAll(child => child.CompareTag("Point"));
     }
 
-    public void SpawnBlock(Vector3 spawnPoint, string prefabName, BlockData[] prefabs, Material blockMaterial)
+    public void SpawnBlock(Vector3 spawnPoint, string prefabName, BlockData[] prefabs, Material blockMaterial, Vector3 rotation)
     {
         if(prefabs.Length == 0)
         {
@@ -87,9 +87,10 @@ public class MainScript : MonoBehaviour
         {
             if(prefab.name == prefabName)
             {
-                newBlock = Instantiate(prefab.prefab, spawnPoint, prefab.prefab.transform.rotation);
+                newBlock = Instantiate(prefab.prefab, spawnPoint, Quaternion.Euler(rotation));
                 newBlock.GetComponent<MeshRenderer>().material = blockMaterial;
                 newBlock.name = prefabName;
+                newBlock.GetComponent<Block>().blockData = prefab;
                 playerScript.movedObject = newBlock;
                 return;
             }

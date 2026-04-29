@@ -9,10 +9,10 @@ public class LevelStepManager : MonoBehaviour
     private PdfInstructionViewer pdfViewer;
 
     private LevelData currentLevel;
-    private Dictionary<string, int> remainingForCurrentStep = new Dictionary<string, int>(); // blockName -> остаток
-    private Dictionary<string, int> totalForCurrentStep = new Dictionary<string, int>();     // исходное количество в шаге
+    private Dictionary<string, int> remainingForCurrentStep = new Dictionary<string, int>();
+    private Dictionary<string, int> totalForCurrentStep = new Dictionary<string, int>();
     private int currentStepPage = -1;
-    private bool stepCompleted = true; // текущий шаг выполнен (все детали использованы)
+    private bool stepCompleted = true;
     private bool isSpawning = false;
 
     private HashSet<int> completedSteps = new HashSet<int>();
@@ -41,7 +41,6 @@ public class LevelStepManager : MonoBehaviour
 
     private IEnumerator WaitForFirstPage()
     {
-        // Ждём, пока загрузится первая страница
         while(pdfViewer.pageTextures == null || pdfViewer.pageTextures.Length == 0)
         yield return null;
         
@@ -78,11 +77,8 @@ public class LevelStepManager : MonoBehaviour
         if(step == null)
         return;
 
-        // Если мы уже на этой странице (текущий шаг)
         if(currentStepPage == pageNumber)
         {
-            // Если шаг не завершён, но в зоне подбора нет блоков – значит, игрок удалил все блоки (например, через Delete)
-            // Восстанавливаем только недостающие блоки (разницу между total и remaining)
             if(!stepCompleted && !AreThereBlocksInPickupZone())
             {
                 foreach(var req in step.blocks)
@@ -94,7 +90,7 @@ public class LevelStepManager : MonoBehaviour
                     
                     for(int i = 0; i < missing; i++)
                     SpawnBlockAtSpawnPoint(req.block, req.color);
-                    // После спавна оставшееся количество увеличивается на missing (так как эти блоки снова на столе)
+
                     remainingForCurrentStep[fullName] = total;
                 }
             }
@@ -109,15 +105,12 @@ public class LevelStepManager : MonoBehaviour
             return;
         }
 
-        // Переход на новый шаг (другую страницу)
-        // Проверяем, есть ли блоки в зоне подбора
         if(AreThereBlocksInPickupZone())
         {
             Debug.Log("В зоне подбора есть блоки. Подберите их или перенесите в зону сборки, чтобы перейти к следующему шагу.");
             return;
         }
 
-        // Если предыдущий шаг не завершён – не разрешаем переход
         if(!stepCompleted && currentStepPage != -1)
         {
             Debug.Log("Сначала используйте все детали текущего шага!");
@@ -131,7 +124,7 @@ public class LevelStepManager : MonoBehaviour
             stepCompleted = true;
             return;
         }
-        // Генерируем новый шаг
+        
         else
         StartCoroutine(SpawnStepWithDelay(step, pageNumber));
     }
@@ -170,7 +163,8 @@ public class LevelStepManager : MonoBehaviour
 
         Camera.main.GetComponent<MainScript>().SpawnBlock(spawnPoint.position, block.type + " " + block.blockName,
             Camera.main.GetComponent<MainScript>().blockPrefabs[block.type.ToString()],
-            Camera.main.GetComponent<MainScript>().standartMaterial);
+            Camera.main.GetComponent<MainScript>().standartMaterial, new Vector3(0.0f, 0.0f, 0.0f));
+
         GameObject newBlock = Camera.main.GetComponent<MainScript>().newBlock;
         newBlock.tag = "Selectable";
         Renderer renderer = newBlock.GetComponent<Renderer>();
@@ -185,7 +179,6 @@ public class LevelStepManager : MonoBehaviour
         Debug.Log("Block instantiated at " + spawnPoint.position);
     }
 
-    // Вызывается, когда блок использован (кнопка Generate)
     public void OnBlockUsed(string blockName)
     {
         Debug.Log($"OnBlockUsed called for {blockName}, stepCompleted={stepCompleted}, remaining before: {string.Join(",", remainingForCurrentStep.Select(kv=>kv.Key+":"+kv.Value))}");
@@ -233,7 +226,6 @@ public class LevelStepManager : MonoBehaviour
         return false;
     }
 
-    // Вызывается, когда блок удалён из инвентаря (без появления на сцене)
     public void OnBlockRemoved(string blockName, Color color, int count = 1)
     {
         Debug.Log($"OnBlockRemoved called: {blockName}, color={color}, count={count}");
@@ -261,12 +253,6 @@ public class LevelStepManager : MonoBehaviour
         
         for(int i = 0; i < count; i++)
         SpawnBlockAtSpawnPoint(req.block, req.color);
-
-        /*if(remainingForCurrentStep.ContainsKey(blockName))
-        remainingForCurrentStep[blockName] += count;
-        
-        else
-        remainingForCurrentStep[blockName] = count;*/
 
         if(stepCompleted)
         stepCompleted = false;
