@@ -414,6 +414,7 @@
 "Assets/BlockPoint.cs"
 "Assets/BuildSceneScript.cs"
 "Assets/CameraMovement.cs"
+"Assets/CareerModeLoader.cs"
 "Assets/ColorPicker.cs"
 "Assets/ColorSelector.cs"
 "Assets/FreeModeLoader.cs"

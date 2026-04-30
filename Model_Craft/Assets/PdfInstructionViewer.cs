@@ -187,7 +187,7 @@ public class PdfInstructionViewer : MonoBehaviour
         // Отображаем первую страницу
         UpdateDisplay();
 
-        OnPageChanged?.Invoke(currentPageIndex + 1);
+        InvokePageChanged(currentPageIndex + 1);
     }
 
     // Обновление состояния кнопок в зависимости от страницы
@@ -215,7 +215,7 @@ public class PdfInstructionViewer : MonoBehaviour
         RefreshPageInfo();
         UpdateDisplay();
         
-        OnPageChanged?.Invoke(currentPageIndex + 1);
+        InvokePageChanged(currentPageIndex + 1);
     }
 
     // Переход к предыдущей странице
@@ -229,7 +229,7 @@ public class PdfInstructionViewer : MonoBehaviour
         RefreshPageInfo();
         UpdateDisplay();
         
-        OnPageChanged?.Invoke(currentPageIndex + 1);
+        InvokePageChanged(currentPageIndex + 1);
     }
 
     // Переход на конкретную страницу (нумерация с 0)
@@ -244,7 +244,7 @@ public class PdfInstructionViewer : MonoBehaviour
         RefreshPageInfo();
         UpdateDisplay();
 
-        OnPageChanged?.Invoke(currentPageIndex + 1);
+        InvokePageChanged(currentPageIndex + 1);
     }
 
     private void RefreshPageInfo()
@@ -271,6 +271,31 @@ public class PdfInstructionViewer : MonoBehaviour
         pageNumberText.text = $"{currentPageIndex + 1} / {pageTextures.Length}";
 
         UpdateButtonStates();
+    }
+
+    private void InvokePageChanged(int page)
+    {
+        // Копируем список делегатов, чтобы избежать изменений во время итерации
+        var delegates = OnPageChanged?.GetInvocationList();
+        
+        if(delegates == null)
+        return;
+
+        foreach(var del in delegates)
+        {
+            // Проверяем, жив ли целевой объект
+            if(del.Target != null && del.Target.Equals(null))
+            continue;
+            
+            try
+            {
+                del.DynamicInvoke(page);
+            }
+            catch
+            {
+                Debug.LogWarning($"Ошибка при вызове обработчика перелистывания: {del.Method.Name}");
+            }
+        }
     }
 
     // Для привязки к кнопкам через инспектор

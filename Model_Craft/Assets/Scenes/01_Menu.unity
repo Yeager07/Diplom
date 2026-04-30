@@ -2096,7 +2096,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -2164,7 +2164,7 @@ Transform:
   m_GameObject: {fileID: 117242635}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.49750394, z: 0, w: 0.86746174}
-  m_LocalPosition: {x: -0.971, y: 0.337, z: 5.926}
+  m_LocalPosition: {x: -0.971, y: 0.3215279, z: 5.926}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -6321,7 +6321,7 @@ MonoBehaviour:
   settingsUIPanel: {fileID: 1172681107}
   exitUIPanel: {fileID: 1105350631}
   levelPreviews:
-  - {fileID: 919132149155446097, guid: 1d3f47d850d42774cbb8df07c950540c, type: 3}
+  - {fileID: 8837097779868121283, guid: e547ae1edb631854eaf322665bd7ad40, type: 3}
   previewSpawnPoint: {fileID: 1454819390}
   nextLevelButton: {fileID: 2025670899}
   prevLevelButton: {fileID: 1585237838}

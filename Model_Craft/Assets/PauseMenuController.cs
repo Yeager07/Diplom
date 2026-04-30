@@ -1,12 +1,14 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
 public class PauseMenuController : MonoBehaviour
 {
-    public GameObject pausePanel;           // панель с кнопками меню паузы
-    public GameObject controlsImage;        // изображение с управлением (инструкция)
+    public GameObject pausePanel;
+    public GameObject controlsImage;
 
     public Button resumeButton;
     public Button mainMenuButton;
@@ -21,14 +23,12 @@ public class PauseMenuController : MonoBehaviour
     {
         player = FindFirstObjectByType<Player>();
         
-        // Изначально меню паузы скрыто, панель инструкции скрыта
         if(pausePanel)
         pausePanel.SetActive(false);
         
         if(controlsImage)
         controlsImage.SetActive(false);
 
-        // Подписываем кнопки
         if(resumeButton)
         resumeButton.onClick.AddListener(ResumeGame);
         
@@ -62,7 +62,6 @@ public class PauseMenuController : MonoBehaviour
 
     void Update()
     {
-        // Проверка нажатия Escape
         if(Input.GetKeyUp(KeyCode.P) && player.typeGame != "MainMenu")
         {
             if(isPaused)
@@ -78,19 +77,17 @@ public class PauseMenuController : MonoBehaviour
         Debug.Log("PauseGame called");
 
         isPaused = true;
-        Time.timeScale = 0.0f;                // останавливаем время
+        Time.timeScale = 0.0f;
         
         if(pausePanel)
         pausePanel.SetActive(true);
         
-        // Блокируем курсор для UI (если нужно)
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
 
     void ResumeGame()
     {
-        // Если открыта инструкция – закрываем её
         if(isControlsOpen)
         CloseControls();
 
@@ -100,7 +97,6 @@ public class PauseMenuController : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1.0f;
         
-        // Возвращаем курсор в состояние для игры (заблокирован, невидим)
         if(player.isBuildMode)
         Cursor.lockState = CursorLockMode.None;
 
@@ -113,6 +109,9 @@ public class PauseMenuController : MonoBehaviour
 
     void GoToMainMenu()
     {
+        if(player.typeGame == "CareerMode")
+        SaveCurrentCareerProgress();
+
         SaveManager.Instance.SaveFreeMode();
 
         Cursor.lockState = CursorLockMode.None;
@@ -148,6 +147,38 @@ public class PauseMenuController : MonoBehaviour
         }
         
         SceneManager.LoadScene("01_Menu");
+    }
+
+    private void SaveCurrentCareerProgress()
+    {
+        if(LevelLoader.SelectedLevel == null)
+        return;
+
+        CareerSaveData data = new CareerSaveData();
+        data.levelId = LevelLoader.SelectedLevel.levelName;
+        data.currentStepPage = GetCurrentStepPage();
+
+        LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+        
+        if(stepManager != null)
+        {
+            data.completedSteps = stepManager.GetCompletedSteps();
+            data.remainingBlocks = stepManager.GetRemainingForStep();
+        }
+        
+        var remaining = stepManager.GetRemainingForStep();
+        Debug.Log("Saving remaining blocks:");
+        
+        foreach(var r in remaining)
+        Debug.Log($"{r.blockFullName}: {r.remaining}");
+        
+        SaveManager.Instance.SaveCareerMode(data.levelId, data);
+    }
+
+    private int GetCurrentStepPage()
+    {
+        PdfInstructionViewer pdf = FindFirstObjectByType<PdfInstructionViewer>();
+        return pdf != null ? pdf.currentPageIndex + 1 : 1;
     }
 
     void ToggleControls()

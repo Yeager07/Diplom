@@ -10,29 +10,56 @@ public class LevelStepManager : MonoBehaviour
 
     private LevelData currentLevel;
     private Dictionary<string, int> remainingForCurrentStep = new Dictionary<string, int>();
-    private Dictionary<string, int> totalForCurrentStep = new Dictionary<string, int>();
     private int currentStepPage = -1;
     private bool stepCompleted = true;
     private bool isSpawning = false;
 
     private HashSet<int> completedSteps = new HashSet<int>();
+    private bool isRestoring = false;
+
+    public static bool IsLoadingSave = false;
 
     void Start()
     {
-        pdfViewer = GameObject.FindGameObjectWithTag("Player").transform.Find("PdfViewer").GetComponent<PdfInstructionViewer>();
-
-        currentLevel = LevelLoader.SelectedLevel;
-        
-        if(currentLevel == null)
+        if(IsLoadingSave)
         {
-            Debug.LogError("No level data!");
+            Debug.Log("LevelStepManager: Loading save, skipping initial page setup.");
+            currentLevel = LevelLoader.SelectedLevel;
             return;
         }
 
+        Initialize(LevelLoader.SelectedLevel);
+    }
+
+    void OnDestroy()
+    {
+        if(pdfViewer != null)
+        pdfViewer.OnPageChanged -= OnPageChanged;
+    }
+
+    public void SetCurrentLevel(LevelData level)
+    {
+        currentLevel = level;
+
         if(pdfViewer == null)
         pdfViewer = FindFirstObjectByType<PdfInstructionViewer>();
+    
+        if(pdfViewer != null && !IsLoadingSave)
+        {
+            pdfViewer.OnPageChanged -= OnPageChanged;
+            pdfViewer.OnPageChanged += OnPageChanged;
+        }
+    }
 
-        if(pdfViewer != null)
+    public void Initialize(LevelData level)
+    {
+        currentLevel = level;
+        pdfViewer = GameObject.FindGameObjectWithTag("Player").transform.Find("PdfViewer").GetComponent<PdfInstructionViewer>();
+     
+        if(pdfViewer == null)
+        pdfViewer = FindFirstObjectByType<PdfInstructionViewer>();
+     
+        if(pdfViewer != null && !IsLoadingSave)
         {
             pdfViewer.OnPageChanged += OnPageChanged;
             StartCoroutine(WaitForFirstPage());
@@ -68,64 +95,59 @@ public class LevelStepManager : MonoBehaviour
     private void OnPageChanged(int pageNumber)
     {
         Debug.Log($"OnPageChanged: page={pageNumber}, currentStepPage={currentStepPage}, stepCompleted={stepCompleted}, remainingCount={remainingForCurrentStep.Count}");
-        
-        if(isSpawning)
-        return;
+
+        if(isSpawning || isRestoring)
+        {
+            Debug.Log("  blocked by isSpawning or isRestoring");
+            return;
+        }
 
         Step step = currentLevel.steps.Find(s => s.pageNumber == pageNumber);
         
         if(step == null)
-        return;
-
-        if(currentStepPage == pageNumber)
         {
-            if(!stepCompleted && !AreThereBlocksInPickupZone())
-            {
-                foreach(var req in step.blocks)
-                {
-                    string fullName = req.block.type + " " + req.block.blockName;
-                    int remaining = remainingForCurrentStep.ContainsKey(fullName) ? remainingForCurrentStep[req.block.type + " " + req.block.blockName] : 0;
-                    int total = totalForCurrentStep[fullName];
-                    int missing = total - remaining;
-                    
-                    for(int i = 0; i < missing; i++)
-                    SpawnBlockAtSpawnPoint(req.block, req.color);
-
-                    remainingForCurrentStep[fullName] = total;
-                }
-            }
+            Debug.Log("  step is null");
             return;
         }
 
         if(completedSteps.Contains(pageNumber))
         {
-            Debug.Log($"Шаг для страницы {pageNumber} уже завершён, генерация пропущена.");
+            Debug.Log("  step already completed, skipping");
             currentStepPage = pageNumber;
             stepCompleted = true;
             return;
         }
 
+        if(currentStepPage == pageNumber)            
+        {
+            Debug.Log("  already on this step, returning");
+            return;
+        }
+        
+        Debug.Log("  checking conditions for moving to new step...");
+        
         if(AreThereBlocksInPickupZone())
         {
-            Debug.Log("В зоне подбора есть блоки. Подберите их или перенесите в зону сборки, чтобы перейти к следующему шагу.");
+            Debug.Log("  blocks in pickup zone, abort");
             return;
         }
 
         if(!stepCompleted && currentStepPage != -1)
         {
-            Debug.Log("Сначала используйте все детали текущего шага!");
+            Debug.Log("  previous step not completed, abort");
             return;
         }
 
         if(step.blocks.Count == 0)
         {
-            Debug.Log($"На данном шаге нет деталей, переход дальше.");
+            Debug.Log("  step has no blocks, marking complete");
             currentStepPage = pageNumber;
             stepCompleted = true;
+            completedSteps.Add(pageNumber);
             return;
         }
-        
-        else
+
+        Debug.Log("  starting SpawnStepWithDelay");
         StartCoroutine(SpawnStepWithDelay(step, pageNumber));
     }
 
@@ -142,8 +164,9 @@ public class LevelStepManager : MonoBehaviour
 
     private void SpawnStep(Step step)
     {
+        Debug.Log("  spawnStep assign");
+
         remainingForCurrentStep.Clear();
-        totalForCurrentStep.Clear();
         
         foreach(RequiredBlock req in step.blocks)
         {
@@ -153,12 +176,17 @@ public class LevelStepManager : MonoBehaviour
             SpawnBlockAtSpawnPoint(req.block, req.color);
 
             remainingForCurrentStep[fullName] = req.count;
-            totalForCurrentStep[fullName] = req.count;
         }
     }
 
     private void SpawnBlockAtSpawnPoint(BlockData block, Color color)
     {
+        if (spawnPoint == null)
+        {
+            Debug.LogError("SpawnPoint is null!");
+            return;
+        }
+
         Debug.Log($"Spawning {block.type} {block.blockName} at {spawnPoint.position}");
 
         Camera.main.GetComponent<MainScript>().SpawnBlock(spawnPoint.position, block.type + " " + block.blockName,
@@ -194,36 +222,12 @@ public class LevelStepManager : MonoBehaviour
             remainingForCurrentStep.Remove(blockName);
         }
 
-        Debug.Log($"remaining after: {string.Join(",", remainingForCurrentStep.Select(kv=>kv.Key+":"+kv.Value))}");
-        
         if(remainingForCurrentStep.Count == 0)
         {
             stepCompleted = true;
             Debug.Log("Шаг выполнен! Можно переходить к следующей странице.");
             completedSteps.Add(currentStepPage);
         }
-    }
-
-    public bool IsBlockColorNeeded(string blockName, Color color)
-    {
-        Debug.Log($"IsBlockColorNeeded: {blockName}, color={color}, currentStepPage={currentStepPage}");
-        
-        if(currentStepPage == -1)
-        return false;
-        
-        Step step = currentLevel.steps.Find(s => s.pageNumber == currentStepPage);
-        
-        if(step == null)
-        return false;
-        
-        foreach(var req in step.blocks)
-        {
-            string fullName = req.block.type + " " + req.block.blockName;
-            
-            if(fullName == blockName)
-            return true;
-        }
-        return false;
     }
 
     public void OnBlockRemoved(string blockName, Color color, int count = 1)
@@ -254,7 +258,125 @@ public class LevelStepManager : MonoBehaviour
         for(int i = 0; i < count; i++)
         SpawnBlockAtSpawnPoint(req.block, req.color);
 
+        if(remainingForCurrentStep.ContainsKey(blockName))
+        remainingForCurrentStep[blockName] += count;
+
+        else
+        remainingForCurrentStep[blockName] = count;
+
         if(stepCompleted)
         stepCompleted = false;
+    }
+
+    public void SpawnMissingBlocksForCurrentStep()
+    {
+        if(currentLevel == null)
+        {
+            Debug.LogWarning("currentLevel not initialized yet, skipping spawn.");
+            return;
+        }
+
+        if(currentStepPage == -1)
+        return;
+        
+        Step step = currentLevel.steps.Find(s => s.pageNumber == currentStepPage);
+        
+        if(step == null)
+        return;
+        
+        Debug.Log($"Spawning missing blocks for step {currentStepPage}");
+
+        foreach(RequiredBlock req in step.blocks)
+        {
+            string fullName = req.block.type + " " + req.block.blockName;
+            int remaining = remainingForCurrentStep.ContainsKey(fullName) ? remainingForCurrentStep[fullName] : 0;
+            
+            Debug.Log($"  {fullName}: remaining (from dict) = {remaining}, total required = {req.count}");
+
+            for(int i = 0; i < remaining; i++)
+            SpawnBlockAtSpawnPoint(req.block, req.color);
+        }
+    }
+
+    public List<RequiredBlockSaveData> GetRemainingForStep()
+    {
+        List<RequiredBlockSaveData> result = new List<RequiredBlockSaveData>();
+
+        if(currentStepPage == -1)
+        return result;
+        
+        Step step = currentLevel.steps.Find(s => s.pageNumber == currentStepPage);
+        
+        if(step == null)
+        return result;
+
+        foreach(RequiredBlock req in step.blocks)
+        {
+            string fullName = req.block.type + " " + req.block.blockName;
+            int remaining = remainingForCurrentStep.ContainsKey(fullName) ? remainingForCurrentStep[fullName] : 0;
+            
+            if(remaining > 0)
+            {
+                result.Add(new RequiredBlockSaveData
+                { blockFullName = fullName,
+                color = req.color,
+                remaining = remaining});
+            }
+        }
+        
+        return result;
+    }
+
+    public List<int> GetCompletedSteps() => new List<int>(completedSteps);
+
+    public void RestoreState(int stepPage, List<int> completed, List<RequiredBlockSaveData> remaining)
+    {
+        isRestoring = true;
+        currentStepPage = stepPage;
+        completedSteps = new HashSet<int>(completed);
+        remainingForCurrentStep.Clear();
+     
+        foreach(var r in remaining)
+        remainingForCurrentStep[r.blockFullName] = r.remaining;
+        
+        stepCompleted = (remainingForCurrentStep.Count == 0);
+
+        if(pdfViewer == null)
+        pdfViewer = FindFirstObjectByType<PdfInstructionViewer>();
+        
+        if(pdfViewer != null)
+        {
+            pdfViewer.OnPageChanged -= OnPageChanged;
+            pdfViewer.OnPageChanged += OnPageChanged;
+        }
+
+        isRestoring = false;
+    }
+
+    public void SetRestoring(bool restoring)
+    {
+        isRestoring = restoring;
+    }
+
+    public bool IsBlockColorNeeded(string blockName, Color color)
+    {
+        Debug.Log($"IsBlockColorNeeded: {blockName}, color={color}, currentStepPage={currentStepPage}");
+        
+        if(currentStepPage == -1)
+        return false;
+        
+        Step step = currentLevel.steps.Find(s => s.pageNumber == currentStepPage);
+        
+        if(step == null)
+        return false;
+        
+        foreach(var req in step.blocks)
+        {
+            string fullName = req.block.type + " " + req.block.blockName;
+            
+            if(fullName == blockName)
+            return true;
+        }
+        return false;
     }
 }

@@ -35,6 +35,7 @@ public class ZoneManager : MonoBehaviour
     public Button newGameButton;
 
     public static FreeModeSaveData PendingFreeModeSave;
+    public static CareerSaveData PendingCareerSave;
 
     void Awake()
     {
@@ -207,6 +208,37 @@ public class ZoneManager : MonoBehaviour
 
     private void StartCareerMode()
     {
+        LevelData levelData = GetLevelDataByIndex(currentLevelIndex);
+        string levelId = levelData.levelName;
+
+        if(SaveManager.Instance.HasCareerSave(levelId))
+        ShowCareerLoadDialog(levelId, levelData);
+        
+        else
+        LoadCareerLevel(levelId, levelData, null);
+    }
+
+    private void ShowCareerLoadDialog(string levelId, LevelData levelData)
+    {
+        confirmLoadPanel.SetActive(true);
+        continueButton.onClick.RemoveAllListeners();
+        newGameButton.onClick.RemoveAllListeners();
+     
+        continueButton.onClick.AddListener(() => {
+            confirmLoadPanel.SetActive(false);
+            CareerSaveData save = SaveManager.Instance.LoadCareerMode(levelId);
+            LoadCareerLevel(levelId, levelData, save);
+        });
+     
+        newGameButton.onClick.AddListener(() => {
+            confirmLoadPanel.SetActive(false);
+            SaveManager.Instance.DeleteCareerSave(levelId);
+            LoadCareerLevel(levelId, levelData, null);
+        });
+    }
+
+    private void LoadCareerLevel(string levelId, LevelData levelData, CareerSaveData save)
+    {
         CameraMovement camMove = Camera.main.GetComponent<CameraMovement>();
         
         if(camMove != null)
@@ -215,11 +247,8 @@ public class ZoneManager : MonoBehaviour
             camMove.transform.rotation = camMove.cameraPoints[0].rotation;
         }
 
-        // Получаем LevelData для выбранного уровня
-        LevelData levelData = GetLevelDataByIndex(currentLevelIndex);
         LevelLoader.SelectedLevel = levelData;
 
-        // Настройка игрока и сцены
         Cursor.lockState = CursorLockMode.Locked;
         Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         player.typeGame = "CareerMode";
@@ -229,6 +258,11 @@ public class ZoneManager : MonoBehaviour
         player.transform.Find("UI").transform.Find("Instruction").gameObject.SetActive(true);
         Camera.main.GetComponent<MainScript>().PlacePlayerZero();
 
+        LevelLoader.SelectedLevel = levelData;
+
+        ZoneManager.PendingCareerSave = save;
+
+        LevelStepManager.IsLoadingSave = (save != null); 
         SceneManager.LoadScene("02_TestScene");
     }
 

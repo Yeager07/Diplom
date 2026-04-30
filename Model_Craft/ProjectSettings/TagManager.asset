@@ -17,6 +17,7 @@ TagManager:
   - Cabinet
   - Settings
   - Exit
+  - SpawnPoint
   layers:
   - Default
   - TransparentFX

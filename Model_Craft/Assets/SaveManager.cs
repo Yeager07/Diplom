@@ -56,33 +56,98 @@ public class SaveManager : MonoBehaviour
     public void SaveFreeMode()
     {
         FreeModeSaveData data = new FreeModeSaveData();
-        data.rootBlocks = new List<BlockSaveData>();
-
-        Block[] allBlocks = FindObjectsByType<Block>(FindObjectsSortMode.None);
-        
-        foreach(Block block in allBlocks)
-        {
-            Transform parent = block.transform.parent;
-            
-            if(parent == null || parent.GetComponent<Block>() == null)
-            {
-                BlockSaveData rootData = SaveBlockRecursive(block);
-                
-                if(rootData != null)
-                data.rootBlocks.Add(rootData);
-            }
-        }
-        
+        data.rootBlocks = CollectRootBlocks();
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(freeModeSavePath, json);
         Debug.Log("Free mode saved");
+    }
+
+    public FreeModeSaveData LoadFreeMode()
+    {
+        if(!File.Exists(freeModeSavePath))
+        return null;
+        
+        string json = File.ReadAllText(freeModeSavePath);
+        return JsonUtility.FromJson<FreeModeSaveData>(json);
+    }
+
+    public bool HasFreeModeSave() => File.Exists(freeModeSavePath);
+
+    public void DeleteFreeModeSave() => File.Delete(freeModeSavePath);
+
+    private string GetCareerSavePath(string levelId)
+    {
+        return Path.Combine(Application.persistentDataPath, $"career_{levelId}.json");
+    }
+
+    public void SaveCareerMode(string levelId, CareerSaveData data)
+    {
+        data.levelId = levelId;
+        data.rootBlocks = CollectRootBlocks();
+        string json = JsonUtility.ToJson(data, true);
+        File.WriteAllText(GetCareerSavePath(levelId), json);
+        Debug.Log($"Career mode saved for level {levelId}");
+    }
+
+    public CareerSaveData LoadCareerMode(string levelId)
+    {
+        string path = GetCareerSavePath(levelId);
+        
+        if(!File.Exists(path))
+        return null;
+        
+        string json = File.ReadAllText(path);
+        return JsonUtility.FromJson<CareerSaveData>(json);
+    }
+
+    public bool HasCareerSave(string levelId) => File.Exists(GetCareerSavePath(levelId));
+
+    public void DeleteCareerSave(string levelId)
+    {
+        if(File.Exists(GetCareerSavePath(levelId)))
+        File.Delete(GetCareerSavePath(levelId));
+    }
+
+    private List<BlockSaveData> CollectRootBlocks()
+    {
+        List<BlockSaveData> roots = new List<BlockSaveData>();
+        Block[] allBlocks = FindObjectsByType<Block>(FindObjectsSortMode.None);
+    
+        foreach(Block block in allBlocks)
+        {
+            if(block.transform.parent == null || block.transform.parent.GetComponent<Block>() == null)
+            roots.Add(SaveBlockRecursive(block));
+        }
+        
+        return roots;
+    }
+
+    public BlockSaveData SaveBlockRecursive(Block block)
+    {
+        BlockSaveData data = new BlockSaveData();
+        data.blockDataId = block.blockData.blockID;
+        data.position = block.transform.position;
+        data.rotation = block.transform.eulerAngles;
+        
+        Renderer renderer = block.GetComponent<Renderer>();
+        data.color = renderer != null ? renderer.material.color : Color.white;
+        data.children = new List<BlockSaveData>();
+        
+        foreach(Transform child in block.transform)
+        {
+            Block childBlock = child.GetComponent<Block>();
+            
+            if(childBlock != null)
+            data.children.Add(SaveBlockRecursive(childBlock));
+        }
+        return data;
     }
 
     public void SpawnFromSaveData(List<BlockSaveData> rootBlocks, Transform parent = null)
     {
         foreach(BlockSaveData data in rootBlocks)
         {
-            BlockData bData = SaveManager.Instance.GetBlockDataById(data.blockDataId);
+            BlockData bData = GetBlockDataById(data.blockDataId);
             
             if(bData == null)
             continue;
@@ -121,40 +186,6 @@ public class SaveManager : MonoBehaviour
         blockDataById.TryGetValue(id, out BlockData data);
         return data;
     }
-
-    private BlockSaveData SaveBlockRecursive(Block block)
-    {
-        BlockSaveData data = new BlockSaveData();
-        data.blockDataId = block.blockData.blockID;
-        data.position = block.transform.position;
-        data.rotation = block.transform.eulerAngles;
-        
-        Renderer renderer = block.GetComponent<Renderer>();
-        data.color = renderer != null ? renderer.material.color : Color.white;
-        data.children = new List<BlockSaveData>();
-        
-        foreach(Transform child in block.transform)
-        {
-            Block childBlock = child.GetComponent<Block>();
-            
-            if(childBlock != null)
-            data.children.Add(SaveBlockRecursive(childBlock));
-        }
-        return data;
-    }
-
-    public FreeModeSaveData LoadFreeMode()
-    {
-        if(!File.Exists(freeModeSavePath))
-        return null;
-        
-        string json = File.ReadAllText(freeModeSavePath);
-        return JsonUtility.FromJson<FreeModeSaveData>(json);
-    }
-
-    public bool HasFreeModeSave() => File.Exists(freeModeSavePath);
-
-    public void DeleteFreeModeSave() => File.Delete(freeModeSavePath);
 }
 
 [System.Serializable]
@@ -171,4 +202,22 @@ public class BlockSaveData
 public class FreeModeSaveData
 {
     public List<BlockSaveData> rootBlocks;
+}
+
+[System.Serializable]
+public class CareerSaveData
+{
+    public string levelId;
+    public int currentStepPage;
+    public List<int> completedSteps;
+    public List<RequiredBlockSaveData> remainingBlocks;
+    public List<BlockSaveData> rootBlocks;
+}
+
+[System.Serializable]
+public class RequiredBlockSaveData
+{
+    public string blockFullName;
+    public Color color;
+    public int remaining;
 }
