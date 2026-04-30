@@ -150,7 +150,6 @@ public class Block : MonoBehaviour
         return occupied;
     }
 
-    // Пересчёт всех точек на основе списка connections
     public void RecalculateAllPoints()
     {
         HashSet<Block> allBlocks = new HashSet<Block>();
@@ -324,10 +323,10 @@ public class Block : MonoBehaviour
         }
     }
 
-    private bool FindNearestConnectionPoints(Block current, Block target, 
-    out Transform nearestBulge, out Transform nearestHollow,
-    out Vector3 localBulgePos, out Vector3 localHollowPos,
-    out Vector3 targetWorldPoint)
+    private bool FindNearestConnectionPoints(Block current, Block target, bool isCurrentTile, bool isTargetTile,
+        out Transform nearestBulge, out Transform nearestHollow,
+        out Vector3 localBulgePos, out Vector3 localHollowPos,
+        out Vector3 targetWorldPoint)
     {
         nearestBulge = null;
         nearestHollow = null;
@@ -336,44 +335,63 @@ public class Block : MonoBehaviour
         targetWorldPoint = Vector3.zero;
 
         float minDistance = 100f;
+        bool found = false;
 
-        // 1) Впадина на current + шип на target
-        foreach(Transform hollow in current.hollowChild)
+        if (!isCurrentTile)
         {
-            foreach(Transform bulge in target.bulgeChild)
+            foreach(Transform bulge in current.bulgeChild)
             {
-                float d = Vector3.Distance(hollow.position, bulge.position);
-                
-                if(d < minDistance)
+                if(!bulge.GetComponent<BlockPoint>().isFree)
+                continue;
+
+                foreach(Transform hollow in target.hollowChild)
                 {
-                    minDistance = d;
-                    nearestBulge = bulge;
-                    nearestHollow = hollow;
-                    localHollowPos = hollow.localPosition;
-                    targetWorldPoint = bulge.position;
+                    if(!hollow.GetComponent<BlockPoint>().isFree)
+                    continue;
+                    
+                    float d = Vector3.Distance(bulge.position, hollow.position);
+
+                    if(d < minDistance)
+                    {
+                        minDistance = d;
+                        nearestBulge = bulge;
+                        nearestHollow = hollow;
+                        localBulgePos = bulge.localPosition;
+                        targetWorldPoint = hollow.position;
+                        found = true;
+                    }
                 }
             }
         }
 
-        // 2) Шип на current + впадина на target
-        foreach(Transform bulge in current.bulgeChild)
+        if(!isTargetTile)
         {
-            foreach(Transform hollow in target.hollowChild)
+            foreach(Transform hollow in current.hollowChild)
             {
-                float d = Vector3.Distance(bulge.position, hollow.position);
+                if(!hollow.GetComponent<BlockPoint>().isFree)
+                continue;
                 
-                if(d < minDistance)
+                foreach(Transform bulge in target.bulgeChild)
                 {
-                    minDistance = d;
-                    nearestBulge = bulge;
-                    nearestHollow = hollow;
-                    localBulgePos = bulge.localPosition;
-                    targetWorldPoint = hollow.position;
+                    if(!bulge.GetComponent<BlockPoint>().isFree)
+                    continue;
+                    
+                    float d = Vector3.Distance(hollow.position, bulge.position);
+                    
+                    if(d < minDistance)
+                    {
+                        minDistance = d;
+                        nearestBulge = bulge;
+                        nearestHollow = hollow;
+                        localHollowPos = hollow.localPosition;
+                        targetWorldPoint = bulge.position;
+                        found = true;
+                    }
                 }
             }
         }
 
-        return nearestBulge != null && nearestHollow != null;
+        return found;
     }
 
     private void PrepareGroupConnection(GameObject currentBlock, GameObject place, Transform rootGroup)
@@ -402,10 +420,19 @@ public class Block : MonoBehaviour
         if(IsChildRecursively(place, currentBlock))
         return;
 
-        // Поиск ближайших точек
-        if(!FindNearestConnectionPoints(current, target, out Transform nearestBulge, out Transform nearestHollow,
-        out Vector3 localBulgePos, out Vector3 localHollowPos, out Vector3 targetWorldPoint))
+        // Определяем типы
+        bool isTilePlace = place.name.Split(' ')[0] == "Tile";
+        bool isTileCurrent = currentBlock.name.Split(' ')[0] == "Tile";
+
+        // Два тайла не соединяются
+        if(isTilePlace && isTileCurrent)
         return;
+
+        // Поиск ближайших точек с учётом тайлов
+        if(!FindNearestConnectionPoints(current, target, isTileCurrent, isTilePlace,
+            out Transform nearestBulge, out Transform nearestHollow,
+            out Vector3 localBulgePos, out Vector3 localHollowPos, out Vector3 targetWorldPoint))
+            return;
 
         // Проверка свободных точек
         if(!nearestBulge.GetComponent<BlockPoint>().isFree || !nearestHollow.GetComponent<BlockPoint>().isFree)
@@ -413,27 +440,39 @@ public class Block : MonoBehaviour
             Debug.Log("Cannot connect – point already occupied");
             return;
         }
-        
+
         if(Vector3.Dot(current.hollowChild[0].up, target.bulgeChild[0].up) <= 0.99f)
         {
             Debug.Log("Axes not aligned");
             return;
         }
 
-        // Определяем, сверху или снизу
+        // Определяем, сверху или снизу (для обычных блоков)
         float yCurrent = current.bulgeChild.Count > 0 ? current.bulgeChild[0].position.y : current.transform.position.y;
         float yPlace = target.bulgeChild.Count > 0 ? target.bulgeChild[0].position.y : place.transform.position.y;
         bool isCurrentAbove = yCurrent > yPlace;
 
-        Vector3 currentSourceWorld;
+        Vector3 offset;
         
-        if(isCurrentAbove)
-        currentSourceWorld = currentBlock.transform.TransformPoint(localHollowPos);
+        if(isTilePlace) // Тайл – это place, currentBlock – обычный блок
+        {
+            Vector3 currentBulgeWorld = currentBlock.transform.TransformPoint(localBulgePos);
+            offset = targetWorldPoint - currentBulgeWorld;
+        }
         
-        else
-        currentSourceWorld = currentBlock.transform.TransformPoint(localBulgePos);
-
-        Vector3 offset = targetWorldPoint - currentSourceWorld;
+        else if(isTileCurrent) // Тайл – это currentBlock, place – обычный блок
+        {
+            Vector3 currentHollowWorld = currentBlock.transform.TransformPoint(localHollowPos);
+            offset = targetWorldPoint - currentHollowWorld;
+        }
+        
+        else // Обычные блоки
+        {
+            Vector3 currentSourceWorld = isCurrentAbove
+                ? currentBlock.transform.TransformPoint(localHollowPos)
+                : currentBlock.transform.TransformPoint(localBulgePos);
+            offset = targetWorldPoint - currentSourceWorld;
+        }
 
         originalRootPosition = rootGroup.position;
 
@@ -452,8 +491,34 @@ public class Block : MonoBehaviour
         pendingSnapParent = place.transform;
         pendingSnapBlock = currentBlock.transform;
         pendingSnapPoints = CountOccupiedPointsBetween(currentBlock, place);
-        pendingSnapBlockPoint = isCurrentAbove ? nearestHollow.GetComponent<BlockPoint>() : nearestBulge.GetComponent<BlockPoint>();
-        pendingSnapOtherPoint = isCurrentAbove ? nearestBulge.GetComponent<BlockPoint>() : nearestHollow.GetComponent<BlockPoint>();
+        // Сохраняем правильные точки для блокировки
+        pendingSnapBlockPoint = null;
+        pendingSnapOtherPoint = null;
+        
+        if(nearestBulge != null && nearestHollow != null)
+        {
+            if(!isTilePlace && !isTileCurrent)
+            {
+                // Обычные блоки: сохраняем использованные точки
+                pendingSnapBlockPoint = isCurrentAbove ? nearestHollow.GetComponent<BlockPoint>() : nearestBulge.GetComponent<BlockPoint>();
+                pendingSnapOtherPoint = isCurrentAbove ? nearestBulge.GetComponent<BlockPoint>() : nearestHollow.GetComponent<BlockPoint>();
+            }
+            
+            else if(isTilePlace)
+            {
+                // place – тайл, currentBlock – обычный блок: используется шип currentBlock и впадина тайла
+                pendingSnapBlockPoint = nearestBulge.GetComponent<BlockPoint>();
+                pendingSnapOtherPoint = nearestHollow.GetComponent<BlockPoint>();
+            }
+            
+            else if(isTileCurrent)
+            {
+                // currentBlock – тайл, place – обычный блок: используется впадина тайла и шип place
+                pendingSnapBlockPoint = nearestHollow.GetComponent<BlockPoint>();
+                pendingSnapOtherPoint = nearestBulge.GetComponent<BlockPoint>();
+            }
+        }
+
         hasPendingConnection = true;
         pendingSnapRoot = rootGroup;
 
