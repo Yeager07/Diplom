@@ -18,6 +18,7 @@ TagManager:
   - Settings
   - Exit
   - SpawnPoint
+  - Preview
   layers:
   - Default
   - TransparentFX

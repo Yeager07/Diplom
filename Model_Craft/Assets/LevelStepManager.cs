@@ -227,6 +227,21 @@ public class LevelStepManager : MonoBehaviour
             stepCompleted = true;
             Debug.Log("Шаг выполнен! Можно переходить к следующей странице.");
             completedSteps.Add(currentStepPage);
+            CheckAllStepsCompleted();
+        }
+    }
+
+    private void CheckAllStepsCompleted()
+    {
+        if(completedSteps.Count == currentLevel.steps.Count)
+        {
+            List<BlockSaveData> rootBlocks = SaveManager.Instance.CollectRootBlocks();
+            SaveManager.Instance.SaveCareerModelToGallery(currentLevel.levelName, rootBlocks);
+            Debug.Log($"Модель для уровня {currentLevel.levelName} сохранена в галерею!");
+        }
+        else
+        {
+            Debug.Log("Not all steps completed yet.");
         }
     }
 

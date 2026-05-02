@@ -37,6 +37,8 @@ public class ZoneManager : MonoBehaviour
     public static FreeModeSaveData PendingFreeModeSave;
     public static CareerSaveData PendingCareerSave;
 
+    public ModelPreview modelPreview;
+
     void Awake()
     {
         if(Instance == null)
@@ -106,7 +108,13 @@ public class ZoneManager : MonoBehaviour
         tableUIPanel.SetActive(false);
         
         if(cabinetUIPanel)
-        cabinetUIPanel.SetActive(false);
+        {
+            GalleryView galleryView = FindFirstObjectByType<GalleryView>();
+            
+            cabinetUIPanel.SetActive(false);
+            galleryView.CloseGallery();
+            modelPreview.HidePreview();
+        }
         
         if(settingsUIPanel)
         settingsUIPanel.SetActive(false);
@@ -134,9 +142,13 @@ public class ZoneManager : MonoBehaviour
         UpdateLevelPreview();
     }
 
-    private void ShowCabinetUI()
+    public void ShowCabinetUI()
     {
         cabinetUIPanel.SetActive(true);
+        GalleryView galleryView = FindFirstObjectByType<GalleryView>();
+        
+        if(galleryView != null)
+        galleryView.ShowGallery();
     }
 
     private void ShowSettingsUI()
@@ -336,6 +348,8 @@ public class ZoneManager : MonoBehaviour
             camMove.transform.position = camMove.cameraPoints[0].position;
             camMove.transform.rotation = camMove.cameraPoints[0].rotation;
         }
+        
+        Camera.main.GetComponent<MainScript>().PlacePlayerZero();
     }
 
     private LevelData GetLevelDataByIndex(int index)

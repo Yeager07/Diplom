@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,11 @@ public class PauseMenuController : MonoBehaviour
     private bool isControlsOpen = false;
 
     private Player player;
+
+    public GameObject saveDialogPanel;
+    public TMP_InputField modelNameInput;
+    public Button saveModelButton;
+    public GameObject successSavePanel;
 
     void Start()
     {
@@ -74,6 +80,12 @@ public class PauseMenuController : MonoBehaviour
 
     void PauseGame()
     {
+        if(player.typeGame != "FreeMode")
+        saveModelButton.gameObject.SetActive(false);
+
+        else
+        saveModelButton.gameObject.SetActive(true);
+
         Debug.Log("PauseGame called");
 
         isPaused = true;
@@ -112,6 +124,7 @@ public class PauseMenuController : MonoBehaviour
         if(player.typeGame == "CareerMode")
         SaveCurrentCareerProgress();
 
+        else if(player.typeGame == "FreeMode")
         SaveManager.Instance.SaveFreeMode();
 
         Cursor.lockState = CursorLockMode.None;
@@ -173,6 +186,53 @@ public class PauseMenuController : MonoBehaviour
         Debug.Log($"{r.blockFullName}: {r.remaining}");
         
         SaveManager.Instance.SaveCareerMode(data.levelId, data);
+    }
+
+    public void ShowSaveDialog()
+    {
+        saveDialogPanel.SetActive(true);
+        pausePanel.SetActive(false);
+    }
+
+    public void OnSaveConfirm()
+    {
+        string modelName = modelNameInput.text;
+     
+        if(string.IsNullOrEmpty(modelName))
+        modelName = "Модель " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        
+        SaveCurrentFreeModeModel(modelName);
+        saveDialogPanel.SetActive(false);
+        successSavePanel.SetActive(true);
+        Debug.Log(Application.persistentDataPath);
+    }
+
+    public void OnConfirm()
+    {
+        successSavePanel.SetActive(false);
+        ResumeGame();
+    }
+
+    public void OnSaveCancel()
+    {
+        //modelNameInput.text = 
+        saveDialogPanel.SetActive(false);
+        pausePanel.SetActive(true);
+        ResumeGame();
+    }
+
+    private void SaveCurrentFreeModeModel(string modelName)
+    {
+        List<BlockSaveData> rootBlocks = SaveManager.Instance.CollectRootBlocks();
+     
+        if(rootBlocks.Count == 0)
+        {
+            Debug.Log("Нет блоков на сцене для сохранения.");
+            return;
+        }
+        
+        SaveManager.Instance.SaveFreeModeModelToGallery(modelName, rootBlocks);
+        Debug.Log("Модель сохранена в галерею!");
     }
 
     private int GetCurrentStepPage()

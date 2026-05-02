@@ -88,6 +88,16 @@
       "source": "registry",
       "testable": false
     },
+    "jillejr.newtonsoft.json-for-unity@https://github.com/jilleJr/Newtonsoft.Json-for-Unity.git#upm": {
+      "name": "jillejr.newtonsoft.json-for-unity",
+      "displayName": "Json.NET 10.0.3 for Unity",
+      "resolvedPath": "C:\\Diplom\\Diplom\\Model_Craft\\Library\\PackageCache\\jillejr.newtonsoft.json-for-unity@f2c6cb098178",
+      "fingerprint": "f2c6cb09817832dccd0600f291053d8d55298ee9",
+      "editorCompatibility": "2018.1.0a1",
+      "version": "10.0.302",
+      "source": "git",
+      "testable": false
+    },
     "com.unity.modules.accessibility@1.0.0": {
       "name": "com.unity.modules.accessibility",
       "displayName": "Accessibility",

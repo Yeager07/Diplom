@@ -15,22 +15,16 @@ MonoBehaviour:
   levelName: Test Level
   instructionFileName: TestInstruction.pdf
   steps:
+  - pageNumber: 1
+    blocks: []
   - pageNumber: 2
-    blocks:
-    - block: {fileID: 11400000, guid: ba65f4eab09b4884abdefa113bb420ab, type: 2}
-      color: {r: 0, g: 1, b: 0.007529974, a: 1}
-      count: 2
-    - block: {fileID: 11400000, guid: ccb152fab2378904f970b377a57018f2, type: 2}
-      color: {r: 1, g: 0, b: 0, a: 1}
-      count: 4
-  - pageNumber: 3
     blocks:
     - block: {fileID: 11400000, guid: cf272db5f82e7a540927e818faf11dc6, type: 2}
       color: {r: 1, g: 0.906075, b: 0, a: 1}
       count: 3
-  - pageNumber: 4
+  - pageNumber: 3
     blocks: []
-  - pageNumber: 5
+  - pageNumber: 4
     blocks:
     - block: {fileID: 11400000, guid: 930f986ffae42c545ad6d9b070cff356, type: 2}
       color: {r: 0.40771866, g: 0, b: 1, a: 1}
@@ -41,7 +35,7 @@ MonoBehaviour:
     - block: {fileID: 11400000, guid: ba689b6103f4f0c4baf713df1ee1b832, type: 2}
       color: {r: 1, g: 0, b: 0.561501, a: 1}
       count: 2
-  - pageNumber: 6
+  - pageNumber: 5
     blocks:
     - block: {fileID: 11400000, guid: d0776618423b6774d8efd290417d9178, type: 2}
       color: {r: 0, g: 0, b: 0, a: 1}
@@ -49,5 +43,172 @@ MonoBehaviour:
     - block: {fileID: 11400000, guid: 356c6e05d29d939468de9d6b4814bb80, type: 2}
       color: {r: 1, g: 0.3582275, b: 0, a: 1}
       count: 1
+  - pageNumber: 6
+    blocks: []
   - pageNumber: 7
     blocks: []
+  - pageNumber: 8
+    blocks: []
+  - pageNumber: 9
+    blocks: []
+  - pageNumber: 10
+    blocks: []
+  - pageNumber: 11
+    blocks: []
+  - pageNumber: 12
+    blocks: []
+  - pageNumber: 13
+    blocks: []
+  - pageNumber: 14
+    blocks: []
+  - pageNumber: 15
+    blocks: []
+  - pageNumber: 16
+    blocks: []
+  - pageNumber: 17
+    blocks: []
+  - pageNumber: 18
+    blocks: []
+  - pageNumber: 19
+    blocks: []
+  - pageNumber: 20
+    blocks: []
+  - pageNumber: 21
+    blocks: []
+  - pageNumber: 22
+    blocks: []
+  - pageNumber: 23
+    blocks: []
+  - pageNumber: 24
+    blocks: []
+  - pageNumber: 25
+    blocks: []
+  - pageNumber: 26
+    blocks: []
+  - pageNumber: 27
+    blocks: []
+  - pageNumber: 28
+    blocks: []
+  - pageNumber: 29
+    blocks: []
+  - pageNumber: 30
+    blocks: []
+  - pageNumber: 31
+    blocks: []
+  - pageNumber: 32
+    blocks: []
+  - pageNumber: 33
+    blocks: []
+  - pageNumber: 34
+    blocks: []
+  - pageNumber: 35
+    blocks: []
+  - pageNumber: 36
+    blocks: []
+  - pageNumber: 37
+    blocks: []
+  - pageNumber: 38
+    blocks: []
+  - pageNumber: 39
+    blocks: []
+  - pageNumber: 40
+    blocks: []
+  - pageNumber: 41
+    blocks: []
+  - pageNumber: 42
+    blocks: []
+  - pageNumber: 43
+    blocks: []
+  - pageNumber: 44
+    blocks: []
+  - pageNumber: 45
+    blocks: []
+  - pageNumber: 46
+    blocks: []
+  - pageNumber: 47
+    blocks: []
+  - pageNumber: 48
+    blocks: []
+  - pageNumber: 49
+    blocks: []
+  - pageNumber: 50
+    blocks: []
+  - pageNumber: 51
+    blocks: []
+  - pageNumber: 52
+    blocks: []
+  - pageNumber: 53
+    blocks: []
+  - pageNumber: 54
+    blocks: []
+  - pageNumber: 55
+    blocks: []
+  - pageNumber: 56
+    blocks: []
+  - pageNumber: 57
+    blocks: []
+  - pageNumber: 58
+    blocks: []
+  - pageNumber: 59
+    blocks: []
+  - pageNumber: 60
+    blocks: []
+  - pageNumber: 61
+    blocks: []
+  - pageNumber: 62
+    blocks: []
+  - pageNumber: 63
+    blocks: []
+  - pageNumber: 64
+    blocks: []
+  - pageNumber: 65
+    blocks: []
+  - pageNumber: 66
+    blocks: []
+  - pageNumber: 67
+    blocks: []
+  - pageNumber: 68
+    blocks: []
+  - pageNumber: 69
+    blocks: []
+  - pageNumber: 70
+    blocks: []
+  - pageNumber: 71
+    blocks: []
+  - pageNumber: 72
+    blocks: []
+  - pageNumber: 73
+    blocks: []
+  - pageNumber: 74
+    blocks: []
+  - pageNumber: 75
+    blocks: []
+  - pageNumber: 76
+    blocks: []
+  - pageNumber: 77
+    blocks: []
+  - pageNumber: 78
+    blocks: []
+  - pageNumber: 79
+    blocks: []
+  - pageNumber: 80
+    blocks: []
+  - pageNumber: 81
+    blocks: []
+  - pageNumber: 82
+    blocks: []
+  - pageNumber: 83
+    blocks: []
+  - pageNumber: 84
+    blocks: []
+  - pageNumber: 85
+    blocks: []
+  - pageNumber: 86
+    blocks: []
+  - pageNumber: 87
+    blocks: []
+  - pageNumber: 88
+    blocks:
+    - block: {fileID: 11400000, guid: 5c9f557485bb6ac43917e91dd8a9b224, type: 2}
+      color: {r: 0.5283019, g: 0.01744394, b: 0.01744394, a: 1}
+      count: 1

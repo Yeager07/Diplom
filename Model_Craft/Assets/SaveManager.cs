@@ -2,7 +2,10 @@ using System.Collections.Generic;
 using System.Collections;
 using System.IO;
 using UnityEngine;
+using System;
 using System.Linq;
+using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 public class SaveManager : MonoBehaviour
 {
@@ -10,6 +13,7 @@ public class SaveManager : MonoBehaviour
 
     private string freeModeSavePath;
     private Dictionary<string, BlockData> blockDataById;
+    private string gallerySavePath;
 
     void Awake()
     {
@@ -20,10 +24,19 @@ public class SaveManager : MonoBehaviour
         }
         
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        /*DontDestroyOnLoad(gameObject);*/
         freeModeSavePath = Path.Combine(Application.persistentDataPath, "freeModeSave.json");
         BuildBlockDataDictionary();
+
+        gallerySavePath = Path.Combine(Application.persistentDataPath, "gallery.json");
     }
+
+    private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+    {
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+        Formatting = Formatting.Indented,
+        ContractResolver = new CustomVector3ContractResolver()
+    };
 
     private void BuildBlockDataDictionary()
     {
@@ -57,7 +70,7 @@ public class SaveManager : MonoBehaviour
     {
         FreeModeSaveData data = new FreeModeSaveData();
         data.rootBlocks = CollectRootBlocks();
-        string json = JsonUtility.ToJson(data, true);
+        string json = JsonConvert.SerializeObject(data, JsonSettings);
         File.WriteAllText(freeModeSavePath, json);
         Debug.Log("Free mode saved");
     }
@@ -68,7 +81,7 @@ public class SaveManager : MonoBehaviour
         return null;
         
         string json = File.ReadAllText(freeModeSavePath);
-        return JsonUtility.FromJson<FreeModeSaveData>(json);
+        return JsonConvert.DeserializeObject<FreeModeSaveData>(json, JsonSettings);
     }
 
     public bool HasFreeModeSave() => File.Exists(freeModeSavePath);
@@ -84,7 +97,7 @@ public class SaveManager : MonoBehaviour
     {
         data.levelId = levelId;
         data.rootBlocks = CollectRootBlocks();
-        string json = JsonUtility.ToJson(data, true);
+        string json = JsonConvert.SerializeObject(data, JsonSettings);
         File.WriteAllText(GetCareerSavePath(levelId), json);
         Debug.Log($"Career mode saved for level {levelId}");
     }
@@ -97,7 +110,7 @@ public class SaveManager : MonoBehaviour
         return null;
         
         string json = File.ReadAllText(path);
-        return JsonUtility.FromJson<CareerSaveData>(json);
+        return JsonConvert.DeserializeObject<CareerSaveData>(json, JsonSettings);
     }
 
     public bool HasCareerSave(string levelId) => File.Exists(GetCareerSavePath(levelId));
@@ -108,7 +121,7 @@ public class SaveManager : MonoBehaviour
         File.Delete(GetCareerSavePath(levelId));
     }
 
-    private List<BlockSaveData> CollectRootBlocks()
+    public List<BlockSaveData> CollectRootBlocks()
     {
         List<BlockSaveData> roots = new List<BlockSaveData>();
         Block[] allBlocks = FindObjectsByType<Block>(FindObjectsSortMode.None);
@@ -143,7 +156,7 @@ public class SaveManager : MonoBehaviour
         return data;
     }
 
-    public void SpawnFromSaveData(List<BlockSaveData> rootBlocks, Transform parent = null)
+    public void SpawnFromSaveData(List<BlockSaveData> rootBlocks, Transform parent = null, bool useLocalPosition = false)
     {
         foreach(BlockSaveData data in rootBlocks)
         {
@@ -156,11 +169,32 @@ public class SaveManager : MonoBehaviour
             newBlock.name = bData.type + " " + bData.blockName;
             newBlock.tag = "Selectable";
 
-            newBlock.transform.position = data.position;
+            if(parent != null)
+            {
+                newBlock.transform.SetParent(parent, true); // false – не сохранять мировую позицию
+                
+                if(useLocalPosition)
+                newBlock.transform.localPosition = data.position;
+                
+                else
+                newBlock.transform.position = data.position;
+                
+                newBlock.transform.localRotation = Quaternion.Euler(data.rotation);
+            }
+            
+            else
+            {
+                newBlock.transform.position = data.position;
+                newBlock.transform.rotation = Quaternion.Euler(data.rotation);
+            }
+
+            /*newBlock.transform.position = data.position;
             newBlock.transform.rotation = Quaternion.Euler(data.rotation);
 
             if(parent != null)
-            newBlock.transform.SetParent(parent, true);
+            newBlock.transform.SetParent(parent, true);*/
+
+            Debug.Log($"Spawning {newBlock.name} with parent = {parent?.name}");
  
             Renderer renderer = newBlock.GetComponent<Renderer>();
             
@@ -186,9 +220,90 @@ public class SaveManager : MonoBehaviour
         blockDataById.TryGetValue(id, out BlockData data);
         return data;
     }
+
+    public void SaveCareerModelToGallery(string levelName, List<BlockSaveData> rootBlocks)
+    {
+        GallerySaveData gallery = LoadGallery();
+        
+        if(gallery.models.Exists(m => m.type == "Career" && m.levelId == levelName))
+        return;
+        
+        GalleryModelData newModel = new GalleryModelData();
+        newModel.id = Guid.NewGuid().ToString();
+        newModel.name = levelName;
+        newModel.type = "Career";
+        newModel.levelId = levelName;
+        newModel.creationDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+        newModel.blocks = rootBlocks;
+
+        gallery.models.Add(newModel);
+        SaveGallery(gallery);
+    }
+
+    public void SaveFreeModeModelToGallery(string modelName, List<BlockSaveData> rootBlocks)
+    {
+        GallerySaveData gallery = LoadGallery();
+        GalleryModelData newModel = new GalleryModelData();
+        newModel.id = Guid.NewGuid().ToString();
+        newModel.name = modelName;
+        newModel.type = "FreeMode";
+        newModel.creationDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        newModel.blocks = rootBlocks;
+        gallery.models.Add(newModel);
+        SaveGallery(gallery);
+    }
+
+    public GallerySaveData LoadGallery()
+    {
+        if(!File.Exists(gallerySavePath))
+        return new GallerySaveData { models = new List<GalleryModelData>() };
+        
+        string json = File.ReadAllText(gallerySavePath);
+        var data = JsonConvert.DeserializeObject<GallerySaveData>(json, JsonSettings);
+        
+        if(data == null)
+        data = new GallerySaveData();
+        
+        if(data.models == null)
+        data.models = new List<GalleryModelData>();
+        
+        return data;
+    }
+
+    private void SaveGallery(GallerySaveData gallery)
+    {
+        string json = JsonConvert.SerializeObject(gallery, JsonSettings);
+        File.WriteAllText(gallerySavePath, json);
+    }
+
+    public List<GalleryModelData> GetAllGalleryModels()
+    {
+        return LoadGallery().models;
+    }
+
+    public void DeleteGalleryModel(string modelId)
+    {
+        GallerySaveData gallery = LoadGallery();
+        GalleryModelData modelToRemove = gallery.models.Find(m => m.id == modelId);
+        
+        if(modelToRemove != null)
+        {
+            gallery.models.Remove(modelToRemove);
+            SaveGallery(gallery);
+            Debug.Log($"Модель {modelId} удалена из галереи");
+            
+            // Если сохраняешь превью-изображение на диск, удали и его:
+            if(!string.IsNullOrEmpty(modelToRemove.thumbnailPath) && File.Exists(modelToRemove.thumbnailPath))
+            File.Delete(modelToRemove.thumbnailPath);
+        }
+        
+        else
+        Debug.LogWarning($"Модель с ID {modelId} не найдена");
+    }
 }
 
-[System.Serializable]
+//[System.Serializable]
 public class BlockSaveData
 {
     public string blockDataId;
@@ -198,13 +313,13 @@ public class BlockSaveData
     public List<BlockSaveData> children;
 }
 
-[System.Serializable]
+//[System.Serializable]
 public class FreeModeSaveData
 {
     public List<BlockSaveData> rootBlocks;
 }
 
-[System.Serializable]
+//[System.Serializable]
 public class CareerSaveData
 {
     public string levelId;
@@ -214,10 +329,28 @@ public class CareerSaveData
     public List<BlockSaveData> rootBlocks;
 }
 
-[System.Serializable]
+//[System.Serializable]
 public class RequiredBlockSaveData
 {
     public string blockFullName;
     public Color color;
     public int remaining;
+}
+
+//[System.Serializable]
+public class GalleryModelData
+{
+    public string id;
+    public string name;
+    public string type;
+    public string levelId;
+    public string creationDate;
+    public List<BlockSaveData> blocks;
+    public string thumbnailPath;
+}
+
+//[System.Serializable]
+public class GallerySaveData
+{
+    public List<GalleryModelData> models = new List<GalleryModelData>();
 }

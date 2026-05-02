@@ -54,6 +54,7 @@ public class MainScript : MonoBehaviour
         playerScript.rotateDirection = zeroPos;
         playerScript.transform.rotation = Quaternion.Euler(zeroPos);
         playerScript.transform.position = zeroPos;
+        playerScript.targetPosition = zeroPos;
     }
 
     public void LoadScene(string sceneName)
@@ -133,7 +134,6 @@ public class MainScript : MonoBehaviour
                     playerScript.rotateDirection = zeroPos;
                     playerScript.transform.rotation = Quaternion.Euler(zeroPos);
                     playerScript.targetPosition = buildPos;
-                    //SceneManager.LoadScene("03_BuildScene");
                 }
                 
                 else
@@ -143,7 +143,6 @@ public class MainScript : MonoBehaviour
                     playerScript.isBuildMode = false;
 
                     PlacePlayerZero();
-                    //SceneManager.LoadScene("02_TestScene");
                 }
             }
 

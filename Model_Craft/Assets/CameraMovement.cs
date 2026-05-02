@@ -13,6 +13,8 @@ public class CameraMovement : MonoBehaviour
     private bool isMoving = false;
     private bool isInitialized = false;
 
+    public System.Action<int> OnMoveComplete;
+
     void Awake()
     {
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
@@ -35,11 +37,11 @@ public class CameraMovement : MonoBehaviour
 
     private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
-        // При загрузке любой сцены пробуем переинициализировать точки
         InitializeCameraPoints();
-        // Если текущая сцена – главное меню, то сбрасываем позицию в центр
+
         Player player = FindFirstObjectByType<Player>();
-        if (player != null && player.typeGame == "MainMenu" && cameraPoints != null && cameraPoints.Length > 0)
+        
+        if(player != null && player.typeGame == "MainMenu" && cameraPoints != null && cameraPoints.Length > 0)
         {
             transform.position = cameraPoints[0].position;
             transform.rotation = cameraPoints[0].rotation;
@@ -49,28 +51,32 @@ public class CameraMovement : MonoBehaviour
 
     private void InitializeCameraPoints()
     {
-        // Если массив уже заполнен валидными ссылками, не трогаем
-        if (cameraPoints != null && cameraPoints.Length == 5)
+        if(cameraPoints != null && cameraPoints.Length == 6)
         {
             bool allValid = true;
-            foreach (var p in cameraPoints)
-                if (p == null) { allValid = false; break; }
-            if (allValid) return;
+            
+            foreach(var p in cameraPoints)
+            {
+                if(p == null)
+                { allValid = false; break; }
+            }
+            
+            if(allValid)
+            return;
         }
 
-        // Иначе ищем точки по тегам
-        cameraPoints = new Transform[5];
+        cameraPoints = new Transform[6];
         cameraPoints[0] = GameObject.FindGameObjectWithTag("Center")?.transform;
         cameraPoints[1] = GameObject.FindGameObjectWithTag("Table")?.transform;
         cameraPoints[2] = GameObject.FindGameObjectWithTag("Cabinet")?.transform;
         cameraPoints[3] = GameObject.FindGameObjectWithTag("Settings")?.transform;
         cameraPoints[4] = GameObject.FindGameObjectWithTag("Exit")?.transform;
+        cameraPoints[5] = GameObject.FindGameObjectWithTag("Preview")?.transform;
 
-        // Проверка
-        for (int i = 0; i < cameraPoints.Length; i++)
+        for(int i = 0; i < cameraPoints.Length; i++)
         {
-            if (cameraPoints[i] == null)
-                Debug.LogWarning($"CameraMovement: point {i} not found! Assign tag correctly.");
+            if(cameraPoints[i] == null)
+            Debug.LogWarning($"CameraMovement: point {i} not found! Assign tag correctly.");
         }
     }
 
@@ -131,11 +137,14 @@ public class CameraMovement : MonoBehaviour
 
         if(ZoneManager.Instance != null)
         ZoneManager.Instance.OnCameraArrived(targetIndex);
+
+        OnMoveComplete?.Invoke(targetIndex);
     }
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape) && currentTargetIndex != 0)
+        GalleryView galleryView = FindFirstObjectByType<GalleryView>();
+        if(Input.GetKeyDown(KeyCode.Escape) && currentTargetIndex != 0 && !galleryView.isPreviewMode)
         {
             if(ZoneManager.Instance != null)
             ZoneManager.Instance.HideAllPanels();

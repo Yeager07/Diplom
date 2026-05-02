@@ -12,7 +12,7 @@ public class ZoneTrigger : MonoBehaviour
         camMove = Camera.main.GetComponent<CameraMovement>();
     }
 
-    void OnMouseDown()
+    public void OnMouseDown()
     {
         if(EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         return;

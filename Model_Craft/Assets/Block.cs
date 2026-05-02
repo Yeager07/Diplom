@@ -172,13 +172,13 @@ public class Block : MonoBehaviour
             conn.blockB.countPoint += conn.occupiedPoints;
         }
 
-        Debug.Log($"=== Recalculated {connections.Count} connections ===");
+        /*Debug.Log($"=== Recalculated {connections.Count} connections ===");
         
         foreach(Block b in allBlocks)
         {
             if(b.countPoint > 0)
             Debug.Log($"{b.name}: {b.countPoint} points");
-        }
+        }*/
     }
 
     public void Move(float distance, GameObject currentObject)
@@ -820,7 +820,7 @@ public class Block : MonoBehaviour
                         {
                             int points = CountOccupiedPointsBetween(gameObject, place);
                             connections.Add(new Connection { blockA = this, blockB = parentBlock, occupiedPoints = points });
-                            Debug.Log($"Forced connection added between {name} and {place.name}, points={points}");
+                            //Debug.Log($"Forced connection added between {name} and {place.name}, points={points}");
                         }
                     }
                     
