@@ -15,6 +15,8 @@ public class SaveManager : MonoBehaviour
     private Dictionary<string, BlockData> blockDataById;
     private string gallerySavePath;
 
+    public static bool IsSpawningBlocks = false;
+
     void Awake()
     {
         if(Instance != null)
@@ -158,6 +160,8 @@ public class SaveManager : MonoBehaviour
 
     public void SpawnFromSaveData(List<BlockSaveData> rootBlocks, Transform parent = null, bool useLocalPosition = false)
     {
+        IsSpawningBlocks = true;
+
         foreach(BlockSaveData data in rootBlocks)
         {
             BlockData bData = GetBlockDataById(data.blockDataId);
@@ -166,12 +170,30 @@ public class SaveManager : MonoBehaviour
             continue;
 
             GameObject newBlock = Instantiate(bData.prefab, Vector3.zero, Quaternion.identity);
+            
+            Rigidbody rb = newBlock.GetComponent<Rigidbody>();
+            
+            if(rb != null)
+            {
+                rb.isKinematic = true;
+                rb.useGravity = false;
+            }
+
             newBlock.name = bData.type + " " + bData.blockName;
             newBlock.tag = "Selectable";
 
-            if(parent != null)
+            Block newBlockComponent = newBlock.GetComponent<Block>();
+            
+            if(newBlockComponent != null)
             {
+                newBlockComponent.blockData = bData;
+            }
+
+            if(parent != null)
+            {   
                 newBlock.transform.SetParent(parent, true); // false – не сохранять мировую позицию
+
+                newBlockComponent.place = parent.gameObject;
                 
                 if(useLocalPosition)
                 newBlock.transform.localPosition = data.position;
@@ -180,19 +202,19 @@ public class SaveManager : MonoBehaviour
                 newBlock.transform.position = data.position;
                 
                 newBlock.transform.localRotation = Quaternion.Euler(data.rotation);
+
+                newBlockComponent.isFree = false;
+                newBlockComponent.isMagnetic = true;
             }
             
             else
             {
                 newBlock.transform.position = data.position;
                 newBlock.transform.rotation = Quaternion.Euler(data.rotation);
+                
+                newBlockComponent.isFree = true;
+                newBlockComponent.isMagnetic = false;
             }
-
-            /*newBlock.transform.position = data.position;
-            newBlock.transform.rotation = Quaternion.Euler(data.rotation);
-
-            if(parent != null)
-            newBlock.transform.SetParent(parent, true);*/
 
             Debug.Log($"Spawning {newBlock.name} with parent = {parent?.name}");
  
@@ -204,15 +226,13 @@ public class SaveManager : MonoBehaviour
                 mat.color = data.color;
                 renderer.material = mat;
             }
-
-            Block newBlockComponent = newBlock.GetComponent<Block>();
-            
-            if(newBlockComponent != null)
-            newBlockComponent.blockData = bData;
             
             if(data.children != null && data.children.Count > 0)
             SpawnFromSaveData(data.children, newBlock.transform);
         }
+        IsSpawningBlocks = false;
+
+
     }
 
     public BlockData GetBlockDataById(string id)
@@ -221,7 +241,7 @@ public class SaveManager : MonoBehaviour
         return data;
     }
 
-    public void SaveCareerModelToGallery(string levelName, List<BlockSaveData> rootBlocks)
+    public void SaveCareerModelToGallery(string levelName, List<BlockSaveData> rootBlocks, string thumbnailPath = null)
     {
         GallerySaveData gallery = LoadGallery();
         
@@ -234,14 +254,38 @@ public class SaveManager : MonoBehaviour
         newModel.type = "Career";
         newModel.levelId = levelName;
         newModel.creationDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
         newModel.blocks = rootBlocks;
 
+        if(string.IsNullOrEmpty(thumbnailPath))
+        {
+            CareerModelDatabase db = FindFirstObjectByType<CareerModelDatabase>();
+            
+            if(db != null)
+            {
+                Sprite thumb = db.GetThumbnail(levelName);
+                
+                if(thumb != null)
+                {
+                    string thumbnailsDir = Path.Combine(Application.persistentDataPath, "Thumbnails");
+                    
+                    if(!Directory.Exists(thumbnailsDir))
+                    Directory.CreateDirectory(thumbnailsDir);
+                    
+                    string fileName = newModel.id + ".png";
+                    thumbnailPath = Path.Combine(thumbnailsDir, fileName);
+                    Texture2D tex = thumb.texture;
+                    byte[] bytes = tex.EncodeToPNG();
+                    File.WriteAllBytes(thumbnailPath, bytes);
+                }
+            }
+        }
+
+        newModel.thumbnailPath = thumbnailPath;
         gallery.models.Add(newModel);
         SaveGallery(gallery);
     }
 
-    public void SaveFreeModeModelToGallery(string modelName, List<BlockSaveData> rootBlocks)
+    public void SaveFreeModeModelToGallery(string modelName, List<BlockSaveData> rootBlocks, string thumbnailPath = null)
     {
         GallerySaveData gallery = LoadGallery();
         GalleryModelData newModel = new GalleryModelData();
@@ -250,8 +294,10 @@ public class SaveManager : MonoBehaviour
         newModel.type = "FreeMode";
         newModel.creationDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         newModel.blocks = rootBlocks;
+        newModel.thumbnailPath = thumbnailPath;
         gallery.models.Add(newModel);
         SaveGallery(gallery);
+        Debug.Log($"Модель {modelName} сохранена в галерею{(thumbnailPath != null ? " с миниатюрой" : "")}");
     }
 
     public GallerySaveData LoadGallery()
@@ -289,13 +335,15 @@ public class SaveManager : MonoBehaviour
         
         if(modelToRemove != null)
         {
+            if(!string.IsNullOrEmpty(modelToRemove.thumbnailPath) && File.Exists(modelToRemove.thumbnailPath))
+            {
+                File.Delete(modelToRemove.thumbnailPath);
+                Debug.Log($"Удалён файл миниатюры: {modelToRemove.thumbnailPath}");
+            }
+
             gallery.models.Remove(modelToRemove);
             SaveGallery(gallery);
             Debug.Log($"Модель {modelId} удалена из галереи");
-            
-            // Если сохраняешь превью-изображение на диск, удали и его:
-            if(!string.IsNullOrEmpty(modelToRemove.thumbnailPath) && File.Exists(modelToRemove.thumbnailPath))
-            File.Delete(modelToRemove.thumbnailPath);
         }
         
         else

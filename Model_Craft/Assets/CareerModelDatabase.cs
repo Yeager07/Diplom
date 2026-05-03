@@ -15,6 +15,17 @@ public class CareerModelDatabase : MonoBehaviour
         
         return null;
     }
+
+    public Sprite GetThumbnail(string levelId)
+    {
+        foreach (var entry in entries)
+        {
+            if(entry.levelId == levelId)
+            return entry.thumbnail;
+        }
+        
+        return null;
+    }
 }
 
 [System.Serializable]
@@ -22,4 +33,5 @@ public class CareerModelEntry
 {
     public string levelId;
     public GameObject prefab;
+    public Sprite thumbnail;
 }

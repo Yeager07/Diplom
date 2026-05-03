@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
@@ -25,15 +26,44 @@ public class PauseMenuController : MonoBehaviour
     public Button saveModelButton;
     public GameObject successSavePanel;
 
+    public GameObject photoModePanel;
+    public Button takePhotoButton;
+    public Button cancelPhotoButton;
+    public GameObject photoReviewPanel;
+    public RawImage photoPreviewImage;
+    public Button acceptPhotoButton;
+    public Button retakePhotoButton;
+
+    private bool isPhotoMode = false;
+    private PhotoModeCamera photoCamera;
+    private GameObject tempPhotoCenter;
+    private Texture2D capturedTexture;
+    private string tempThumbnailPath;
+
+    private CameraMovement originalCameraMovement;
+    private Transform cameraOriginalParent;
+    private Vector3 originalCameraPos;
+    private Quaternion originalCameraRot;
+    private Player playerScript;
+
+    private List<Renderer> playerRenderers = new List<Renderer>(); 
+
     void Start()
     {
         player = FindFirstObjectByType<Player>();
+        playerScript = player;
         
         if(pausePanel)
         pausePanel.SetActive(false);
         
         if(controlsImage)
         controlsImage.SetActive(false);
+
+        if(photoModePanel)
+        photoModePanel.SetActive(false);
+        
+        if(photoReviewPanel)
+        photoReviewPanel.SetActive(false);
 
         if(resumeButton)
         resumeButton.onClick.AddListener(ResumeGame);
@@ -44,8 +74,25 @@ public class PauseMenuController : MonoBehaviour
         if(controlsButton)
         controlsButton.onClick.AddListener(ToggleControls);
 
+        if(takePhotoButton)
+        takePhotoButton.onClick.AddListener(TakePhotoAndSave);
+        
+        if(cancelPhotoButton)
+        cancelPhotoButton.onClick.AddListener(CancelPhotoMode);
+        
+        if(acceptPhotoButton)
+        acceptPhotoButton.onClick.AddListener(AcceptPhoto);
+        
+        if(retakePhotoButton)
+        retakePhotoButton.onClick.AddListener(RetakePhoto);
+
         if(LocalizationManager.Instance != null)
         LocalizationManager.Instance.OnLanguageChanged += RefreshUI;
+
+        if(player != null)
+        {
+            playerRenderers.AddRange(player.GetComponentsInChildren<Renderer>());
+        }
     }
 
     void OnDestroy()
@@ -86,8 +133,6 @@ public class PauseMenuController : MonoBehaviour
         else
         saveModelButton.gameObject.SetActive(true);
 
-        Debug.Log("PauseGame called");
-
         isPaused = true;
         Time.timeScale = 0.0f;
         
@@ -102,6 +147,9 @@ public class PauseMenuController : MonoBehaviour
     {
         if(isControlsOpen)
         CloseControls();
+
+        if(isPhotoMode)
+        ExitPhotoMode(false);
 
         if(pausePanel)
         pausePanel.SetActive(false);
@@ -190,8 +238,7 @@ public class PauseMenuController : MonoBehaviour
 
     public void ShowSaveDialog()
     {
-        saveDialogPanel.SetActive(true);
-        pausePanel.SetActive(false);
+        EnterPhotoMode();
     }
 
     public void OnSaveConfirm()
@@ -201,10 +248,10 @@ public class PauseMenuController : MonoBehaviour
         if(string.IsNullOrEmpty(modelName))
         modelName = "Модель " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         
-        SaveCurrentFreeModeModel(modelName);
+        SaveCurrentFreeModeModelWithThumbnail(modelName, tempThumbnailPath);
         saveDialogPanel.SetActive(false);
         successSavePanel.SetActive(true);
-        Debug.Log(Application.persistentDataPath);
+        tempThumbnailPath = null;
     }
 
     public void OnConfirm()
@@ -215,13 +262,12 @@ public class PauseMenuController : MonoBehaviour
 
     public void OnSaveCancel()
     {
-        //modelNameInput.text = 
         saveDialogPanel.SetActive(false);
         pausePanel.SetActive(true);
         ResumeGame();
     }
 
-    private void SaveCurrentFreeModeModel(string modelName)
+    private void SaveCurrentFreeModeModelWithThumbnail(string modelName, string thumbnailPath)
     {
         List<BlockSaveData> rootBlocks = SaveManager.Instance.CollectRootBlocks();
      
@@ -231,8 +277,8 @@ public class PauseMenuController : MonoBehaviour
             return;
         }
         
-        SaveManager.Instance.SaveFreeModeModelToGallery(modelName, rootBlocks);
-        Debug.Log("Модель сохранена в галерею!");
+        SaveManager.Instance.SaveFreeModeModelToGallery(modelName, rootBlocks, thumbnailPath);
+        Debug.Log("Модель сохранена в галерею с миниатюрой!");
     }
 
     private int GetCurrentStepPage()
@@ -261,5 +307,185 @@ public class PauseMenuController : MonoBehaviour
     public void CloseControlsButton()
     {
         CloseControls();
+    }
+
+    public void EnterPhotoMode()
+    {
+        if(player.typeGame != "FreeMode")
+        return;
+
+        player.transform.Find("UI").transform.Find("BlockCatalog").gameObject.SetActive(false);
+        player.transform.Find("UI").transform.Find("BlocksIcon").gameObject.SetActive(false);
+        player.transform.Find("UI").transform.Find("InventoryIcon").gameObject.SetActive(false);
+        player.transform.Find("UI").transform.Find("Instruction").gameObject.SetActive(false);
+        player.transform.Find("UI").transform.Find("IconInstruction").gameObject.SetActive(false);
+        player.transform.Find("UI").transform.Find("Inventory1").gameObject.SetActive(false);
+        player.transform.Find("UI").transform.Find("Inventory2").gameObject.SetActive(false);
+        player.transform.Find("UI").transform.Find("Inventory3").gameObject.SetActive(false);
+        player.transform.Find("UI").transform.Find("Inventory4").gameObject.SetActive(false);
+        player.transform.Find("UI").transform.Find("Inventory5").gameObject.SetActive(false);
+        player.transform.Find("UI").transform.Find("ColorListPanel").gameObject.SetActive(false);
+        
+        foreach(var rend in playerRenderers)
+        rend.enabled = false;
+
+        pausePanel.SetActive(false);
+        photoModePanel.SetActive(true);
+        isPhotoMode = true;
+        // Time.timeScale уже 0, оставляем
+
+        if(playerScript != null)
+        playerScript.enabled = false;
+        
+        originalCameraMovement = Camera.main.GetComponent<CameraMovement>();
+        
+        if(originalCameraMovement != null)
+        originalCameraMovement.enabled = false;
+
+        cameraOriginalParent = Camera.main.transform.parent;
+        Camera.main.transform.SetParent(null);
+        originalCameraPos = Camera.main.transform.position;
+        originalCameraRot = Camera.main.transform.rotation;
+
+        photoCamera = Camera.main.GetComponent<PhotoModeCamera>();
+
+        if(photoCamera == null)
+        photoCamera = Camera.main.gameObject.AddComponent<PhotoModeCamera>();
+
+
+        GameObject centerObj = new GameObject("PhotoCenter");
+        Vector3 center = CalculateModelCenter();
+        centerObj.transform.position = center;
+        tempPhotoCenter = centerObj;
+        photoCamera.SetTarget(tempPhotoCenter.transform);
+
+        photoModePanel.SetActive(true);
+        photoReviewPanel.SetActive(false);
+        pausePanel.SetActive(false);
+        isPhotoMode = true;
+    }
+
+    private Vector3 CalculateModelCenter()
+    {
+        GameObject[] blocks = GameObject.FindGameObjectsWithTag("Selectable");
+        
+        if(blocks.Length == 0)
+        return Vector3.zero;
+        
+        Vector3 sum = Vector3.zero;
+     
+        foreach(var block in blocks)
+        sum += block.transform.position;
+        
+        return sum / blocks.Length;
+    }
+
+    private void ExitPhotoMode(bool restorePause = true)
+    {
+        if(!isPhotoMode)
+        return;
+
+        if(photoCamera != null)
+        Destroy(photoCamera);
+        
+        if(tempPhotoCenter != null)
+        Destroy(tempPhotoCenter);
+
+        Camera.main.transform.SetParent(cameraOriginalParent);
+        Camera.main.transform.position = originalCameraPos;
+        Camera.main.transform.rotation = originalCameraRot;
+
+        if(originalCameraMovement != null)
+        originalCameraMovement.enabled = true;
+        
+        if(playerScript != null)
+        playerScript.enabled = true;
+
+        player.transform.Find("UI").transform.Find("BlocksIcon").gameObject.SetActive(true);
+        player.transform.Find("UI").transform.Find("InventoryIcon").gameObject.SetActive(true);
+        player.transform.Find("UI").transform.Find("IconInstruction").gameObject.SetActive(true);
+        player.transform.Find("UI").transform.Find("Inventory1").gameObject.SetActive(true);
+        player.transform.Find("UI").transform.Find("Inventory2").gameObject.SetActive(true);
+        player.transform.Find("UI").transform.Find("Inventory3").gameObject.SetActive(true);
+        player.transform.Find("UI").transform.Find("Inventory4").gameObject.SetActive(true);
+        player.transform.Find("UI").transform.Find("Inventory5").gameObject.SetActive(true);    
+        
+        foreach(var rend in playerRenderers)
+        rend.enabled = true;
+
+        photoModePanel.SetActive(false);
+        photoReviewPanel.SetActive(false);
+        isPhotoMode = false;
+
+        if(restorePause)
+        pausePanel.SetActive(true);
+    }
+
+    private void TakePhotoAndSave()
+    {
+        if(!isPhotoMode)
+        return;
+        
+        photoModePanel.SetActive(false);
+        StartCoroutine(CaptureThumbnailCoroutine());
+    }
+
+    private IEnumerator CaptureThumbnailCoroutine()
+    {
+        yield return new WaitForEndOfFrame();
+
+        Camera cam = Camera.main;
+        int width = 512;
+        int height = 512;
+        RenderTexture rt = new RenderTexture(width, height, 24);
+        RenderTexture prevRT = cam.targetTexture;
+        cam.targetTexture = rt;
+        cam.Render();
+        RenderTexture.active = rt;
+
+        capturedTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
+        capturedTexture.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+        capturedTexture.Apply();
+
+        cam.targetTexture = prevRT;
+        RenderTexture.active = null;
+        Destroy(rt);
+
+        photoModePanel.SetActive(false);
+        photoReviewPanel.SetActive(true);
+        photoPreviewImage.texture = capturedTexture;
+    }
+
+    private void AcceptPhoto()
+    {
+        string thumbnailsDir = Path.Combine(Application.persistentDataPath, "Thumbnails");
+     
+        if(!Directory.Exists(thumbnailsDir))
+        Directory.CreateDirectory(thumbnailsDir);
+        
+        string fileName = Guid.NewGuid().ToString() + ".png";
+        tempThumbnailPath = Path.Combine(thumbnailsDir, fileName);
+        byte[] bytes = capturedTexture.EncodeToPNG();
+        File.WriteAllBytes(tempThumbnailPath, bytes);
+        Destroy(capturedTexture);
+
+        ExitPhotoMode(true);
+        saveDialogPanel.SetActive(true);
+        pausePanel.SetActive(false);
+    }
+
+    private void RetakePhoto()
+    {
+        Destroy(capturedTexture);
+        photoReviewPanel.SetActive(false);
+        photoModePanel.SetActive(true);
+    }
+
+    private void CancelPhotoMode()
+    {
+        ExitPhotoMode(true);
+        pausePanel.SetActive(true);
+        photoReviewPanel.SetActive(false);
+        photoModePanel.SetActive(false);
     }
 }

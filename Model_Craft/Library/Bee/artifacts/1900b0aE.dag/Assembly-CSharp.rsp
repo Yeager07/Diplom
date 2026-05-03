@@ -443,6 +443,7 @@
 "Assets/OutlineSelection.cs"
 "Assets/PauseMenuController.cs"
 "Assets/PdfInstructionViewer.cs"
+"Assets/PhotoModeCamera.cs"
 "Assets/Player.cs"
 "Assets/PresetButton.cs"
 "Assets/QuickOutline/Scripts/Outline.cs"

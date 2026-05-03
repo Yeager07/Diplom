@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 using System.Collections.Generic;
 using TMPro;
 
@@ -31,6 +32,12 @@ public class GalleryView : MonoBehaviour
     public ModelPreview modelPreview;
 
     private GalleryModelData pendingDeleteModel;
+
+    void Awake()
+    {
+        if(cameraMovement == null)
+        cameraMovement = FindFirstObjectByType<CameraMovement>();
+    }
 
     void Start()
     {
@@ -130,6 +137,32 @@ public class GalleryView : MonoBehaviour
             GalleryModelData currentModel = model;
             detector.onShortPress.AddListener(() => OnModelSelected(currentModel));
             detector.onLongPress.AddListener(() => OnLongPressDelete(currentModel));
+
+            Image thumbImage = btnGO.GetComponent<Image>();
+            
+            if(thumbImage != null)
+            {
+                if(!string.IsNullOrEmpty(model.thumbnailPath) && File.Exists(model.thumbnailPath))
+                {
+                    byte[] bytes = File.ReadAllBytes(model.thumbnailPath);
+                    Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                    tex.LoadImage(bytes);
+                    tex.filterMode = FilterMode.Bilinear;
+                    tex.wrapMode = TextureWrapMode.Clamp;
+                    Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+                    thumbImage.sprite = sprite;
+                    thumbImage.color = Color.white;
+                    thumbImage.preserveAspect = true;
+                }
+                
+                else
+                {
+                    Sprite defaultThumb = Resources.Load<Sprite>("Materials/Download");
+                    
+                    if(defaultThumb != null)
+                    thumbImage.sprite = defaultThumb;
+                }
+            }
         }
     }
 
@@ -174,6 +207,14 @@ public class GalleryView : MonoBehaviour
 
         selectedModel = model;
         isPreviewMode = true;
+
+        if(cameraMovement == null)
+        {
+            cameraMovement = FindFirstObjectByType<CameraMovement>();
+            
+            if(cameraMovement != null)
+            cameraMovement.OnMoveComplete += OnMoveComplete;
+        }
     
         if(cameraMovement != null)
         cameraMovement.MoveToPoint(PREVIEW_POINT_INDEX);

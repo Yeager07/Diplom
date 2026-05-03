@@ -62,8 +62,15 @@ public class Block : MonoBehaviour
 
     public BlockData blockData;
 
+    //private LevelStepManager levelStepManager;
+
     void Start()
     {
+        //levelStepManager = FindFirstObjectByType<LevelStepManager>();
+
+        if(LevelStepManager.IsLoadingSave && SaveManager.IsSpawningBlocks)
+        return;
+
         player = GameObject.FindGameObjectWithTag("Player");
         mainScript = Camera.main.GetComponent<MainScript>();
 
@@ -171,14 +178,6 @@ public class Block : MonoBehaviour
             conn.blockA.countPoint += conn.occupiedPoints;
             conn.blockB.countPoint += conn.occupiedPoints;
         }
-
-        /*Debug.Log($"=== Recalculated {connections.Count} connections ===");
-        
-        foreach(Block b in allBlocks)
-        {
-            if(b.countPoint > 0)
-            Debug.Log($"{b.name}: {b.countPoint} points");
-        }*/
     }
 
     public void Move(float distance, GameObject currentObject)
@@ -529,6 +528,9 @@ public class Block : MonoBehaviour
 
     void OnMouseDrag()
     {
+        if(LevelStepManager.IsLoadingSave && SaveManager.IsSpawningBlocks)
+        return;
+        
         if((playerScript.colorChoosePanel == null || !playerScript.colorChoosePanel.gameObject.activeInHierarchy) &&
         !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
@@ -591,6 +593,9 @@ public class Block : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if(LevelStepManager.IsLoadingSave && SaveManager.IsSpawningBlocks)
+        return;
+
         if(hasPendingConnection)
         return; // не обрабатываем новое соединение, пока старое не завершено
 
@@ -619,6 +624,9 @@ public class Block : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if(LevelStepManager.IsLoadingSave && SaveManager.IsSpawningBlocks)
+        return;
+
         // Если вышли из триггера, сбрасываем флаг у корня
         Transform root = FindMainParent(transform);
 
@@ -713,6 +721,11 @@ public class Block : MonoBehaviour
         RecalculateAllPoints();
 
         pendingSnapRoot = null;
+
+        OutlineSelection outlineSel = FindFirstObjectByType<OutlineSelection>();
+            
+        if(outlineSel != null)
+        outlineSel.ClearCurrentHighlight();
     }
 
     private void Rotation(Transform currentObject)
@@ -732,9 +745,23 @@ public class Block : MonoBehaviour
         rotateDirection = currentObject.rotation.eulerAngles;
     }
 
+    private void RemoveOutlinesRecursively()
+    {
+        Outline[] outlines = GetComponentsInChildren<Outline>(true);
+        
+        foreach(Outline ol in outlines)
+        {
+            if(ol != null)
+            Destroy(ol);
+        }
+    }
+
     void Update()
     {
         mainScript.MakeObjectGravity(gameObject);
+
+        if(LevelStepManager.IsLoadingSave && SaveManager.IsSpawningBlocks)
+        return;
 
         if(gameObject == playerScript.movedObject && Input.GetMouseButton(0) && offset != Vector3.zero)
         Move(playerScript.distance, gameObject);
@@ -869,13 +896,21 @@ public class Block : MonoBehaviour
             {
                 if(isMagnetic)
                 {
+                    RemoveOutlinesRecursively();
+
                     isMagnetic = false;
                     Transform oldParent = transform.parent;
                     connections.RemoveAll(c => c.blockA == this || c.blockB == this);
                     transform.parent = null;
                     countPoint = 0;
 
+                    OutlineSelection outlineSel = FindFirstObjectByType<OutlineSelection>();
+                    
+                    if(outlineSel != null)
+                    outlineSel.ClearCurrentHighlight();
+
                     moveVector = Vector3.zero;
+                    
                     foreach(Transform child in transform)
                     {
                         Block childBlock = child.GetComponent<Block>();
@@ -883,7 +918,7 @@ public class Block : MonoBehaviour
                         if(childBlock != null)
                         childBlock.moveVector = Vector3.zero;
                     }
-                  
+                    
                     foreach(Transform child in transform)
                     {
                         Block childBlock = child.GetComponent<Block>();
@@ -914,7 +949,7 @@ public class Block : MonoBehaviour
                 }
             }
         }
-
+        
         else if(Input.GetKeyUp(KeyCode.R) && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
             SavePosition(previousRotate[previousRotate.Count - 1]);
@@ -926,7 +961,7 @@ public class Block : MonoBehaviour
 
         else if(isActive && Input.GetKeyUp(KeyCode.E) && transform.parent == null &&
         !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
-        {
+        {                 
             if(inventoryManager.inventory.Count != 0)
             {
                 foreach(var value in inventoryManager.inventory)
@@ -934,12 +969,34 @@ public class Block : MonoBehaviour
                     if(value.Value == 0)
                     inventoryManager.inventory.Remove(value.Key);
                 }
+        
+                foreach (var ol in GetComponentsInChildren<Outline>(true))
+                {
+                    if (ol != null) ol.enabled = false;
+                }
                 
+                OutlineSelection outlineSel = FindFirstObjectByType<OutlineSelection>();
+            
+                if(outlineSel != null)
+                outlineSel.ClearCurrentHighlight();
+        
                 inventoryManager.AddToInventory(transform);
             }
             
             else
-            inventoryManager.AddToInventory(transform);
+            {
+                foreach (var ol in GetComponentsInChildren<Outline>(true))
+                {
+                    if (ol != null) ol.enabled = false;
+                }
+        
+                OutlineSelection outlineSel = FindFirstObjectByType<OutlineSelection>();
+            
+                if(outlineSel != null)
+                outlineSel.ClearCurrentHighlight();
+        
+                inventoryManager.AddToInventory(transform);
+            }
             
             playerScript.target = Vector3.zero;
         }

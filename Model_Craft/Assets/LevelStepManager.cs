@@ -59,10 +59,17 @@ public class LevelStepManager : MonoBehaviour
         if(pdfViewer == null)
         pdfViewer = FindFirstObjectByType<PdfInstructionViewer>();
      
-        if(pdfViewer != null && !IsLoadingSave)
+        if(pdfViewer != null)
         {
-            pdfViewer.OnPageChanged += OnPageChanged;
-            StartCoroutine(WaitForFirstPage());
+            if(!IsLoadingSave)
+            pdfViewer.ResetToFirstPage();
+            
+            
+            if(!IsLoadingSave)
+            {
+                pdfViewer.OnPageChanged += OnPageChanged;
+                StartCoroutine(WaitForFirstPage());
+            }
         }
     }
 
@@ -348,6 +355,10 @@ public class LevelStepManager : MonoBehaviour
     {
         isRestoring = true;
         currentStepPage = stepPage;
+
+        if(pdfViewer != null)
+        pdfViewer.GoToPage(stepPage - 1);
+
         completedSteps = new HashSet<int>(completed);
         remainingForCurrentStep.Clear();
      

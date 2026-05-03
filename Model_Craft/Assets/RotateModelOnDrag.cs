@@ -5,7 +5,7 @@ public class RotateModelOnDrag : MonoBehaviour
     private float sensitivity = 3.0f;
     private float speed = 1.0f;
     private float minDistance = 4.2f;
-    private float maxDistance = 5.0f;
+    private float maxDistance = 10.0f;
     public float currentDistance = 0.0f;
 
     public Vector3 lastMousePos;

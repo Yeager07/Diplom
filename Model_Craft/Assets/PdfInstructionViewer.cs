@@ -190,6 +190,21 @@ public class PdfInstructionViewer : MonoBehaviour
         InvokePageChanged(currentPageIndex + 1);
     }
 
+    public void ResetToFirstPage()
+    {
+        if(pdfNavigator != null)
+        GoToPage(0);
+        
+        else
+        StartCoroutine(ResetAfterLoad());
+    }
+
+    private IEnumerator ResetAfterLoad()
+    {
+        while (pdfNavigator == null) yield return null;
+        GoToPage(0);
+    }
+
     // Обновление состояния кнопок в зависимости от страницы
     private void UpdateButtonStates()
     {
