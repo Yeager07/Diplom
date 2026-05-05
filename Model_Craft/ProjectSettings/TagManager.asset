@@ -19,6 +19,7 @@ TagManager:
   - Exit
   - SpawnPoint
   - Preview
+  - MusicUIContainer
   layers:
   - Default
   - TransparentFX

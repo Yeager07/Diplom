@@ -440,6 +440,7 @@
 "Assets/MainMenu.cs"
 "Assets/MainScript.cs"
 "Assets/ModelPreview.cs"
+"Assets/MusicPlayer.cs"
 "Assets/OutlineSelection.cs"
 "Assets/PauseMenuController.cs"
 "Assets/PdfInstructionViewer.cs"

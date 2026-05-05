@@ -129,7 +129,10 @@ public class ZoneManager : MonoBehaviour
         {
             case 1: ShowTableUI(); break;
             case 2: ShowCabinetUI(); break;
-            case 3: ShowSettingsUI(); break;
+            case 3:
+                ShowSettingsUI();
+                MusicPlayer.Instance?.ShowMusicUI();
+                break;
             case 4: ShowExitUI(); break;
             default: break;
         }

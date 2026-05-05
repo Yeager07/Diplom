@@ -137,7 +137,10 @@ public class PauseMenuController : MonoBehaviour
         Time.timeScale = 0.0f;
         
         if(pausePanel)
-        pausePanel.SetActive(true);
+        {
+            pausePanel.SetActive(true);
+            MusicPlayer.Instance?.ShowMusicUI();
+        }
         
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

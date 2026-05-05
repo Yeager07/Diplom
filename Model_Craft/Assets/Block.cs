@@ -839,7 +839,6 @@ public class Block : MonoBehaviour
                     
                     else
                     {
-                        // Fallback (одиночный блок)
                         transform.SetParent(place.transform);
                         Block parentBlock = place.GetComponent<Block>();
                         
@@ -847,13 +846,12 @@ public class Block : MonoBehaviour
                         {
                             int points = CountOccupiedPointsBetween(gameObject, place);
                             connections.Add(new Connection { blockA = this, blockB = parentBlock, occupiedPoints = points });
-                            //Debug.Log($"Forced connection added between {name} and {place.name}, points={points}");
                         }
                     }
                     
                     Transform rootAfter = FindMainParent(transform);
                     
-                    if(rootAfter != null)
+                    if(rootAfter != null && playerScript.typeGame != "MainMenu")
                     rootAfter.GetComponent<Block>().RecalculateAllPoints();
                     
                     else

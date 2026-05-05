@@ -15,6 +15,8 @@ public class CameraMovement : MonoBehaviour
 
     public System.Action<int> OnMoveComplete;
 
+    private Player player;
+
     void Awake()
     {
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
@@ -38,8 +40,6 @@ public class CameraMovement : MonoBehaviour
     private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
         InitializeCameraPoints();
-
-        Player player = FindFirstObjectByType<Player>();
         
         if(player != null && player.typeGame == "MainMenu" && cameraPoints != null && cameraPoints.Length > 0)
         {
@@ -51,6 +51,8 @@ public class CameraMovement : MonoBehaviour
 
     private void InitializeCameraPoints()
     {
+        player = FindFirstObjectByType<Player>();
+
         if(cameraPoints != null && cameraPoints.Length == 6)
         {
             bool allValid = true;
@@ -144,12 +146,16 @@ public class CameraMovement : MonoBehaviour
     void Update()
     {
         GalleryView galleryView = FindFirstObjectByType<GalleryView>();
-        if(Input.GetKeyDown(KeyCode.Escape) && currentTargetIndex != 0 && !galleryView.isPreviewMode)
+        
+        if(player.typeGame == "MainMenu")
         {
-            if(ZoneManager.Instance != null)
-            ZoneManager.Instance.HideAllPanels();
+            if(Input.GetKeyDown(KeyCode.Escape) && currentTargetIndex != 0 && !galleryView.isPreviewMode)
+            {
+                if(ZoneManager.Instance != null)
+                ZoneManager.Instance.HideAllPanels();
             
-            MoveToPoint(0);
+                MoveToPoint(0);
+            }
         }
     }
 }
