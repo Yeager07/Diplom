@@ -14,6 +14,13 @@ public class ModelPreview : MonoBehaviour
     public void ShowModel(List<BlockSaveData> rootBlocks)
     {
         ClearPreview();
+
+        if (previewParent != null)
+        {
+            previewParent.localPosition = Vector3.zero;
+            previewParent.localRotation = Quaternion.identity;
+            previewParent.localScale = Vector3.one;
+        }
         
         if(rootBlocks == null || rootBlocks.Count == 0)
         return;

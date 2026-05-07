@@ -37,6 +37,9 @@ public class GalleryView : MonoBehaviour
     {
         if(cameraMovement == null)
         cameraMovement = FindFirstObjectByType<CameraMovement>();
+
+        Player player = FindFirstObjectByType<Player>();
+        careerDatabase = player.transform.Find("CareerModelDatabase").gameObject.GetComponent<CareerModelDatabase>();
     }
 
     void Start()
@@ -246,10 +249,13 @@ public class GalleryView : MonoBehaviour
 
     private void SpawnPreviewModel(GalleryModelData model)
     {
+        SaveManager.IsSpawningBlocks = true;
+
         if(model.type == "FreeMode" && model.blocks != null && model.blocks.Count > 0)
         {
             SaveManager.Instance.SpawnFromSaveData(model.blocks, modelPreview.previewParent);
             DisableCollidersRecursive(modelPreview.previewParent);
+            DisableBlockComponents(modelPreview.previewParent.gameObject);
             
             BoxCollider bc = modelPreview.previewParent.gameObject.AddComponent<BoxCollider>();
             bc.size = new Vector3(2, 2, 2);
@@ -282,6 +288,7 @@ public class GalleryView : MonoBehaviour
             if(prefab != null)
             {
                 currentPreviewInstance = Instantiate(prefab, previewStage.position, previewStage.rotation);
+                DisableBlockComponents(currentPreviewInstance);
                 currentPreviewInstance.transform.SetParent(modelPreview.previewParent);
                 modelPreview.previewParent.gameObject.AddComponent<RotateModelOnDrag>();
                 modelPreview.previewParent.gameObject.GetComponent<RotateModelOnDrag>().lastMousePos = new Vector3(0.0f, 0.0f, 0.0f);
@@ -295,10 +302,13 @@ public class GalleryView : MonoBehaviour
                 Debug.LogWarning($"Префаб для уровня {model.levelId} не найден!");
             }
         }
+        
         else
         {
             Debug.Log("Не удалось спавнить модель: нет данных блоков или неизвестный тип.");
         }
+
+        SaveManager.IsSpawningBlocks = false;
     }
 
     private GameObject GetCareerPrefab(string levelId)
@@ -314,6 +324,20 @@ public class GalleryView : MonoBehaviour
         foreach(Transform child in modelPreview.previewParent)
         Destroy(child.gameObject);
 
+        modelPreview.previewParent.localPosition = Vector3.zero;
+        modelPreview.previewParent.localRotation = Quaternion.identity;
+        modelPreview.previewParent.localScale = Vector3.one;
+
+        BoxCollider bc = modelPreview.previewParent.GetComponent<BoxCollider>();
+        
+        if(bc != null)
+        Destroy(bc);
+        
+        RotateModelOnDrag rot = modelPreview.previewParent.GetComponent<RotateModelOnDrag>();
+        
+        if(rot != null)
+        Destroy(rot);
+
         if(previewUICanvas != null)
         previewUICanvas.SetActive(false);
 
@@ -322,6 +346,21 @@ public class GalleryView : MonoBehaviour
 
         galleryPanel.SetActive(true);
         isPreviewMode = false;
+    }
+
+    private void DisableBlockComponents(GameObject root)
+    {
+        if(root == null)
+        return;
+        
+        var blocks = root.GetComponentsInChildren<Block>(true);
+        var points = root.GetComponentsInChildren<BlockPoint>(true);
+        
+        foreach(var b in blocks)
+        b.enabled = false;
+        
+        foreach(var p in points)
+        p.enabled = false;
     }
 
     private void DisableCollidersRecursive(Transform parent)

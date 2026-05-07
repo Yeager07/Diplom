@@ -62,12 +62,8 @@ public class Block : MonoBehaviour
 
     public BlockData blockData;
 
-    //private LevelStepManager levelStepManager;
-
     void Start()
     {
-        //levelStepManager = FindFirstObjectByType<LevelStepManager>();
-
         if(LevelStepManager.IsLoadingSave && SaveManager.IsSpawningBlocks)
         return;
 
@@ -556,7 +552,6 @@ public class Block : MonoBehaviour
                     if(!FindMainParent(transform).gameObject.GetComponent<Block>().isFree)
                     {
                         FindMainParent(transform).gameObject.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
-                        //FindMainParent(transform).gameObject.GetComponent<Block>().blockChild.Clear();
                       
                         Block rootBlock = FindMainParent(transform).GetComponent<Block>();
                         rootBlock.GetComponent<MeshRenderer>().material = mainScript.rendgenMaterial;
@@ -579,6 +574,7 @@ public class Block : MonoBehaviour
     {
         isActive = true;
         
+        playerScript = FindFirstObjectByType<Player>();
         if(playerScript.isBuildMode)
         playerScript.target = transform.position + new Vector3(0f, -0.4f, 0f);
     }
