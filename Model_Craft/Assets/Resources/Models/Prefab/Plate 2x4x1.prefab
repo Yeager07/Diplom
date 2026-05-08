@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &1030052815687913367
 GameObject:
   m_ObjectHideFlags: 0
@@ -90,6 +91,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &1315291918980745680
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,6 +137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &1394128820395557871
 GameObject:
   m_ObjectHideFlags: 0
@@ -252,15 +255,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde1ead9e0d071843ad2ee3c9d86dc3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveVector: {x: 0, y: 0, z: 0}
+  offset: {x: 0, y: 0, z: 0}
   curPosition: {x: 0, y: 0, z: 0}
   previousPosition: {x: 0, y: 0, z: 0}
   colorChoosePanel: {fileID: 0}
   place: {fileID: 0}
   blockHeight: 0.064
-  spaceBetweenBlockCursor: {x: 0, y: 0, z: 0}
-  xDistance: 0
-  zDistance: 0
   hollowChild: []
   bulgeChild: []
   hollowChildCoordinat: []
@@ -268,15 +268,19 @@ MonoBehaviour:
   hollowChildRotation: []
   bulgeChildRotation: []
   nearestBulge: {fileID: 0}
-  blockChild: []
+  nearestHollow: {fileID: 0}
   previousBlock: []
   isActive: 0
   positionHistory: []
   isFree: 1
   isMagnetic: 0
-  isPlaced: 0
-  blockType: 
   countPoint: 0
+  moveVector: {x: 0, y: 0, z: 0}
+  bulgePosition: {x: 0, y: 0, z: 0}
+  localHollowPosition: {x: 0, y: 0, z: 0}
+  localBulgePosition: {x: 0, y: 0, z: 0}
+  placeHollowPosition: {x: 0, y: 0, z: 0}
+  blockData: {fileID: 0}
 --- !u!54 &3565079055105561541
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -370,6 +374,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &1738498808973721294
 GameObject:
   m_ObjectHideFlags: 0
@@ -415,6 +420,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
 --- !u!1 &1789258085345120550
 GameObject:
   m_ObjectHideFlags: 0
@@ -460,6 +466,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
 --- !u!1 &2191843336315914429
 GameObject:
   m_ObjectHideFlags: 0
@@ -505,6 +512,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
 --- !u!1 &2520767906333191700
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,6 +558,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
 --- !u!1 &3831405713903448144
 GameObject:
   m_ObjectHideFlags: 0
@@ -595,6 +604,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
 --- !u!1 &4474976149694209746
 GameObject:
   m_ObjectHideFlags: 0
@@ -640,6 +650,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &4581889431967230054
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,6 +696,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
 --- !u!1 &4869013286991171227
 GameObject:
   m_ObjectHideFlags: 0
@@ -730,6 +742,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &5925660209517930656
 GameObject:
   m_ObjectHideFlags: 0
@@ -775,6 +788,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &7294276720928665851
 GameObject:
   m_ObjectHideFlags: 0
@@ -820,6 +834,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
 --- !u!1 &7866318932889468754
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,6 +880,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
 --- !u!1 &8428845266994998990
 GameObject:
   m_ObjectHideFlags: 0
@@ -910,3 +926,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}

@@ -222,6 +222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &9028433065299166795
 GameObject:
   m_ObjectHideFlags: 0
@@ -267,3 +268,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}

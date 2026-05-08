@@ -20,6 +20,8 @@ public class Block : MonoBehaviour
     public GameObject place;
     private float bulgeWidth = 0.16f;
     public float blockHeight = 0.064f;
+    private float xDistance = 0f;
+    private float zDistance = 0f;
 
     private Vector3 playerRotation;
     public List<Transform> hollowChild;
@@ -30,7 +32,6 @@ public class Block : MonoBehaviour
     public List<Vector3> bulgeChildRotation = new List<Vector3>();
     public Transform nearestBulge;
     public Transform nearestHollow;
-    //public List<Transform> blockChild;
     public List<GameObject> previousBlock = new List<GameObject>();
     public bool isActive = false;
     public List<Vector3> positionHistory = new List<Vector3>();
@@ -176,6 +177,38 @@ public class Block : MonoBehaviour
         }
     }
 
+    private Vector3 GetWorldHorizontalDirection(int sign, Transform camera)
+    {
+        Vector3 right = camera.right;
+        right.y = 0f;
+     
+        if(right.sqrMagnitude < 0.001f)
+        right = Vector3.right;
+        
+        right.Normalize();
+
+        if(Mathf.Abs(right.x) > Mathf.Abs(right.z))
+        return Vector3.right * Mathf.Sign(right.x) * sign;
+        
+        else
+        return Vector3.forward * Mathf.Sign(right.z) * sign;
+    }
+
+    private Vector3 GetWorldVerticalDirection(int sign, Transform camera)
+    {
+        Vector3 forward = camera.forward;
+        forward.y = 0f;
+     
+        if(forward.sqrMagnitude < 0.001f) forward = Vector3.forward;
+        forward.Normalize();
+
+        if(Mathf.Abs(forward.x) > Mathf.Abs(forward.z))
+        return Vector3.right * Mathf.Sign(forward.x) * sign;
+     
+        else
+        return Vector3.forward * Mathf.Sign(forward.z) * sign;
+    }
+
     public void Move(float distance, GameObject currentObject)
     {
         if(hasPendingConnection)
@@ -199,34 +232,26 @@ public class Block : MonoBehaviour
         {
             playerRotation = playerScript.transform.rotation.eulerAngles;
 
-            if(!hasStoredMousePos)
+            xDistance += Input.GetAxis("Mouse X");
+            zDistance += Input.GetAxis("Mouse Y");
+
+            float stepThreshold = bulgeWidth * 20f;
+
+            if(Mathf.Abs(xDistance) >= stepThreshold)
             {
-                lastMouseScreenPos = Input.mousePosition;
-                hasStoredMousePos = true;
+                int dir = xDistance > 0 ? 1 : -1;
+                Vector3 worldMoveDir = GetWorldHorizontalDirection(dir, Camera.main.transform);
+                FindMainParent(transform).position += worldMoveDir * bulgeWidth;
+                xDistance -= dir * stepThreshold;
             }
 
-            Vector2 currentMousePos = Input.mousePosition;
-            Vector2 delta = currentMousePos - lastMouseScreenPos;
-            float threshold = 70f; // чувствительность
-
-            bool moved = false;
-            
-            if(Mathf.Abs(delta.x) >= threshold)
+            if(Mathf.Abs(zDistance) >= stepThreshold)
             {
-                int dir = delta.x > 0 ? 1 : -1;
-                ApplyStepMove(movingObject, dir, threshold, ref delta, true);
-                moved = true;
+                int dir = zDistance > 0 ? 1 : -1;
+                Vector3 worldMoveDir = GetWorldVerticalDirection(dir, Camera.main.transform);
+                FindMainParent(transform).position += worldMoveDir * bulgeWidth;
+                zDistance -= dir * stepThreshold;
             }
-            
-            if(Mathf.Abs(delta.y) >= threshold)
-            {
-                int dir = delta.y > 0 ? 1 : -1;
-                ApplyStepMove(movingObject, dir, threshold, ref delta, false);
-                moved = true;
-            }
-
-            if(moved)
-            lastMouseScreenPos = currentMousePos - delta;
         }
 
         PlaceObjectCorrectly(movingObject);
@@ -486,7 +511,7 @@ public class Block : MonoBehaviour
         pendingSnapParent = place.transform;
         pendingSnapBlock = currentBlock.transform;
         pendingSnapPoints = CountOccupiedPointsBetween(currentBlock, place);
-        // Сохраняем правильные точки для блокировки
+        
         pendingSnapBlockPoint = null;
         pendingSnapOtherPoint = null;
         
@@ -539,14 +564,9 @@ public class Block : MonoBehaviour
             {
                 if(!Input.GetKey(KeyCode.R))
                 {
-                    if(FindMainParent(transform) == transform)
-                    Move(playerScript.distance, gameObject);
-                    
-                    else
-                    {
-                        CalculateOffset(FindMainParent(transform).gameObject);
-                        Move(playerScript.distance, FindMainParent(transform).gameObject);
-                    }
+                    Transform targetObject = FindMainParent(transform);
+                    CalculateOffset(targetObject.gameObject);
+                    Move(playerScript.distance, targetObject.gameObject);
 
                     // Визуальное выделение при соединении
                     if(!FindMainParent(transform).gameObject.GetComponent<Block>().isFree)

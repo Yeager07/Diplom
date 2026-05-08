@@ -136,15 +136,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde1ead9e0d071843ad2ee3c9d86dc3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveVector: {x: 0, y: 0, z: 0}
+  offset: {x: 0, y: 0, z: 0}
   curPosition: {x: 0, y: 0, z: 0}
   previousPosition: {x: 0, y: 0, z: 0}
   colorChoosePanel: {fileID: 0}
   place: {fileID: 0}
   blockHeight: 0.064
-  spaceBetweenBlockCursor: {x: 0, y: 0, z: 0}
-  xDistance: 0
-  zDistance: 0
   hollowChild: []
   bulgeChild: []
   hollowChildCoordinat: []
@@ -152,15 +149,19 @@ MonoBehaviour:
   hollowChildRotation: []
   bulgeChildRotation: []
   nearestBulge: {fileID: 0}
-  blockChild: []
+  nearestHollow: {fileID: 0}
   previousBlock: []
   isActive: 0
   positionHistory: []
   isFree: 1
   isMagnetic: 0
-  isPlaced: 0
-  blockType: 
   countPoint: 0
+  moveVector: {x: 0, y: 0, z: 0}
+  bulgePosition: {x: 0, y: 0, z: 0}
+  localHollowPosition: {x: 0, y: 0, z: 0}
+  localBulgePosition: {x: 0, y: 0, z: 0}
+  placeHollowPosition: {x: 0, y: 0, z: 0}
+  blockData: {fileID: 0}
 --- !u!65 &8866269289752955404
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -227,6 +228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &2935644818071527643
 GameObject:
   m_ObjectHideFlags: 0
@@ -272,6 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &3198949675047487564
 GameObject:
   m_ObjectHideFlags: 0
@@ -317,6 +320,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &4180809268036735807
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,6 +366,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
 --- !u!1 &5681490848936109283
 GameObject:
   m_ObjectHideFlags: 0
@@ -407,6 +412,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
 --- !u!1 &5960112574757210046
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,6 +458,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
 --- !u!1 &7463275133327215341
 GameObject:
   m_ObjectHideFlags: 0
@@ -497,6 +504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &9216042415462387210
 GameObject:
   m_ObjectHideFlags: 0
@@ -542,3 +550,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}

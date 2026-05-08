@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
 --- !u!1 &1789891036880511363
 GameObject:
   m_ObjectHideFlags: 0
@@ -90,6 +91,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &3297025266865859653
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,6 +137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &5189425500420487365
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,15 +243,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde1ead9e0d071843ad2ee3c9d86dc3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveVector: {x: 0, y: 0, z: 0}
+  offset: {x: 0, y: 0, z: 0}
   curPosition: {x: 0, y: 0, z: 0}
   previousPosition: {x: 0, y: 0, z: 0}
   colorChoosePanel: {fileID: 0}
   place: {fileID: 0}
   blockHeight: 0.064
-  spaceBetweenBlockCursor: {x: 0, y: 0, z: 0}
-  xDistance: 0
-  zDistance: 0
   hollowChild: []
   bulgeChild: []
   hollowChildCoordinat: []
@@ -256,15 +256,19 @@ MonoBehaviour:
   hollowChildRotation: []
   bulgeChildRotation: []
   nearestBulge: {fileID: 0}
-  blockChild: []
+  nearestHollow: {fileID: 0}
   previousBlock: []
   isActive: 0
   positionHistory: []
   isFree: 1
   isMagnetic: 0
-  isPlaced: 0
-  blockType: 
   countPoint: 0
+  moveVector: {x: 0, y: 0, z: 0}
+  bulgePosition: {x: 0, y: 0, z: 0}
+  localHollowPosition: {x: 0, y: 0, z: 0}
+  localBulgePosition: {x: 0, y: 0, z: 0}
+  placeHollowPosition: {x: 0, y: 0, z: 0}
+  blockData: {fileID: 0}
 --- !u!54 &5154546765014511812
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -358,3 +362,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
+  direction: {x: 0, y: 1, z: 0}
