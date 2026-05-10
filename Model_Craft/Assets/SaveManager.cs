@@ -231,8 +231,6 @@ public class SaveManager : MonoBehaviour
             SpawnFromSaveData(data.children, newBlock.transform);
         }
         IsSpawningBlocks = false;
-
-
     }
 
     public BlockData GetBlockDataById(string id)

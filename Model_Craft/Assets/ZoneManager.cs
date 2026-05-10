@@ -20,7 +20,6 @@ public class ZoneManager : MonoBehaviour
     public Button nextLevelButton;
     public Button prevLevelButton;
 
-    public Slider volumeSlider;
     public Button languageButton;
 
     public Button confirmExitButton;
@@ -38,6 +37,11 @@ public class ZoneManager : MonoBehaviour
     public static CareerSaveData PendingCareerSave;
 
     public ModelPreview modelPreview;
+
+    public Button defaultThemeButton;
+    public Button castleThemeButton;
+    public Button spaceThemeButton;
+    public Button robotsThemeButton;
 
     void Awake()
     {
@@ -86,9 +90,6 @@ public class ZoneManager : MonoBehaviour
         if(prevLevelButton)
         prevLevelButton.onClick.AddListener(PreviousLevel);
         
-        if(volumeSlider)
-        volumeSlider.onValueChanged.AddListener(ChangeVolume);
-        
         if(languageButton)
         languageButton.onClick.AddListener(ChangeLanguage);
         
@@ -97,6 +98,18 @@ public class ZoneManager : MonoBehaviour
         
         if(cancelExitButton)
         cancelExitButton.onClick.AddListener(() => exitUIPanel.SetActive(false));
+
+        if(defaultThemeButton)
+        defaultThemeButton.onClick.AddListener(SetThemeDefault);
+        
+        if(castleThemeButton)
+        castleThemeButton.onClick.AddListener(SetThemeCastle);
+        
+        if(spaceThemeButton)
+        spaceThemeButton.onClick.AddListener(SetThemeSpace);
+        
+        if(robotsThemeButton)
+        robotsThemeButton.onClick.AddListener(SetThemeRobots);
     }
 
     public void HideAllPanels()
@@ -158,15 +171,32 @@ public class ZoneManager : MonoBehaviour
     {
         if(settingsUIPanel)
         settingsUIPanel.SetActive(true);
-        
-        if(volumeSlider)
-        volumeSlider.value = AudioListener.volume;
     }
 
     private void ShowExitUI()
     {
         if(exitUIPanel)
         exitUIPanel.SetActive(true);
+    }
+
+    public void SetThemeDefault()
+    {
+        ThemeManager.Instance.ChangeTheme(0);
+    }
+    
+    public void SetThemeCastle()
+    {
+        ThemeManager.Instance.ChangeTheme(1);
+    }
+    
+    public void SetThemeSpace()
+    {
+        ThemeManager.Instance.ChangeTheme(2);
+    }
+    
+    public void SetThemeRobots()
+    {
+        ThemeManager.Instance.ChangeTheme(3);
     }
 
     private void UpdateLevelPreview()

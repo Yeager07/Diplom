@@ -210,7 +210,7 @@ public class PauseMenuController : MonoBehaviour
             player.isBuildMode = false;
         }
         
-        SceneManager.LoadScene("01_Menu");
+        SceneManager.LoadScene("MainMenu_Base");
     }
 
     private void SaveCurrentCareerProgress()
