@@ -323,8 +323,7 @@ public class GalleryView : MonoBehaviour
     {
         foreach(Transform child in modelPreview.previewParent)
         Destroy(child.gameObject);
-
-        modelPreview.previewParent.localPosition = Vector3.zero;
+        
         modelPreview.previewParent.localRotation = Quaternion.identity;
         modelPreview.previewParent.localScale = Vector3.one;
 
