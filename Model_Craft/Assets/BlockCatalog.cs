@@ -91,10 +91,10 @@ public class BlockCatalog : MonoBehaviour
             BlockCard card = cardGO.GetComponent<BlockCard>();
             
             if(card != null)
-            {
-                Debug.Log($"Создаю карточку для {blockData.blockName}, передаю колбэк OnBlockSelected");
-                card.Setup(blockData, OnBlockSelected);
-            }
+            card.Setup(blockData, OnBlockSelected);
+
+            if(UISkinManager.Instance != null)
+            UISkinManager.Instance.ApplyToGameObject(cardGO);
         }
     }
 

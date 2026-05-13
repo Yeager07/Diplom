@@ -43,6 +43,9 @@ public class ZoneManager : MonoBehaviour
     public Button spaceThemeButton;
     public Button robotsThemeButton;
 
+    public Button cancelLoadButton;
+    public bool IsDialogOpen { get; private set; } = false;
+
     void Awake()
     {
         if(Instance == null)
@@ -110,6 +113,9 @@ public class ZoneManager : MonoBehaviour
         
         if(robotsThemeButton)
         robotsThemeButton.onClick.AddListener(SetThemeRobots);
+
+        if(cancelLoadButton != null)
+        cancelLoadButton.onClick.AddListener(CancelLoadDialog);
     }
 
     public void HideAllPanels()
@@ -266,17 +272,20 @@ public class ZoneManager : MonoBehaviour
     private void ShowCareerLoadDialog(string levelId, LevelData levelData)
     {
         confirmLoadPanel.SetActive(true);
+        IsDialogOpen = true;
         continueButton.onClick.RemoveAllListeners();
         newGameButton.onClick.RemoveAllListeners();
      
         continueButton.onClick.AddListener(() => {
             confirmLoadPanel.SetActive(false);
+            IsDialogOpen = false;
             CareerSaveData save = SaveManager.Instance.LoadCareerMode(levelId);
             LoadCareerLevel(levelId, levelData, save);
         });
      
         newGameButton.onClick.AddListener(() => {
             confirmLoadPanel.SetActive(false);
+            IsDialogOpen = false;
             SaveManager.Instance.DeleteCareerSave(levelId);
             LoadCareerLevel(levelId, levelData, null);
         });
@@ -323,18 +332,27 @@ public class ZoneManager : MonoBehaviour
     private void ShowFreeModeLoadDialog()
     {
         confirmLoadPanel.SetActive(true);
+        IsDialogOpen = true;
         continueButton.onClick.RemoveAllListeners();
         newGameButton.onClick.RemoveAllListeners();
         
         continueButton.onClick.AddListener(() => {
             confirmLoadPanel.SetActive(false);
+            IsDialogOpen = false;
             StartFreeModeContinue();
         });
         
         newGameButton.onClick.AddListener(() => {
             confirmLoadPanel.SetActive(false);
+            IsDialogOpen = false;
             StartFreeModeNewGame();
         });
+    }
+
+    private void CancelLoadDialog()
+    {
+        confirmLoadPanel.SetActive(false);
+        IsDialogOpen = false;
     }
 
     private void ClearAllBlocks()
@@ -434,5 +452,12 @@ public class ZoneManager : MonoBehaviour
     {
         ClearTablePreview();
         SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape) && IsDialogOpen)
+        CancelLoadDialog();
+        
     }
 }

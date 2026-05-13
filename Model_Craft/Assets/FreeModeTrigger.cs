@@ -1,8 +1,8 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class FreeModeTrigger : MonoBehaviour
 {
-    public float hoverScale = 1.1f;
     public float scaleSpeed = 5f;
 
     private Vector3 originalScale;
@@ -25,19 +25,11 @@ public class FreeModeTrigger : MonoBehaviour
         transform.localScale = originalScale; // сброс, если камера не у стола
     }
 
-    void OnMouseEnter()
-    {
-        if(cameraMovement != null && cameraMovement.CurrentTargetIndex == 1)
-        targetScale = originalScale * hoverScale;
-    }
-
-    void OnMouseExit()
-    {
-        targetScale = originalScale;
-    }
-
     void OnMouseDown()
     {
+        if(EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        return;
+
         if(cameraMovement == null || cameraMovement.CurrentTargetIndex != 1)
         return;
 

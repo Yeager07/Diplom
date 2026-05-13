@@ -141,6 +141,9 @@ public class GalleryView : MonoBehaviour
             detector.onShortPress.AddListener(() => OnModelSelected(currentModel));
             detector.onLongPress.AddListener(() => OnLongPressDelete(currentModel));
 
+            if(UISkinManager.Instance != null)
+            UISkinManager.Instance.ApplyToGameObject(btnGO);
+
             Image thumbImage = btnGO.GetComponent<Image>();
             
             if(thumbImage != null)
@@ -325,6 +328,7 @@ public class GalleryView : MonoBehaviour
         Destroy(child.gameObject);
         
         modelPreview.previewParent.localRotation = Quaternion.identity;
+        modelPreview.previewParent.localPosition = previewStage.position;
         modelPreview.previewParent.localScale = Vector3.one;
 
         BoxCollider bc = modelPreview.previewParent.GetComponent<BoxCollider>();

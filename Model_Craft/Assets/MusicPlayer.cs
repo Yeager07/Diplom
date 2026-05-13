@@ -189,10 +189,10 @@ public class MusicPlayer : MonoBehaviour
         uiInstance = Instantiate(musicUIPrefab_Simple, containerTransform);
         
         else
-        {
-            Debug.LogError("Music UI Prefab is not assigned for the current context!");
-            return;
-        }
+        return;
+
+        if(UISkinManager.Instance != null)
+        UISkinManager.Instance.ApplyToGameObject(uiInstance);
         
         uiInstance.transform.localPosition = Vector3.zero;
 
@@ -267,6 +267,9 @@ public class MusicPlayer : MonoBehaviour
             int index = i;
             GameObject card = Instantiate(trackCardPrefab, trackListContent);
             trackCards.Add(card);
+
+            if(UISkinManager.Instance != null)
+            UISkinManager.Instance.ApplyToGameObject(card);
 
             Button playBtn = card.GetComponentInChildren<Button>();
             TMP_Text nameText = playBtn?.GetComponentInChildren<TMP_Text>();

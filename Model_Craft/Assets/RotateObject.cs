@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class RotateObject : MonoBehaviour
 {
@@ -21,15 +22,16 @@ public class RotateObject : MonoBehaviour
    
     void OnMouseEnter()
     {
+        if(EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        return;
+        
         if(cameraMovement != null && cameraMovement.CurrentTargetIndex == 1)
         targetScale = originalScale * hoverScaleMultiplier;
-        //isHovering = true;
     }
 
     void OnMouseExit()
     {
         targetScale = originalScale;
-        //isHovering = false;
     }
 
     void Update()

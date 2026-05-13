@@ -149,7 +149,7 @@ public class CameraMovement : MonoBehaviour
         
         if(player.typeGame == "MainMenu")
         {
-            if(Input.GetKeyDown(KeyCode.Escape) && currentTargetIndex != 0 && !galleryView.isPreviewMode)
+            if(Input.GetKeyDown(KeyCode.Escape) && currentTargetIndex != 0 && !galleryView.isPreviewMode && !ZoneManager.Instance.IsDialogOpen)
             {
                 if(ZoneManager.Instance != null)
                 ZoneManager.Instance.HideAllPanels();

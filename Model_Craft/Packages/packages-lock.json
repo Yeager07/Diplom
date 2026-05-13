@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.abyssmoth.tmp-font-replacer": {
+      "version": "https://github.com/RimuruDev/TMPFontReplacer.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "753d6a660fbaf63423d5334c50284d8f44a0b1b3"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,

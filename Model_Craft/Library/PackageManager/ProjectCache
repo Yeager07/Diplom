@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 639133425142576472
-    m_Hash: 2797487615
+      ticks: 639140828041552299
+    m_Hash: 345820576
   m_LockFileStatus:
     m_FilePath: C:/Diplom/Diplom/Model_Craft/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 639133425142628205
-    m_Hash: 1415673746
+      ticks: 639140828041609240
+    m_Hash: 1119680824
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
@@ -22,6 +22,77 @@ m_LocalPackages:
 m_ProjectPath: C:/Diplom/Diplom/Model_Craft/Packages
 m_EditorVersion: 6000.0.44f1 (101c91f3a8fb)
 m_ResolvedPackages:
+- packageId: com.abyssmoth.tmp-font-replacer@https://github.com/RimuruDev/TMPFontReplacer.git
+  testable: 0
+  isDirectDependency: 1
+  version: 1.0.0
+  source: 5
+  resolvedPath: C:\Diplom\Diplom\Model_Craft\Library\PackageCache\com.abyssmoth.tmp-font-replacer@753d6a660fba
+  assetPath: Packages/com.abyssmoth.tmp-font-replacer
+  name: com.abyssmoth.tmp-font-replacer
+  displayName: TMP Font Replacer
+  author:
+    name: RimuruDev
+    email: 
+    url: https://github.com/RimuruDev
+  category: 
+  type: tool
+  description: Editor tool for analyzing and replacing TMP fonts in prefabs, with
+    an optional legacy tab for UGUI Text and TextMesh.
+  errors: []
+  versions:
+    all: []
+    compatible: []
+    recommended: 
+    deprecated: []
+  dependencies: []
+  resolvedDependencies: []
+  keywords:
+  - rimurudev
+  - rimuru-dev
+  - abyssmoth
+  - tmp
+  - font
+  - textmeshpro
+  registry:
+    id: main
+    name: 
+    url: https://packages.unity.com
+    scopes: []
+    isDefault: 1
+    capabilities: 7
+    configSource: 0
+  hideInEditor: 1
+  entitlements:
+    licensingModel: 0
+  isAssetStorePackage: 0
+  datePublishedTicks: 0
+  documentationUrl: 
+  hasRepository: 0
+  repository:
+    type: 
+    url: 
+    revision: 
+    path: 
+  unityLifecycle:
+    version: 
+    nextVersion: 
+    recommendedVersion: 
+    isDeprecated: 0
+    deprecationMessage: 
+  isDeprecated: 0
+  deprecationMessage: 
+  git:
+    hash: 753d6a660fbaf63423d5334c50284d8f44a0b1b3
+    revision: HEAD
+  upmReserved: 
+  assetStore:
+    productId: 
+  fingerprint: 753d6a660fbaf63423d5334c50284d8f44a0b1b3
+  editorCompatibility:
+    compatibilityLevel: 2
+    minimumPackageVersion: 
+    minimumUnityVersion: 6000.3.6f1
 - packageId: com.unity.2d.sprite@1.0.0
   testable: 0
   isDirectDependency: 1

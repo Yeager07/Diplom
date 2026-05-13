@@ -9,6 +9,16 @@
     "C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.44f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\BuiltInPackagesCombined.sha1"
   ],
   "outputs": {
+    "com.abyssmoth.tmp-font-replacer@https://github.com/RimuruDev/TMPFontReplacer.git": {
+      "name": "com.abyssmoth.tmp-font-replacer",
+      "displayName": "TMP Font Replacer",
+      "resolvedPath": "C:\\Diplom\\Diplom\\Model_Craft\\Library\\PackageCache\\com.abyssmoth.tmp-font-replacer@753d6a660fba",
+      "fingerprint": "753d6a660fbaf63423d5334c50284d8f44a0b1b3",
+      "editorCompatibility": "6000.3.6f1",
+      "version": "1.0.0",
+      "source": "git",
+      "testable": false
+    },
     "com.unity.2d.sprite@1.0.0": {
       "name": "com.unity.2d.sprite",
       "displayName": "2D Sprite",

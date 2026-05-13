@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 using System.Collections;
 
 public class ThemeManager : MonoBehaviour
@@ -10,8 +11,10 @@ public class ThemeManager : MonoBehaviour
     public string[] themeSceneNames = { "Theme_Default", "Theme_Castle", "Theme_Space", "Theme_Robots" };
 
     private int currentThemeIndex = 0;
-    private string currentThemeScene;
+    private string currentThemeScene = null;
     private bool isLoading = false;
+
+    public event Action<int> OnThemeChanged;
 
     void Awake()
     {
@@ -20,11 +23,11 @@ public class ThemeManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+       
         Instance = this;
-        //DontDestroyOnLoad(gameObject);
         
         currentThemeIndex = PlayerPrefs.GetInt("SelectedTheme", 0);
-        SceneManager.sceneLoaded += OnBaseSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void Start()
@@ -33,7 +36,7 @@ public class ThemeManager : MonoBehaviour
         StartCoroutine(LoadThemeCoroutine(currentThemeIndex));
     }
 
-    private void OnBaseSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if(scene.name == baseSceneName)
         StartCoroutine(LoadThemeCoroutine(currentThemeIndex));
@@ -53,6 +56,8 @@ public class ThemeManager : MonoBehaviour
 
         if(SceneManager.GetActiveScene().name == baseSceneName)
         StartCoroutine(SwitchTheme());
+
+        OnThemeChanged?.Invoke(themeIndex);
     }
 
     private IEnumerator SwitchTheme()
@@ -109,8 +114,10 @@ public class ThemeManager : MonoBehaviour
         isLoading = false;
     }
 
+    public int GetCurrentThemeIndex() => currentThemeIndex;
+
     void OnDestroy()
     {
-        SceneManager.sceneLoaded -= OnBaseSceneLoaded;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }
