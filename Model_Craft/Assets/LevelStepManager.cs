@@ -202,6 +202,12 @@ public class LevelStepManager : MonoBehaviour
 
         GameObject newBlock = Camera.main.GetComponent<MainScript>().newBlock;
         newBlock.tag = "Selectable";
+
+        Block blockComponent = newBlock.GetComponent<Block>();
+        
+        if(blockComponent != null)
+        blockComponent.isInPickupZone = true;
+
         Renderer renderer = newBlock.GetComponent<Renderer>();
         
         if(renderer != null)
@@ -216,7 +222,8 @@ public class LevelStepManager : MonoBehaviour
 
     public void OnBlockUsed(string blockName)
     {
-        Debug.Log($"OnBlockUsed called for {blockName}, stepCompleted={stepCompleted}, remaining before: {string.Join(",", remainingForCurrentStep.Select(kv=>kv.Key+":"+kv.Value))}");
+        int before = remainingForCurrentStep.ContainsKey(blockName) ? remainingForCurrentStep[blockName] : 0;
+        Debug.Log($"[OnBlockUsed] {blockName}, before={before}");
 
         if(stepCompleted)
         return;
@@ -228,6 +235,9 @@ public class LevelStepManager : MonoBehaviour
             if(remainingForCurrentStep[blockName] <= 0)
             remainingForCurrentStep.Remove(blockName);
         }
+
+        int after = remainingForCurrentStep.ContainsKey(blockName) ? remainingForCurrentStep[blockName] : 0;
+        Debug.Log($"[OnBlockUsed] after update: {after}");
 
         if(remainingForCurrentStep.Count == 0)
         {
@@ -252,10 +262,8 @@ public class LevelStepManager : MonoBehaviour
         }
     }
 
-    public void OnBlockRemoved(string blockName, Color color, int count = 1)
+    public void OnBlockRemoved(string blockName, Color color, int count = 1, bool spawn = true, bool updateCounter = true)
     {
-        Debug.Log($"OnBlockRemoved called: {blockName}, color={color}, count={count}");
-
         if(currentStepPage == -1)
         return;
         
@@ -275,19 +283,25 @@ public class LevelStepManager : MonoBehaviour
             return;
         }
 
+        if(spawn)
+        {
+            for(int i = 0; i < count; i++)
+            SpawnBlockAtSpawnPoint(req.block, req.color);
+        }
+
         Debug.Log("Spawning block at spawn point...");
-        
-        for(int i = 0; i < count; i++)
-        SpawnBlockAtSpawnPoint(req.block, req.color);
 
-        if(remainingForCurrentStep.ContainsKey(blockName))
-        remainingForCurrentStep[blockName] += count;
+        if(updateCounter)
+        {
+            if(remainingForCurrentStep.ContainsKey(blockName))
+            remainingForCurrentStep[blockName] += count;
 
-        else
-        remainingForCurrentStep[blockName] = count;
+            else
+            remainingForCurrentStep[blockName] = count;
 
-        if(stepCompleted)
-        stepCompleted = false;
+            if(stepCompleted)
+            stepCompleted = false;      
+        }        
     }
 
     public void SpawnMissingBlocksForCurrentStep()

@@ -63,6 +63,8 @@ public class Block : MonoBehaviour
 
     public BlockData blockData;
 
+    public bool isInPickupZone = true;
+
     void Start()
     {
         if(LevelStepManager.IsLoadingSave && SaveManager.IsSpawningBlocks)
@@ -433,6 +435,12 @@ public class Block : MonoBehaviour
 
         Block current = currentBlock.GetComponent<Block>();
         Block target = place.GetComponent<Block>();
+
+        if(current != null && current.isInPickupZone)
+        return;
+        
+        if(target != null && target.isInPickupZone)
+        return;
         
         if(current == null || target == null)
         return;
@@ -612,6 +620,14 @@ public class Block : MonoBehaviour
         if(LevelStepManager.IsLoadingSave && SaveManager.IsSpawningBlocks)
         return;
 
+        if(isInPickupZone)
+        return;
+
+        Block otherBlock = other.GetComponent<Block>();
+        
+        if(otherBlock != null && otherBlock.isInPickupZone)
+        return;
+
         if(hasPendingConnection)
         return; // не обрабатываем новое соединение, пока старое не завершено
 
@@ -778,6 +794,12 @@ public class Block : MonoBehaviour
 
         if(LevelStepManager.IsLoadingSave && SaveManager.IsSpawningBlocks)
         return;
+
+        if(isInPickupZone && transform.position.x > 800f)
+        isInPickupZone = false;
+        
+        else if(!isInPickupZone && transform.position.x <= 800f)
+        isInPickupZone = true;
 
         if(gameObject == playerScript.movedObject && Input.GetMouseButton(0) && offset != Vector3.zero)
         Move(playerScript.distance, gameObject);
@@ -975,7 +997,7 @@ public class Block : MonoBehaviour
 
         else if(isActive && Input.GetKeyUp(KeyCode.E) && transform.parent == null &&
         !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
-        {                 
+        {             
             if(inventoryManager.inventory.Count != 0)
             {
                 foreach(var value in inventoryManager.inventory)
@@ -993,8 +1015,9 @@ public class Block : MonoBehaviour
             
                 if(outlineSel != null)
                 outlineSel.ClearCurrentHighlight();
-        
-                inventoryManager.AddToInventory(transform);
+
+                bool inBuildZone = (transform.position.x > 800f);
+                inventoryManager.AddToInventory(transform, notify:inBuildZone);
             }
             
             else
@@ -1009,7 +1032,9 @@ public class Block : MonoBehaviour
                 if(outlineSel != null)
                 outlineSel.ClearCurrentHighlight();
         
-                inventoryManager.AddToInventory(transform);
+                
+                bool inBuildZone = (transform.position.x > 800f);
+                inventoryManager.AddToInventory(transform, notify:inBuildZone);
             }
             
             playerScript.target = Vector3.zero;

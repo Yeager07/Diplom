@@ -99,7 +99,7 @@ public class InventoryManager : MonoBehaviour
             LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
             
             if(stepManager != null)
-            stepManager.OnBlockRemoved(blockName, color, 1);
+            stepManager.OnBlockRemoved(blockName, color, 1, spawn: true, updateCounter: false);
         }
     }
 
@@ -192,7 +192,7 @@ public class InventoryManager : MonoBehaviour
         UpdateInventoryView();
     }
 
-    public void AddToInventory(Transform selectedBlock)
+    public void AddToInventory(Transform selectedBlock, bool notify = true)
     {
         if(inventory.Count != 5 && !inventory.ContainsKey(selectedBlock.name))
         {
@@ -203,6 +203,9 @@ public class InventoryManager : MonoBehaviour
             
             UpdateMassive();
 
+            if(notify)
+            NotifyBlockRemoved(selectedBlock);
+            
             Destroy(selectedBlock.gameObject);
         }
 
@@ -221,6 +224,10 @@ public class InventoryManager : MonoBehaviour
                         dictionary[selectedBlock.GetComponent<Renderer>().material.color] += 1;
                         UpdateMassive();
                         count = 0;
+                        
+                        if(notify)
+                        NotifyBlockRemoved(selectedBlock);
+                        
                         Destroy(selectedBlock.gameObject);
                         return;
                     }
@@ -230,6 +237,10 @@ public class InventoryManager : MonoBehaviour
                         materialsCount[selectedBlock.name].Add(new Dictionary<Color, int>()  { { selectedBlock.GetComponent<Renderer>().material.color, 1 } });
                         UpdateMassive();
                         count = 0;
+                        
+                        if(notify)
+                        NotifyBlockRemoved(selectedBlock);
+                        
                         Destroy(selectedBlock.gameObject);
                         return;
                     }
@@ -283,6 +294,18 @@ public class InventoryManager : MonoBehaviour
         return 0;
     }
 
+    private void NotifyBlockRemoved(Transform block)
+    {
+        LevelStepManager stepManager = FindFirstObjectByType<LevelStepManager>();
+     
+        if(stepManager != null)
+        {
+            string blockName = block.name.Replace("(Clone)", "");
+            Renderer rend = block.GetComponent<Renderer>();
+            Color color = rend != null ? rend.material.color : Color.white;
+            stepManager.OnBlockRemoved(blockName, color, 1, spawn: false, updateCounter: true);
+        }
+    }
     // Update is called once per frame
     void Update()
     {

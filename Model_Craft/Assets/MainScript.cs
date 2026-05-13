@@ -83,7 +83,6 @@ public class MainScript : MonoBehaviour
             return;
         }
 
-
         foreach(BlockData prefab in prefabs)
         {
             if(prefab.name == prefabName)
@@ -92,6 +91,7 @@ public class MainScript : MonoBehaviour
                 newBlock.GetComponent<MeshRenderer>().material = blockMaterial;
                 newBlock.name = prefabName;
                 newBlock.GetComponent<Block>().blockData = prefab;
+                newBlock.GetComponent<Block>().isInPickupZone = (newBlock.transform.position.x <= 800f);
                 playerScript.movedObject = newBlock;
                 return;
             }
