@@ -795,11 +795,14 @@ public class Block : MonoBehaviour
         if(LevelStepManager.IsLoadingSave && SaveManager.IsSpawningBlocks)
         return;
 
-        if(isInPickupZone && transform.position.x > 800f)
+        if(playerScript.typeGame == "CareerMode" && isInPickupZone && transform.position.x > 800f)
         isInPickupZone = false;
         
-        else if(!isInPickupZone && transform.position.x <= 800f)
+        else if(playerScript.typeGame == "CareerMode" && !isInPickupZone && transform.position.x <= 800f)
         isInPickupZone = true;
+
+        else
+        isInPickupZone = false;
 
         if(gameObject == playerScript.movedObject && Input.GetMouseButton(0) && offset != Vector3.zero)
         Move(playerScript.distance, gameObject);
