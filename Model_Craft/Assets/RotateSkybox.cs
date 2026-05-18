@@ -18,11 +18,13 @@ public class RotateSkybox : MonoBehaviour
 
     void Update()
     {
-        if(skyboxMaterial != null)
+        Material skybox = RenderSettings.skybox;
+        
+        if(skybox != null && skybox.HasProperty("_Rotation"))
         {
-            float currentRotation = skyboxMaterial.GetFloat("_Rotation");
+            float currentRotation = skybox.GetFloat("_Rotation");
             float newRotation = currentRotation + rotationSpeed * Time.deltaTime;
-            skyboxMaterial.SetFloat("_Rotation", newRotation);
+            skybox.SetFloat("_Rotation", newRotation);
         }
     }
 }

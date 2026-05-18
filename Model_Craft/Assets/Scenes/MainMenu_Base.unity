@@ -3326,6 +3326,68 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 301859713}
   m_CullTransparentMesh: 1
+--- !u!1 &309409340
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 309409343}
+  - component: {fileID: 309409342}
+  - component: {fileID: 309409341}
+  m_Layer: 0
+  m_Name: SkyboxSetter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &309409341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309409340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eb4cb425c11a4e4f85c56a8f91acc9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 0.3
+--- !u!114 &309409342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309409340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9209fa9b8170aae44b8bbc735257360c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  castleSkybox: {fileID: 2100000, guid: e6c08070c458cb240b19b44eb2c4f859, type: 2}
+  spaceSkybox: {fileID: 2100000, guid: a03a6ed5645bf1746a0167fdcf130aad, type: 2}
+  robotsSkybox: {fileID: 0}
+  defaultSkybox: {fileID: 2100000, guid: 51b9f148525da454e8ffeb7104aae5b0, type: 2}
+--- !u!4 &309409343
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309409340}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 5.32314, y: -2.3798037, z: -6.9728885}
+  m_LocalScale: {x: 0.9959431, y: 0.9959431, z: 0.9959431}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1336744250}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &315670542
 GameObject:
   m_ObjectHideFlags: 0
@@ -13027,6 +13089,7 @@ Transform:
   - {fileID: 835975032}
   - {fileID: 142815840}
   - {fileID: 1468820793}
+  - {fileID: 309409343}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1345355412

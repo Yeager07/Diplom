@@ -81,6 +81,7 @@ public class ThemeManager : MonoBehaviour
         yield return null;
         
         currentThemeScene = newTheme;
+        OnThemeChanged?.Invoke(currentThemeIndex);
         isLoading = false;
     }
 
@@ -112,6 +113,8 @@ public class ThemeManager : MonoBehaviour
         
         currentThemeScene = newTheme;
         isLoading = false;
+
+        OnThemeChanged?.Invoke(currentThemeIndex);
     }
 
     public int GetCurrentThemeIndex() => currentThemeIndex;

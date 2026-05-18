@@ -129,5 +129,5 @@ SpriteAtlas:
   - Button_normal
   - IconNextButton_highlighted
   m_RenderDataMap: {}
-  m_Tag: SpaceUIAtlas
+  m_Tag: CastleUIAtlas
   m_IsVariant: 0
