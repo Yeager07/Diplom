@@ -3371,7 +3371,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   castleSkybox: {fileID: 2100000, guid: e6c08070c458cb240b19b44eb2c4f859, type: 2}
   spaceSkybox: {fileID: 2100000, guid: a03a6ed5645bf1746a0167fdcf130aad, type: 2}
-  robotsSkybox: {fileID: 0}
+  robotsSkybox: {fileID: 2100000, guid: 51875b61287f1ee469bbdc74314a10ea, type: 2}
   defaultSkybox: {fileID: 2100000, guid: 51b9f148525da454e8ffeb7104aae5b0, type: 2}
 --- !u!4 &309409343
 Transform:
