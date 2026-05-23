@@ -51,6 +51,21 @@ public class UISkinManager : MonoBehaviour
         return defaultAtlas;
     }
 
+    private bool IsPartOfThemeButton(Component comp)
+    {
+        Transform t = comp.transform;
+        
+        while(t != null)
+        {
+            if(t.CompareTag("ThemeButton"))
+            return true;
+            
+            t = t.parent;
+        }
+        
+        return false;
+    }
+
     private void ApplyTheme(int themeIndex)
     {
         currentAtlas = GetAtlasByTheme(themeIndex);
@@ -62,6 +77,9 @@ public class UISkinManager : MonoBehaviour
 
         foreach(Image img in allImages)
         {
+            if(IsPartOfThemeButton(img))
+            continue;
+            
             if(img.sprite == null)
             continue;
             
@@ -80,6 +98,9 @@ public class UISkinManager : MonoBehaviour
 
         foreach(Button btn in allButtons)
         {
+            if(btn.CompareTag("ThemeButton"))
+            continue;
+            
             if(btn.transition != Selectable.Transition.SpriteSwap)
             continue;
             
@@ -114,6 +135,9 @@ public class UISkinManager : MonoBehaviour
     public void ApplyToGameObject(GameObject target)
     {
         if(currentAtlas == null || target == null)
+        return;
+
+        if(IsPartOfThemeButton(target.GetComponent<Component>()))
         return;
 
         Image[] images = target.GetComponentsInChildren<Image>(true);

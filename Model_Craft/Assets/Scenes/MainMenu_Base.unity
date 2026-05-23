@@ -1090,6 +1090,7 @@ GameObject:
   - component: {fileID: 97872922}
   - component: {fileID: 97872921}
   - component: {fileID: 97872920}
+  - component: {fileID: 97872923}
   m_Layer: 5
   m_Name: LanguageButton
   m_TagString: Untagged
@@ -1210,6 +1211,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 97872918}
   m_CullTransparentMesh: 1
+--- !u!114 &97872923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 97872918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8b85349776fa4946813bf716707b8fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &103633210
 GameObject:
   m_ObjectHideFlags: 0
@@ -2933,7 +2946,7 @@ GameObject:
   - component: {fileID: 242102890}
   m_Layer: 5
   m_Name: DefaultThemeButton
-  m_TagString: Untagged
+  m_TagString: ThemeButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2957,7 +2970,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -2967,8 +2980,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 21300000, guid: 07b8523853755bc46b46536299c8b6e0, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 99aa8f80f68f61e418788c4149cc5490, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -3002,8 +3015,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: ed55ce74f258b8f48a24177f79d71b9b, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5747,7 +5760,7 @@ GameObject:
   - component: {fileID: 590627230}
   m_Layer: 5
   m_Name: CastleThemeButton
-  m_TagString: Untagged
+  m_TagString: ThemeButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5771,7 +5784,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -5781,8 +5794,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 21300000, guid: 25267f4da07eb42449970dd95355b720, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 82af4c58085bdc546b99e61f52c5d235, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -5816,8 +5829,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 05e823900e7b8084e8bf928fb5f85a14, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -6241,7 +6254,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CT
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
   m_sharedMaterial: {fileID: 3458203808749192800, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
@@ -7163,6 +7176,7 @@ GameObject:
   - component: {fileID: 792899964}
   - component: {fileID: 792899966}
   - component: {fileID: 792899965}
+  - component: {fileID: 792899967}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -7224,6 +7238,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 792899963}
   m_CullTransparentMesh: 1
+--- !u!114 &792899967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 792899963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8b85349776fa4946813bf716707b8fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &819839483
 GameObject:
   m_ObjectHideFlags: 0
@@ -7725,7 +7751,7 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 368618654}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.024390161}
+  m_AnchorMin: {x: 0, y: 0.02439022}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
@@ -9611,7 +9637,7 @@ GameObject:
   - component: {fileID: 1016299285}
   m_Layer: 5
   m_Name: SpaceThemeButton
-  m_TagString: Untagged
+  m_TagString: ThemeButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9635,7 +9661,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -9645,8 +9671,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 21300000, guid: 407469d8ec44f6144afd8c7f7af786cb, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 6f121e2ce9565a64887ffe0e169d5c63, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -9680,8 +9706,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: b77d465cd385a664887e725af10adba8, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -11344,7 +11370,6 @@ GameObject:
   - component: {fileID: 1172681108}
   - component: {fileID: 1172681110}
   - component: {fileID: 1172681109}
-  - component: {fileID: 1172681111}
   m_Layer: 5
   m_Name: SettingsUI
   m_TagString: Untagged
@@ -11418,18 +11443,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1172681107}
   m_CullTransparentMesh: 1
---- !u!114 &1172681111
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1172681107}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8b85349776fa4946813bf716707b8fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1186706155
 GameObject:
   m_ObjectHideFlags: 0
@@ -17175,7 +17188,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: RT
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
   m_sharedMaterial: {fileID: 3458203808749192800, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
@@ -18164,7 +18177,7 @@ GameObject:
   - component: {fileID: 1765214298}
   m_Layer: 5
   m_Name: RobotsThemeButton
-  m_TagString: Untagged
+  m_TagString: ThemeButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -18188,7 +18201,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -18198,8 +18211,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 21300000, guid: 7889596c9ad137f48a49da118fa848e1, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 1377d6837b904ca46a59c12200006182, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -18233,8 +18246,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 6a8d3bd69105bbb45bf8b4d2cc214474, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -18283,6 +18296,7 @@ GameObject:
   - component: {fileID: 1771267577}
   - component: {fileID: 1771267576}
   - component: {fileID: 1771267575}
+  - component: {fileID: 1771267578}
   m_Layer: 5
   m_Name: BackButton
   m_TagString: Untagged
@@ -18403,6 +18417,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1771267573}
   m_CullTransparentMesh: 1
+--- !u!114 &1771267578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1771267573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8b85349776fa4946813bf716707b8fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1776040420
 GameObject:
   m_ObjectHideFlags: 0
@@ -19317,7 +19343,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ST
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
   m_sharedMaterial: {fileID: 3458203808749192800, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
@@ -21086,7 +21112,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: DT
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
   m_sharedMaterial: {fileID: 3458203808749192800, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
@@ -22360,8 +22386,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 841233498}
   m_HandleRect: {fileID: 841233497}
   m_Direction: 2
-  m_Value: 1.0000031
-  m_Size: 0.97560984
+  m_Value: 1
+  m_Size: 0.9756098
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
