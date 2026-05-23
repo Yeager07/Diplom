@@ -11,7 +11,7 @@ public class LocalizationManager : MonoBehaviour
     private Dictionary<string, string> russianDict = new Dictionary<string, string>();
     private Dictionary<string, string> currentDict;
 
-    public System.Action OnLanguageChanged; // событие для обновления UI
+    public System.Action OnLanguageChanged;
 
     private void Awake()
     {
@@ -22,7 +22,6 @@ public class LocalizationManager : MonoBehaviour
         }
         
         Instance = this;
-        //DontDestroyOnLoad(gameObject);
         LoadDictionaries();
     }
 

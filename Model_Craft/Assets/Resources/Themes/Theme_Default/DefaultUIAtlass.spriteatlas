@@ -79,6 +79,8 @@ SpriteAtlas:
     - {fileID: 2800000, guid: ab5839b6aa588a74cbe5994849a7789b, type: 3}
     - {fileID: 2800000, guid: ee598945b3e37dc4ba3e6abdd816e09f, type: 3}
     - {fileID: 2800000, guid: 4adbed5aa29e44446b9c546006b47845, type: 3}
+    - {fileID: 2800000, guid: 817043d65949ba44183b382d652c6cba, type: 3}
+    - {fileID: 2800000, guid: 4b36880833f4fde4992e181aee9c682a, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -98,7 +100,9 @@ SpriteAtlas:
     - 4b80ab66a3c06ed45a54a4ea6f449be1: 21300000
     - ab5839b6aa588a74cbe5994849a7789b: 21300000
     - b4c323c6436bd474fa000bfd563e64b0: 21300000
+    - 817043d65949ba44183b382d652c6cba: 21300000
     - e430cd87bae3bf34994116c9246c3ade: 21300000
+    - 4b36880833f4fde4992e181aee9c682a: 21300000
     - b7277268ce663d5489329b88cc67a345: 21300000
     - fa3dddf8209b84e4a8a1c36d470aa851: 21300000
     - 414e2a493c5f8324981148aead630ef1: 21300000
@@ -134,7 +138,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4b80ab66a3c06ed45a54a4ea6f449be1, type: 3}
   - {fileID: 21300000, guid: ab5839b6aa588a74cbe5994849a7789b, type: 3}
   - {fileID: 21300000, guid: b4c323c6436bd474fa000bfd563e64b0, type: 3}
+  - {fileID: 21300000, guid: 817043d65949ba44183b382d652c6cba, type: 3}
   - {fileID: 21300000, guid: e430cd87bae3bf34994116c9246c3ade, type: 3}
+  - {fileID: 21300000, guid: 4b36880833f4fde4992e181aee9c682a, type: 3}
   - {fileID: 21300000, guid: b7277268ce663d5489329b88cc67a345, type: 3}
   - {fileID: 21300000, guid: fa3dddf8209b84e4a8a1c36d470aa851, type: 3}
   - {fileID: 21300000, guid: 414e2a493c5f8324981148aead630ef1, type: 3}
@@ -169,7 +175,9 @@ SpriteAtlas:
   - IconPreviousButton_normal
   - IconBlocksButton_normal
   - IconDeleteButton_highlighted
+  - MovementRu
   - IconBackButton_pressed
+  - MovementEn
   - IconInstructionButton_pressed
   - IconNextButton_pressed
   - IconNextButton_normal

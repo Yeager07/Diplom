@@ -79,6 +79,8 @@ SpriteAtlas:
     - {fileID: 2800000, guid: 87887b09d353eef4681baf9be914a42b, type: 3}
     - {fileID: 2800000, guid: 567b0659cca200c41b3213b1e6e3359b, type: 3}
     - {fileID: 2800000, guid: ac766b861452a0544968a0287d6709bc, type: 3}
+    - {fileID: 2800000, guid: 9dbe9e57fbc113145a2ef1fbe2a8ddd0, type: 3}
+    - {fileID: 2800000, guid: bd004165ce1d6964483099cae12f571a, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -94,9 +96,11 @@ SpriteAtlas:
     - 29bf88349edcdd04aaf325ace14ba7b8: 21300000
     - d81e2b64bf82bea44a4e0a68ee935ecd: 21300000
     - a542299499c9eb8448b77265e6ca7d3b: 21300000
+    - bd004165ce1d6964483099cae12f571a: 21300000
     - 04c299e5f5b40254da9f0a3a74ad21be: 21300000
     - ac766b861452a0544968a0287d6709bc: 21300000
     - e413bb0748eebbc45a0948abe35b5cac: 21300000
+    - 9dbe9e57fbc113145a2ef1fbe2a8ddd0: 21300000
     - 1691e687b4c4b5f4b84c0b65115eaff2: 21300000
     - 72e9c8f7e05c94447bb560837620e15d: 21300000
     - 8b5164389b003eb4087449e76dd14c92: 21300000
@@ -130,9 +134,11 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 29bf88349edcdd04aaf325ace14ba7b8, type: 3}
   - {fileID: 21300000, guid: d81e2b64bf82bea44a4e0a68ee935ecd, type: 3}
   - {fileID: 21300000, guid: a542299499c9eb8448b77265e6ca7d3b, type: 3}
+  - {fileID: 21300000, guid: bd004165ce1d6964483099cae12f571a, type: 3}
   - {fileID: 21300000, guid: 04c299e5f5b40254da9f0a3a74ad21be, type: 3}
   - {fileID: 21300000, guid: ac766b861452a0544968a0287d6709bc, type: 3}
   - {fileID: 21300000, guid: e413bb0748eebbc45a0948abe35b5cac, type: 3}
+  - {fileID: 21300000, guid: 9dbe9e57fbc113145a2ef1fbe2a8ddd0, type: 3}
   - {fileID: 21300000, guid: 1691e687b4c4b5f4b84c0b65115eaff2, type: 3}
   - {fileID: 21300000, guid: 72e9c8f7e05c94447bb560837620e15d, type: 3}
   - {fileID: 21300000, guid: 8b5164389b003eb4087449e76dd14c92, type: 3}
@@ -165,9 +171,11 @@ SpriteAtlas:
   - IconDownloadButton_pressed
   - IconPauseButton_normal
   - IconBackButton_highlighted
+  - MovementRu
   - IconInstructionButton_highlighted
   - IconSizeButton_pressed
   - IconPreviousButton_normal
+  - MovementEn
   - IconDeleteButton_normal
   - IconLanguage_pressed
   - IconPauseButton_pressed

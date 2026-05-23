@@ -21,6 +21,7 @@ TagManager:
   - Preview
   - MusicUIContainer
   - ThemeButton
+  - ControlsImage
   layers:
   - Default
   - TransparentFX

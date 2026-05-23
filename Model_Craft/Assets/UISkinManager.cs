@@ -14,6 +14,8 @@ public class UISkinManager : MonoBehaviour
     
     public ThemeManager themeManager;
     private SpriteAtlas currentAtlas;
+
+    private string currentLanguage = "En";
     
     private void Awake()
     {
@@ -35,6 +37,30 @@ public class UISkinManager : MonoBehaviour
             themeManager.OnThemeChanged += ApplyTheme;
             ApplyTheme(themeManager.GetCurrentThemeIndex());
         }
+
+        if(LocalizationManager.Instance != null)
+        LocalizationManager.Instance.OnLanguageChanged += OnLanguageChanged;
+
+        Player player = FindFirstObjectByType<Player>();
+        
+        if(player != null)
+        currentLanguage = player.language;
+        
+        ApplyTheme(themeManager?.GetCurrentThemeIndex() ?? 0);
+    }
+
+    private void OnLanguageChanged()
+    {
+        Player player = FindFirstObjectByType<Player>();
+        
+        if(player != null)
+        currentLanguage = player.language;
+    }
+
+    public void SetLanguageAndUpdate(string newLanguage, GameObject controlsTarget)
+    {
+        currentLanguage = newLanguage;
+        UpdateControlsImage(controlsTarget);
     }
 
     private SpriteAtlas GetAtlasByTheme(int themeIndex)
@@ -64,6 +90,28 @@ public class UISkinManager : MonoBehaviour
         }
         
         return false;
+    }
+
+    public void UpdateControlsImage(GameObject target)
+    {   
+        if(currentAtlas == null || target == null)
+        return;
+        
+        Image img = target.GetComponent<Image>();
+
+        if(img == null)
+        return;
+        
+        string langSuffix = (currentLanguage == "Ru") ? "Ru" : "En";
+        string spriteName = "Movement" + langSuffix;
+        
+        Sprite newSprite = currentAtlas.GetSprite(spriteName);
+        
+        if(newSprite != null)
+        img.sprite = newSprite;
+        
+        else
+        Debug.LogWarning($"Sprite {spriteName} not found in atlas {currentAtlas.name}");
     }
 
     private void ApplyTheme(int themeIndex)
@@ -178,5 +226,8 @@ public class UISkinManager : MonoBehaviour
     {
         if(themeManager != null)
         themeManager.OnThemeChanged -= ApplyTheme;
+
+        if(LocalizationManager.Instance != null)
+        LocalizationManager.Instance.OnLanguageChanged -= OnLanguageChanged;
     }
 }

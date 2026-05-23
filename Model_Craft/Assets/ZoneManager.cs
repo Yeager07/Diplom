@@ -45,6 +45,7 @@ public class ZoneManager : MonoBehaviour
 
     public Button cancelLoadButton;
     public bool IsDialogOpen { get; private set; } = false;
+    
 
     void Awake()
     {
@@ -78,7 +79,6 @@ public class ZoneManager : MonoBehaviour
         
         if(player == null || player.typeGame != "MainMenu")
         {
-            Debug.Log("ZoneManager: Not in main menu, disabling.");
             enabled = false;
             return;
         }
@@ -116,6 +116,19 @@ public class ZoneManager : MonoBehaviour
 
         if(cancelLoadButton != null)
         cancelLoadButton.onClick.AddListener(CancelLoadDialog);
+
+        LocalizationManager.Instance.OnLanguageChanged += OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged()
+    {   
+        if(settingsUIPanel != null && settingsUIPanel.activeInHierarchy && UISkinManager.Instance != null)
+        {
+            GameObject controlsImage = GameObject.FindGameObjectWithTag("ControlsImage");
+            
+            if(controlsImage != null)
+            UISkinManager.Instance.UpdateControlsImage(controlsImage);
+        }
     }
 
     public void HideAllPanels()
@@ -177,6 +190,11 @@ public class ZoneManager : MonoBehaviour
     {
         if(settingsUIPanel)
         settingsUIPanel.SetActive(true);
+
+        GameObject controlsImage = GameObject.FindGameObjectWithTag("ControlsImage");
+
+        if(UISkinManager.Instance != null)
+        UISkinManager.Instance.UpdateControlsImage(controlsImage);
     }
 
     private void ShowExitUI()
