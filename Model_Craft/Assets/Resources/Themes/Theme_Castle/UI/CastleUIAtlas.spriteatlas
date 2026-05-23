@@ -170,7 +170,7 @@ SpriteAtlas:
   - Button_highlighted
   - IconBlocksButton_pressed
   - IconNextButton_highlighted
-  - IconpreviousButton_highlighted
+  - IconPreviousButton_highlighted
   - IconBackButton_pressed
   - IconBlocksButton_normal
   - IconSizeButton_highlighted

@@ -14630,7 +14630,7 @@ MonoBehaviour:
   defaultAtlas: {fileID: 4343727234628468602, guid: 1a39db5b3293bce4084e402f494fb323, type: 2}
   spaceAtlas: {fileID: 4343727234628468602, guid: c9f354e6345f77a43bf059b44532c820, type: 2}
   castleAtlas: {fileID: 4343727234628468602, guid: 711ba60340d7f234eb7c6c6d483641c9, type: 2}
-  robotsAtlas: {fileID: 0}
+  robotsAtlas: {fileID: 4343727234628468602, guid: 3443bac2e39e8194e8db954e2fda83df, type: 2}
   themeManager: {fileID: 142815841}
 --- !u!1 &1470690405
 GameObject:
