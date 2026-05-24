@@ -12486,6 +12486,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 65c751b32a5f1c14e80ca04b892af38b, type: 2}
   - {fileID: 11400000, guid: 8d1def6b3d4cfb54e9d426ec30c13e6f, type: 2}
   - {fileID: 11400000, guid: 491a5da075d98144f80e60fc6d042fea, type: 2}
+  - {fileID: 11400000, guid: 0e4a6b038dcb7b34bbd3f945e63fd6c7, type: 2}
+  - {fileID: 11400000, guid: 36d3b588bd383c34dba3817a193be093, type: 2}
+  - {fileID: 11400000, guid: fe6710a73a802e440bc2d18e35097b93, type: 2}
+  - {fileID: 11400000, guid: cc0fd49bf7e352c468124404df189e40, type: 2}
   colorSelector: {fileID: 217068261}
   scrollRect: {fileID: 1154932312}
 --- !u!224 &1319307820
