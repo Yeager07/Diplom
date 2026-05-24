@@ -122,7 +122,12 @@ public class ZoneManager : MonoBehaviour
 
     private void OnLanguageChanged()
     {   
-        if(settingsUIPanel != null && settingsUIPanel.activeInHierarchy && UISkinManager.Instance != null)
+        Player player = FindFirstObjectByType<Player>();
+        
+        if(UISkinManager.Instance != null)
+        UISkinManager.Instance.SetLanguage(player.language);
+        
+        if(settingsUIPanel != null && settingsUIPanel.activeInHierarchy)
         {
             GameObject controlsImage = GameObject.FindGameObjectWithTag("ControlsImage");
             
@@ -191,6 +196,11 @@ public class ZoneManager : MonoBehaviour
         if(settingsUIPanel)
         settingsUIPanel.SetActive(true);
 
+        Player player = FindFirstObjectByType<Player>();
+        
+        if(player != null && UISkinManager.Instance != null)
+        UISkinManager.Instance.SetLanguage(player.language);
+        
         GameObject controlsImage = GameObject.FindGameObjectWithTag("ControlsImage");
 
         if(UISkinManager.Instance != null)

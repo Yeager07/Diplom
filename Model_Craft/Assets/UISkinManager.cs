@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.U2D;
+using TMPro;
 
 public class UISkinManager : MonoBehaviour
 {
@@ -16,6 +17,12 @@ public class UISkinManager : MonoBehaviour
     private SpriteAtlas currentAtlas;
 
     private string currentLanguage = "En";
+
+    private int currentThemeIndex;
+    public Color defaultTextColor = new Color(255, 255, 255);
+    public Color castleTextColor = new Color(0, 0, 0);
+    public Color spaceTextColor = new Color(150, 239, 255);
+    public Color robotsTextColor = new Color(255, 167, 3);
     
     private void Awake()
     {
@@ -63,18 +70,34 @@ public class UISkinManager : MonoBehaviour
         UpdateControlsImage(controlsTarget);
     }
 
+    public void SetLanguage(string newLanguage)
+    {
+        currentLanguage = newLanguage;
+        Debug.Log($"UISkinManager language set to {currentLanguage}");
+    }
+
     private SpriteAtlas GetAtlasByTheme(int themeIndex)
     {
-        if(themeIndex == 1)
-        return castleAtlas;
-        
-        if(themeIndex == 2)
-        return spaceAtlas;
-        
-        if(themeIndex == 3)
-        return robotsAtlas;
-        
-        return defaultAtlas;
+        switch(themeIndex)
+        {
+            case 0: return defaultAtlas;
+            case 1: return castleAtlas;
+            case 2: return spaceAtlas;
+            case 3: return robotsAtlas;
+            default: return defaultAtlas;
+        }
+    }
+
+    private Color GetColorByTheme(int themeIndex)
+    {
+        switch(themeIndex)
+        {
+            case 0: return defaultTextColor;
+            case 1: return castleTextColor;
+            case 2: return spaceTextColor;
+            case 3: return robotsTextColor;
+            default: return defaultTextColor;
+        }
     }
 
     private bool IsPartOfThemeButton(Component comp)
@@ -116,6 +139,7 @@ public class UISkinManager : MonoBehaviour
 
     private void ApplyTheme(int themeIndex)
     {
+        currentThemeIndex = themeIndex;
         currentAtlas = GetAtlasByTheme(themeIndex);
         
         if(currentAtlas == null)
@@ -159,6 +183,17 @@ public class UISkinManager : MonoBehaviour
             newState.selectedSprite = GetSpriteWithSuffix(oldState.selectedSprite);
             newState.disabledSprite = GetSpriteWithSuffix(oldState.disabledSprite);
             btn.spriteState = newState;
+        }
+
+        TMP_Text[] allTexts = FindObjectsByType<TMP_Text>(FindObjectsSortMode.None);
+        Color targetColor = GetColorByTheme(themeIndex);
+        
+        foreach(TMP_Text txt in allTexts)
+        {
+            if(IsPartOfThemeButton(txt))
+            continue;
+            
+            txt.color = targetColor;
         }
     }
 
@@ -219,6 +254,17 @@ public class UISkinManager : MonoBehaviour
             newState.selectedSprite = GetSpriteWithSuffix(oldState.selectedSprite);
             newState.disabledSprite = GetSpriteWithSuffix(oldState.disabledSprite);
             btn.spriteState = newState;
+        }
+
+        TMP_Text[] texts = target.GetComponentsInChildren<TMP_Text>(true);
+        Color targetColor = GetColorByTheme(currentThemeIndex);
+        
+        foreach(TMP_Text txt in texts)
+        {
+            if(IsPartOfThemeButton(txt))
+            continue;
+            
+            txt.color = targetColor;
         }
     }
 
