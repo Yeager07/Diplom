@@ -237,7 +237,7 @@ public class Block : MonoBehaviour
             xDistance += Input.GetAxis("Mouse X");
             zDistance += Input.GetAxis("Mouse Y");
 
-            float stepThreshold = bulgeWidth * 20f;
+            float stepThreshold = bulgeWidth * 70f;
 
             if(Mathf.Abs(xDistance) >= stepThreshold)
             {
@@ -345,6 +345,21 @@ public class Block : MonoBehaviour
         }
     }
 
+    /*private bool IsValidConnectionPair(Transform bulge, Transform hollow)
+    {
+        BlockPoint bp = bulge.GetComponent<BlockPoint>();
+        BlockPoint hp = hollow.GetComponent<BlockPoint>();
+        
+        if(bp == null || hp == null)
+        return false;
+
+        Vector3 bulgeDir = bulge.TransformDirection(bp.direction);
+        Vector3 hollowDir = hollow.TransformDirection(hp.direction);
+        float dot = Vector3.Dot(bulgeDir, hollowDir);
+        
+        return dot < -0.9f;
+    }*/
+
     private bool FindNearestConnectionPoints(Block current, Block target, bool isCurrentTile, bool isTargetTile,
         out Transform nearestBulge, out Transform nearestHollow,
         out Vector3 localBulgePos, out Vector3 localHollowPos,
@@ -370,6 +385,9 @@ public class Block : MonoBehaviour
                 {
                     if(!hollow.GetComponent<BlockPoint>().isFree)
                     continue;
+                    
+                    /*if(!IsValidConnectionPair(bulge, hollow))
+                    continue;*/
                     
                     float d = Vector3.Distance(bulge.position, hollow.position);
 
@@ -397,6 +415,9 @@ public class Block : MonoBehaviour
                 {
                     if(!bulge.GetComponent<BlockPoint>().isFree)
                     continue;
+
+                    /*if(!IsValidConnectionPair(bulge, hollow))
+                    continue;*/
                     
                     float d = Vector3.Distance(hollow.position, bulge.position);
                     

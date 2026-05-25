@@ -12490,6 +12490,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 36d3b588bd383c34dba3817a193be093, type: 2}
   - {fileID: 11400000, guid: fe6710a73a802e440bc2d18e35097b93, type: 2}
   - {fileID: 11400000, guid: cc0fd49bf7e352c468124404df189e40, type: 2}
+  - {fileID: 11400000, guid: a1b3b2bd8b4baf14c9eaa389860e8ae0, type: 2}
   colorSelector: {fileID: 217068261}
   scrollRect: {fileID: 1154932312}
 --- !u!224 &1319307820

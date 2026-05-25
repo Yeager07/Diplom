@@ -18,7 +18,7 @@ public class Player : MonoBehaviour
     private float maxDistance = 10f;
     public float distance = 0.0f;
     public float currentDistance = 0.0f;
-    private float buildSpeed = 25.0f;
+    private float buildSpeed = 5.0f;
     private float speedRot = 1.5f;
     private float verRotLim = 60.0f;
     private float speedBuildRot = 3.0f;
@@ -101,16 +101,13 @@ public class Player : MonoBehaviour
             }
         }
 
-        //if(movedObject == null)
         Vector3 negDistance = new Vector3(0.0f, 0.0f, -currentDistance);
-
-        /*else
-        Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);*/
 
         if(Input.GetMouseButtonUp(1) && target != new Vector3(0.0f, 0.0f, 0.0f))
         {
             targetPosition = target;
             currentDistance = minDistance;
+            distance = minDistance;
         }
         
         moveDirection = Quaternion.Euler(rotateDirection) * negDistance + targetPosition;
