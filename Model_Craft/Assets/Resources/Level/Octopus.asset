@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2447e83d9d4d80c4b98c0980c67726f6, type: 3}
+  m_Name: Octopus
+  m_EditorClassIdentifier: 
+  levelName: Octopus
+  instructionFileName: octopus.pdf
+  steps:
+  - pageNumber: 1
+    blocks:
+    - block: {fileID: 11400000, guid: ab4fcb32ef6b96847a05375642145704, type: 2}
+      color: {r: 1, g: 1, b: 1, a: 1}
+      count: 3
+    - block: {fileID: 11400000, guid: fe6710a73a802e440bc2d18e35097b93, type: 2}
+      color: {r: 1, g: 1, b: 1, a: 1}
+      count: 10
+  - pageNumber: 2
+    blocks:
+    - block: {fileID: 11400000, guid: 36d3b588bd383c34dba3817a193be093, type: 2}
+      color: {r: 1, g: 1, b: 1, a: 1}
+      count: 2
+    - block: {fileID: 11400000, guid: cc0fd49bf7e352c468124404df189e40, type: 2}
+      color: {r: 1, g: 1, b: 1, a: 1}
+      count: 2
+    - block: {fileID: 11400000, guid: 0e4a6b038dcb7b34bbd3f945e63fd6c7, type: 2}
+      color: {r: 1, g: 1, b: 1, a: 1}
+      count: 4
+    - block: {fileID: 11400000, guid: fe6710a73a802e440bc2d18e35097b93, type: 2}
+      color: {r: 1, g: 1, b: 1, a: 1}
+      count: 2
+    - block: {fileID: 11400000, guid: 04cd0a666431db74588e46a9d5df15ff, type: 2}
+      color: {r: 1, g: 1, b: 1, a: 1}
+      count: 2
+  - pageNumber: 3
+    blocks:
+    - block: {fileID: 11400000, guid: 36d3b588bd383c34dba3817a193be093, type: 2}
+      color: {r: 1, g: 1, b: 1, a: 1}
+      count: 2
+    - block: {fileID: 11400000, guid: aeb05ce42fe6a0743a05e0f0e1055dbd, type: 2}
+      color: {r: 1, g: 1, b: 1, a: 1}
+      count: 2
+  - pageNumber: 4
+    blocks:
+    - block: {fileID: 11400000, guid: a1b3b2bd8b4baf14c9eaa389860e8ae0, type: 2}
+      color: {r: 1, g: 1, b: 1, a: 1}
+      count: 6

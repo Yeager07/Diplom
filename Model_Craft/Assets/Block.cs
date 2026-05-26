@@ -64,6 +64,7 @@ public class Block : MonoBehaviour
     public BlockData blockData;
 
     public bool isInPickupZone = true;
+    private bool isProcessingConnection = false;
 
     void Start()
     {
@@ -345,7 +346,7 @@ public class Block : MonoBehaviour
         }
     }
 
-    /*private bool IsValidConnectionPair(Transform bulge, Transform hollow)
+    private bool IsValidConnectionPair(Transform bulge, Transform hollow)
     {
         BlockPoint bp = bulge.GetComponent<BlockPoint>();
         BlockPoint hp = hollow.GetComponent<BlockPoint>();
@@ -358,7 +359,7 @@ public class Block : MonoBehaviour
         float dot = Vector3.Dot(bulgeDir, hollowDir);
         
         return dot < -0.9f;
-    }*/
+    }
 
     private bool FindNearestConnectionPoints(Block current, Block target, bool isCurrentTile, bool isTargetTile,
         out Transform nearestBulge, out Transform nearestHollow,
@@ -386,12 +387,14 @@ public class Block : MonoBehaviour
                     if(!hollow.GetComponent<BlockPoint>().isFree)
                     continue;
                     
-                    /*if(!IsValidConnectionPair(bulge, hollow))
-                    continue;*/
+                    if(!IsValidConnectionPair(bulge, hollow))
+                    continue;
                     
                     float d = Vector3.Distance(bulge.position, hollow.position);
 
-                    if(d < minDistance)
+                    Debug.Log($"Valid pair: {bulge.name} (pos={bulge.position}) and {hollow.name} (pos={hollow.position}), distance={d}");
+
+                    if(d < minDistance && d < 0.2f)
                     {
                         minDistance = d;
                         nearestBulge = bulge;
@@ -416,12 +419,14 @@ public class Block : MonoBehaviour
                     if(!bulge.GetComponent<BlockPoint>().isFree)
                     continue;
 
-                    /*if(!IsValidConnectionPair(bulge, hollow))
-                    continue;*/
+                    if(!IsValidConnectionPair(bulge, hollow))
+                    continue;
                     
                     float d = Vector3.Distance(hollow.position, bulge.position);
+
+                    Debug.Log($"Valid pair: {bulge.name} (pos={bulge.position}) and {hollow.name} (pos={hollow.position}), distance={d}");
                     
-                    if(d < minDistance)
+                    if(d < minDistance && d < 0.2f)
                     {
                         minDistance = d;
                         nearestBulge = bulge;
@@ -439,77 +444,123 @@ public class Block : MonoBehaviour
 
     private void PrepareGroupConnection(GameObject currentBlock, GameObject place, Transform rootGroup)
     {
-        if(rootGroup == null && currentBlock != null)
-        rootGroup = FindMainParent(currentBlock.transform);
-        
-        if(rootGroup == null)
+        // Защита от повторного входа
+        if(hasPendingConnection || isProcessingConnection)
         return;
+        
+        isProcessingConnection = true;
 
-        Block rootBlock = rootGroup.GetComponent<Block>();
+        if(playerScript == null)
+        {
+            isProcessingConnection = false;
+            return;
+        }
+
+        // Определяем, какой блок перемещается
+        Transform movingRoot = null;
+        if(playerScript.movedObject != null)
+        {
+            movingRoot = FindMainParent(playerScript.movedObject.transform);
+        }
+        
+        if(movingRoot == null)
+        movingRoot = FindMainParent(currentBlock.transform);
+
+        // Остальные проверки
+        if(movingRoot == null)
+        {
+            isProcessingConnection = false;
+            return;
+        }
+
+        Block rootBlock = movingRoot.GetComponent<Block>();
         
         if(rootBlock == null)
-        return;
+        {
+            isProcessingConnection = false;
+            return;
+        }
 
-        // Блокируем повторные вызовы
+        // Блокируем повторные вызовы для одного и того же места
         if(rootBlock.lastProcessedPlace == place.transform)
-        return;
+        {
+            isProcessingConnection = false;
+            return;
+        }
 
         Block current = currentBlock.GetComponent<Block>();
         Block target = place.GetComponent<Block>();
-
-        if(current != null && current.isInPickupZone)
-        return;
-        
-        if(target != null && target.isInPickupZone)
-        return;
         
         if(current == null || target == null)
-        return;
+        {
+            isProcessingConnection = false;
+            return;
+        }
+        
+        if(current.isInPickupZone || target.isInPickupZone)
+        {
+            isProcessingConnection = false;
+            return;
+        }
         
         if(IsChildRecursively(place, currentBlock))
-        return;
+        {
+            isProcessingConnection = false;
+            return;
+        }
 
-        // Определяем типы
         bool isTilePlace = place.name.Split(' ')[0] == "Tile";
         bool isTileCurrent = currentBlock.name.Split(' ')[0] == "Tile";
-
-        // Два тайла не соединяются
+        
         if(isTilePlace && isTileCurrent)
-        return;
+        {
+            isProcessingConnection = false;
+            return;
+        }
 
-        // Поиск ближайших точек с учётом тайлов
+        // Поиск ближайших точек
         if(!FindNearestConnectionPoints(current, target, isTileCurrent, isTilePlace,
             out Transform nearestBulge, out Transform nearestHollow,
             out Vector3 localBulgePos, out Vector3 localHollowPos, out Vector3 targetWorldPoint))
+        {
+            isProcessingConnection = false;
             return;
+        }
 
         // Проверка свободных точек
         if(!nearestBulge.GetComponent<BlockPoint>().isFree || !nearestHollow.GetComponent<BlockPoint>().isFree)
         {
-            Debug.Log("Cannot connect – point already occupied");
+            isProcessingConnection = false;
             return;
         }
 
-        if(Vector3.Dot(current.hollowChild[0].up, target.bulgeChild[0].up) <= 0.99f)
+        // Убедимся, что перемещаемый блок содержит одну из точек
+        bool bulgeBelongsToMoving = nearestBulge.IsChildOf(movingRoot);
+        bool hollowBelongsToMoving = nearestHollow.IsChildOf(movingRoot);
+        
+        if(!bulgeBelongsToMoving && !hollowBelongsToMoving)
         {
-            Debug.Log("Axes not aligned");
+            isProcessingConnection = false;
             return;
         }
 
-        // Определяем, сверху или снизу (для обычных блоков)
-        float yCurrent = current.bulgeChild.Count > 0 ? current.bulgeChild[0].position.y : current.transform.position.y;
-        float yPlace = target.bulgeChild.Count > 0 ? target.bulgeChild[0].position.y : place.transform.position.y;
-        bool isCurrentAbove = yCurrent > yPlace;
+        // Блокируем дальнейшие вызовы
+        hasPendingConnection = true;
+        pendingSnapRoot = movingRoot;
+        pendingSnapParent = place.transform;
+        pendingSnapBlock = currentBlock.transform;
+        pendingSnapPoints = CountOccupiedPointsBetween(currentBlock, place);
+        originalRootPosition = movingRoot.position;
 
         Vector3 offset;
         
-        if(isTilePlace) // Тайл – это place, currentBlock – обычный блок
+        if(isTilePlace)
         {
             Vector3 currentBulgeWorld = currentBlock.transform.TransformPoint(localBulgePos);
             offset = targetWorldPoint - currentBulgeWorld;
         }
         
-        else if(isTileCurrent) // Тайл – это currentBlock, place – обычный блок
+        else if(isTileCurrent)
         {
             Vector3 currentHollowWorld = currentBlock.transform.TransformPoint(localHollowPos);
             offset = targetWorldPoint - currentHollowWorld;
@@ -517,30 +568,30 @@ public class Block : MonoBehaviour
         
         else // Обычные блоки
         {
-            Vector3 currentSourceWorld = isCurrentAbove
-                ? currentBlock.transform.TransformPoint(localHollowPos)
-                : currentBlock.transform.TransformPoint(localBulgePos);
-            offset = targetWorldPoint - currentSourceWorld;
+            // Вычисляем смещение: перемещаем movingRoot так, чтобы точка на нём совпала с точкой на месте
+            if (bulgeBelongsToMoving)
+            // Шип на перемещаемом блоке должен совпасть с впадиной места
+            offset = nearestHollow.position - nearestBulge.position;
+            
+            
+            else // hollowBelongsToMoving
+            // Впадина на перемещаемом блоке должна совпасть с шипом места
+            offset = nearestBulge.position - nearestHollow.position;
+            
         }
 
-        originalRootPosition = rootGroup.position;
-
         // Применяем смещение
-        rootGroup.position += offset;
-        rootGroup.GetComponent<Block>().isFree = false;
+        movingRoot.position += offset;
+        movingRoot.GetComponent<Block>().isFree = false;
 
-        // Сбрасываем накопленное движение мыши у всех блоков сборки
-        foreach(Block b in rootGroup.GetComponentsInChildren<Block>())
+        // Сбрасываем накопленное движение мыши
+        foreach(Block b in movingRoot.GetComponentsInChildren<Block>())
         {
             b.hasStoredMousePos = false;
             b.lastMouseScreenPos = Vector2.zero;
         }
 
-        // Сохраняем данные для фиксации
-        pendingSnapParent = place.transform;
-        pendingSnapBlock = currentBlock.transform;
-        pendingSnapPoints = CountOccupiedPointsBetween(currentBlock, place);
-        
+        // Сохраняем точки
         pendingSnapBlockPoint = null;
         pendingSnapOtherPoint = null;
         
@@ -548,32 +599,25 @@ public class Block : MonoBehaviour
         {
             if(!isTilePlace && !isTileCurrent)
             {
-                // Обычные блоки: сохраняем использованные точки
-                pendingSnapBlockPoint = isCurrentAbove ? nearestHollow.GetComponent<BlockPoint>() : nearestBulge.GetComponent<BlockPoint>();
-                pendingSnapOtherPoint = isCurrentAbove ? nearestBulge.GetComponent<BlockPoint>() : nearestHollow.GetComponent<BlockPoint>();
+                pendingSnapBlockPoint = nearestBulge.GetComponent<BlockPoint>();
+                pendingSnapOtherPoint = nearestHollow.GetComponent<BlockPoint>();
             }
             
             else if(isTilePlace)
             {
-                // place – тайл, currentBlock – обычный блок: используется шип currentBlock и впадина тайла
                 pendingSnapBlockPoint = nearestBulge.GetComponent<BlockPoint>();
                 pendingSnapOtherPoint = nearestHollow.GetComponent<BlockPoint>();
             }
             
             else if(isTileCurrent)
             {
-                // currentBlock – тайл, place – обычный блок: используется впадина тайла и шип place
                 pendingSnapBlockPoint = nearestHollow.GetComponent<BlockPoint>();
                 pendingSnapOtherPoint = nearestBulge.GetComponent<BlockPoint>();
             }
         }
 
-        hasPendingConnection = true;
-        pendingSnapRoot = rootGroup;
-
         rootBlock.lastProcessedPlace = place.transform;
-
-        Debug.Log($"PrepareGroupConnection: {currentBlock.name} -> {place.name}, offset={offset}");
+        isProcessingConnection = false;
     }
 
     void OnMouseDrag()
@@ -587,7 +631,7 @@ public class Block : MonoBehaviour
             if(Input.GetMouseButton(0))
             playerScript.movedObject = FindMainParent(transform).gameObject;
 
-            playerScript.distance += Input.GetAxis("Mouse ScrollWheel") * 4.0f;
+            playerScript.distance += Input.GetAxis("Mouse ScrollWheel") * 2.0f;
 
             if(playerScript.isBuildMode)
             {
@@ -680,6 +724,10 @@ public class Block : MonoBehaviour
         if(LevelStepManager.IsLoadingSave && SaveManager.IsSpawningBlocks)
         return;
 
+        // Не сбрасываем активное соединение
+        if(hasPendingConnection)
+        return;
+
         // Если вышли из триггера, сбрасываем флаг у корня
         Transform root = FindMainParent(transform);
 
@@ -698,9 +746,8 @@ public class Block : MonoBehaviour
             pendingSnapRoot.GetComponent<Block>().isFree = true;
         }
 
-        // Сбрасываем флаги обработки
+        // Сбрасываем флаги обработки (но не hasPendingConnection)
         lastProcessedPlace = null;
-        hasPendingConnection = false;
         pendingSnapParent = null;
         pendingSnapRoot = null;
 
@@ -708,7 +755,7 @@ public class Block : MonoBehaviour
         {
             if(other.gameObject == place || other.gameObject == pendingSnapParent?.gameObject)
             {
-                hasPendingConnection = false;
+                hasPendingConnection = false; // разрешён сброс только в этом особом случае
                 pendingSnapParent = null;
                 lastProcessedPlace = null;
                 isFree = true;
@@ -776,7 +823,7 @@ public class Block : MonoBehaviour
         pendingSnapRoot = null;
 
         OutlineSelection outlineSel = FindFirstObjectByType<OutlineSelection>();
-            
+        
         if(outlineSel != null)
         outlineSel.ClearCurrentHighlight();
     }
@@ -852,8 +899,6 @@ public class Block : MonoBehaviour
                 {
                     if(hasPendingConnection && pendingSnapParent != null && playerScript.movedObject != null)
                     {
-                        // Смещение уже было применено в PrepareGroupConnection, поэтому не нужно.
-                        // Делаем корень (который мы перемещали) дочерним по отношению к pendingSnapParent
                         if(pendingSnapRoot != null)
                         pendingSnapRoot.SetParent(pendingSnapParent);
                         
@@ -885,6 +930,7 @@ public class Block : MonoBehaviour
                             pendingSnapOtherPoint.isFree = false;
                         }
                         
+                        Debug.Log($"[Update] Connection fixed, setting hasPendingConnection=false");
                         hasPendingConnection = false;
     
                         if(pendingSnapRoot != null)
@@ -929,7 +975,6 @@ public class Block : MonoBehaviour
                     if(block != null && block != transform.parent && !IsChildRecursively(block, gameObject))
                     {
                         block.transform.SetParent(transform);
-                        // blockChild не используется для соединений, но можно обновить
                         block.GetComponent<Block>().place = gameObject;
                         block.GetComponent<Block>().isMagnetic = true;
                         previousPosition = transform.localPosition;
@@ -1021,7 +1066,15 @@ public class Block : MonoBehaviour
 
         else if(isActive && Input.GetKeyUp(KeyCode.E) && transform.parent == null &&
         !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
-        {             
+        {
+            Block[] allBlocksInHierarchy = GetComponentsInChildren<Block>();
+            
+            if(allBlocksInHierarchy.Length > 1)
+            {
+                Debug.Log("Cannot remove root block of an assembly. Use 'M' to disconnect first.");
+                return;
+            }          
+            
             if(inventoryManager.inventory.Count != 0)
             {
                 foreach(var value in inventoryManager.inventory)

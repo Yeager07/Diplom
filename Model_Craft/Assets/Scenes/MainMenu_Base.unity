@@ -7386,8 +7386,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -13792,6 +13792,7 @@ GameObject:
   - component: {fileID: 1386740841}
   - component: {fileID: 1386740843}
   - component: {fileID: 1386740844}
+  - component: {fileID: 1386740845}
   m_Layer: 5
   m_Name: Movement
   m_TagString: Untagged
@@ -13856,6 +13857,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1386740845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1386740840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8b85349776fa4946813bf716707b8fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1391904337
 GameObject:
   m_ObjectHideFlags: 0
@@ -15030,8 +15043,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -15166,8 +15179,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -15267,10 +15280,11 @@ MonoBehaviour:
   musicUIPrefab_Simple: {fileID: 8047862718596567778, guid: 93e4047149001f84b8a3a4a1551358c8, type: 3}
   trackCardPrefab: {fileID: 6121208829470605544, guid: 15bebe9d450934d46935a9e6ee913818, type: 3}
   builtInTracks:
-  - {fileID: 8300000, guid: 9f3f81b3dd26dfc4cb434590332a5f26, type: 3}
-  - {fileID: 8300000, guid: 629088d277be43240a069ef9bc4b08dc, type: 3}
-  - {fileID: 8300000, guid: d3919e7ac4cbbff46b0efb66f6aac753, type: 3}
-  - {fileID: 8300000, guid: e771f4ebaa62629469cc6ba23397ce72, type: 3}
+  - {fileID: 8300000, guid: 38b9e78ac5f9f464d89d5588e3864651, type: 3}
+  - {fileID: 8300000, guid: afffffcf19f8af34fb7549f0805ec036, type: 3}
+  - {fileID: 8300000, guid: b41748fa454366e47b948fe45819d9c1, type: 3}
+  - {fileID: 8300000, guid: d5fe1a3e5917ab54d958b4a146a5e743, type: 3}
+  - {fileID: 8300000, guid: fabdf20baf4628844813874a0ca1b3c7, type: 3}
   masterMixer: {fileID: 24100000, guid: fa78b5298398daa41b8405a21ddd92cc, type: 2}
   userMusicFolder: UserMusic
 --- !u!82 &1559894428
@@ -19599,8 +19613,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -20065,8 +20079,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -22434,8 +22448,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

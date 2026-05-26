@@ -34,7 +34,6 @@ Transform:
   m_LocalScale: {x: 20, y: 20, z: 20}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 7274949119293251231}
   - {fileID: 238216540215779410}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -177,6 +176,7 @@ MonoBehaviour:
   localBulgePosition: {x: 0, y: 0, z: 0}
   placeHollowPosition: {x: 0, y: 0, z: 0}
   blockData: {fileID: 0}
+  isInPickupZone: 1
 --- !u!1 &4318191909156483483
 GameObject:
   m_ObjectHideFlags: 0
@@ -223,49 +223,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isFree: 1
   direction: {x: 0, y: -1, z: 0}
---- !u!1 &9028433065299166795
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7274949119293251231}
-  - component: {fileID: 6957329063784481075}
-  m_Layer: 0
-  m_Name: Bulge
-  m_TagString: Point
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &7274949119293251231
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9028433065299166795}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0005, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4810082392289410384}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6957329063784481075
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9028433065299166795}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cc35793fd5c4874f9ce8e4d9f7e0a8f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isFree: 1
-  direction: {x: 0, y: 1, z: 0}
