@@ -295,19 +295,22 @@ public class MusicPlayer : MonoBehaviour
 
     private void HighlightCurrentTrack()
     {
-        if(trackCards == null)
+        if(trackCards == null || trackCards.Count == 0)
         return;
         
         for(int i = 0; i < trackCards.Count; i++)
         {
+            if(trackCards[i] == null)
+            continue;
+            
             Button btn = trackCards[i].GetComponentInChildren<Button>();
             
-            if(btn != null)
-            {
-                ColorBlock colors = btn.colors;
-                colors.normalColor = (i == currentCombinedIndex) ? Color.green : Color.white;
-                btn.colors = colors;
-            }
+            if(btn == null)
+            continue;
+            
+            ColorBlock colors = btn.colors;
+            colors.normalColor = (i == currentCombinedIndex) ? Color.green : Color.white;
+            btn.colors = colors;
         }
     }
 
@@ -334,6 +337,8 @@ public class MusicPlayer : MonoBehaviour
      
         SaveSettings();
         UpdateUI();
+        
+        if(trackCards != null && trackCards.Count > 0)
         HighlightCurrentTrack();
     }
 

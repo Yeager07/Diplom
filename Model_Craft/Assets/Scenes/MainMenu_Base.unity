@@ -7149,7 +7149,7 @@ MonoBehaviour:
   settingsUIPanel: {fileID: 1172681107}
   exitUIPanel: {fileID: 1105350631}
   levelPreviews:
-  - {fileID: 8837097779868121283, guid: e547ae1edb631854eaf322665bd7ad40, type: 3}
+  - {fileID: 6805388538708660985, guid: 488961460275b9d41b3f51931c195df5, type: 3}
   previewSpawnPoint: {fileID: 1299266564}
   nextLevelButton: {fileID: 2025670899}
   prevLevelButton: {fileID: 1585237838}
@@ -7386,8 +7386,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -7718,9 +7718,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entries:
-  - levelId: Test Level
-    prefab: {fileID: 919132149155446097, guid: 1d3f47d850d42774cbb8df07c950540c, type: 3}
-    thumbnail: {fileID: 21300000, guid: 500d34e6ca049b744ab863fa2658ca19, type: 3}
+  - levelId: Octopus
+    prefab: {fileID: 6805388538708660985, guid: 488961460275b9d41b3f51931c195df5, type: 3}
+    thumbnail: {fileID: 21300000, guid: ad01ed2d3fa70c14db8a0c379a6a1c15, type: 3}
 --- !u!1 &841233496
 GameObject:
   m_ObjectHideFlags: 0
@@ -10011,7 +10011,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0
+  m_text: '0
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
   m_sharedMaterial: {fileID: 3458203808749192800, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
@@ -10038,8 +10040,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -15043,8 +15045,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -15179,8 +15181,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -20079,8 +20081,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -22448,8 +22450,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

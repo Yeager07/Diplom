@@ -174,14 +174,23 @@ public class LevelStepManager : MonoBehaviour
         Debug.Log("  spawnStep assign");
 
         remainingForCurrentStep.Clear();
+        StartCoroutine(SpawnBlocksWithDelay(step.blocks));
+    }
+
+    private IEnumerator SpawnBlocksWithDelay(List<RequiredBlock> blocks)
+    {
+        yield return new WaitForSeconds(0.05f);
         
-        foreach(RequiredBlock req in step.blocks)
+        foreach (RequiredBlock req in blocks)
         {
             string fullName = req.block.type + " " + req.block.blockName;
-            
-            for(int i = 0; i < req.count; i++)
-            SpawnBlockAtSpawnPoint(req.block, req.color);
 
+            for(int i = 0; i < req.count; i++)
+            {
+                SpawnBlockAtSpawnPoint(req.block, req.color);
+                yield return new WaitForSeconds(0.1f);
+            }
+            
             remainingForCurrentStep[fullName] = req.count;
         }
     }
@@ -193,6 +202,10 @@ public class LevelStepManager : MonoBehaviour
             Debug.LogError("SpawnPoint is null!");
             return;
         }
+
+        float offsetX = Random.Range(-0.05f, 0.05f);
+        float offsetZ = Random.Range(-0.05f, 0.05f);
+        Vector3 spawnPos = spawnPoint.position + new Vector3(offsetX, 0, offsetZ);
 
         Debug.Log($"Spawning {block.type} {block.blockName} at {spawnPoint.position}");
 
