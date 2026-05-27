@@ -1,0 +1,108 @@
+<linker>
+	<assembly fullname="Assembly-CSharp" ignoreIfMissing="1">
+		<type fullname="InventoryCard">
+			<method name="DeleteBLock"/>
+			<method name="DeleteBLock"/>
+			<method name="DeleteBLock"/>
+			<method name="GenerateBlock"/>
+			<method name="GenerateBlock"/>
+			<method name="GenerateBlock"/>
+		</type>
+		<type fullname="InventoryCatalog">
+			<method name="ClosePanel"/>
+			<method name="ClosePanel"/>
+			<method name="OpenPanel"/>
+			<method name="OpenPanel"/>
+			<method name="OpenPanel"/>
+			<method name="OpenPanel"/>
+			<method name="OpenPanel"/>
+			<method name="OpenPanel"/>
+			<method name="OpenPanel"/>
+			<method name="OpenPanel"/>
+			<method name="OpenPanel"/>
+			<method name="OpenPanel"/>
+		</type>
+		<type fullname="PauseMenuController">
+			<method name="OnConfirm"/>
+			<method name="OnConfirm"/>
+			<method name="OnSaveCancel"/>
+			<method name="OnSaveCancel"/>
+			<method name="OnSaveConfirm"/>
+			<method name="OnSaveConfirm"/>
+			<method name="ShowSaveDialog"/>
+			<method name="ShowSaveDialog"/>
+		</type>
+		<type fullname="PdfInstructionViewer">
+			<method name="OnNextButtonClick"/>
+			<method name="OnNextButtonClick"/>
+			<method name="OnPrevButtonClick"/>
+			<method name="OnPrevButtonClick"/>
+			<method name="OpenFilePickerAndLoad"/>
+			<method name="OpenFilePickerAndLoad"/>
+		</type>
+		<type fullname="UI">
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeNone"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="MakeOutline"/>
+			<method name="OpenCloseBlockList"/>
+			<method name="OpenCloseBlockList"/>
+			<method name="OpenCloseInstruction"/>
+			<method name="OpenCloseInstruction"/>
+			<method name="OpenCloseInventory"/>
+			<method name="OpenCloseInventory"/>
+			<method name="SetSelectedItem"/>
+			<method name="SetSelectedItem"/>
+			<method name="SetSelectedItem"/>
+			<method name="SetSelectedItem"/>
+			<method name="SetSelectedItem"/>
+			<method name="SetSelectedItem"/>
+			<method name="SetSelectedItem"/>
+			<method name="SetSelectedItem"/>
+			<method name="SetSelectedItem"/>
+			<method name="SetSelectedItem"/>
+		</type>
+		<type fullname="ZoneManager">
+			<method name="MoveToCenter"/>
+			<method name="MoveToCenter"/>
+			<method name="MoveToCenter"/>
+			<method name="MoveToCenter"/>
+			<method name="MoveToCenter"/>
+			<method name="MoveToCenter"/>
+			<method name="MoveToCenter"/>
+			<method name="MoveToCenter"/>
+		</type>
+	</assembly>
+</linker>

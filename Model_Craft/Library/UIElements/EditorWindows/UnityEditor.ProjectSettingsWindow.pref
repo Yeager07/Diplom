@@ -14,19 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Keys:
   - __PanelContainer__rootVisualContainer__settings-main-splitter__view-data-key__UnityEngine.UIElements.TwoPaneSplitView
-  - __PanelContainer__rootVisualContainer__settings-main-splitter__view-data-key__actions-editor-splitter-1__UnityEngine.UIElements.TwoPaneSplitView
-  - __PanelContainer__rootVisualContainer__settings-main-splitter__view-data-key__actions-editor-splitter-1__actions-editor-splitter-2__UnityEngine.UIElements.TwoPaneSplitView
-  - __PanelContainer__rootVisualContainer__settings-main-splitter__view-data-key__actions-editor-splitter-1__actions-editor-splitter-2__InputActionTreeView_289c1b55c9541489481df5cc06664110__UnityEngine.UIElements.TreeView
-  - __PanelContainer__rootVisualContainer__settings-main-splitter__view-data-key__actions-editor-splitter-1__actions-editor-splitter-2__InputActionTreeView_289c1b55c9541489481df5cc06664110__unity-vertical-collection-scroll-view__Slider__UnityEngine.UIElements.Scroller+ScrollerSlider
-  - __PanelContainer__rootVisualContainer__settings-main-splitter__view-data-key__unity-list-m_AlwaysIncludedShaders__UnityEngine.UIElements.ListView
-  - __PanelContainer__rootVisualContainer__settings-main-splitter__view-data-key__unity-list-m_AlwaysIncludedShaders__unity-vertical-collection-scroll-view__Slider__UnityEngine.UIElements.Scroller+ScrollerSlider
-  - __PanelContainer__rootVisualContainer__settings-main-splitter__view-data-key__unity-vertical-collection-scroll-view__Slider__UnityEngine.UIElements.Scroller+ScrollerSlider
   m_Values:
-  - '{"m_FixedPaneDimension":191.0}'
-  - '{}'
-  - '{}'
-  - '{}'
-  - '{}'
-  - '{}'
-  - '{}'
-  - '{"m_Value":0.0,"m_LowValue":0.0,"m_HighValue":2147483648.0}'
+  - '{"m_FixedPaneDimension":100.0}'

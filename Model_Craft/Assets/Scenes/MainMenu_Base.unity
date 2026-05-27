@@ -999,7 +999,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '>'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
   m_sharedMaterial: {fileID: 3458203808749192800, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
@@ -12287,7 +12287,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1318226294
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15593,7 +15593,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}
   m_sharedMaterial: {fileID: 3458203808749192800, guid: ba295486d30ab264c9acca9a8ed1e99e, type: 2}

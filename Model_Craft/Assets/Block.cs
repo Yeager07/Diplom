@@ -1117,7 +1117,7 @@ public class Block : MonoBehaviour
             playerScript.target = Vector3.zero;
         }
 
-        else if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.I) &&
+        else if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.Z) &&
         !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
         {
             if(positionHistory.Count >= 1)

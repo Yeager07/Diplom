@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
-  direction: {x: 0, y: 1, z: 0}
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &8896727687763138849
 GameObject:
   m_ObjectHideFlags: 0
@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFree: 1
-  direction: {x: 0, y: 1, z: 0}
+  direction: {x: 0, y: -1, z: 0}
 --- !u!1 &9058220120209765159
 GameObject:
   m_ObjectHideFlags: 0

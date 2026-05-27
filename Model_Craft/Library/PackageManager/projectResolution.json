@@ -68,6 +68,16 @@
       "source": "builtin",
       "testable": false
     },
+    "com.unity.nuget.newtonsoft-json@3.2.2": {
+      "name": "com.unity.nuget.newtonsoft-json",
+      "displayName": "Newtonsoft Json",
+      "resolvedPath": "C:\\Diplom\\Diplom\\Model_Craft\\Library\\PackageCache\\com.unity.nuget.newtonsoft-json@4dfd81071c64",
+      "fingerprint": "4dfd81071c6475bb9c114f920bfb4e3fc5e28c6a",
+      "editorCompatibility": "2018.4.0a1",
+      "version": "3.2.2",
+      "source": "registry",
+      "testable": false
+    },
     "com.unity.timeline@1.8.7": {
       "name": "com.unity.timeline",
       "displayName": "Timeline",
@@ -96,16 +106,6 @@
       "editorCompatibility": "2021.3.0a1",
       "version": "1.9.6",
       "source": "registry",
-      "testable": false
-    },
-    "jillejr.newtonsoft.json-for-unity@https://github.com/jilleJr/Newtonsoft.Json-for-Unity.git#upm": {
-      "name": "jillejr.newtonsoft.json-for-unity",
-      "displayName": "Json.NET 10.0.3 for Unity",
-      "resolvedPath": "C:\\Diplom\\Diplom\\Model_Craft\\Library\\PackageCache\\jillejr.newtonsoft.json-for-unity@f2c6cb098178",
-      "fingerprint": "f2c6cb09817832dccd0600f291053d8d55298ee9",
-      "editorCompatibility": "2018.1.0a1",
-      "version": "10.0.302",
-      "source": "git",
       "testable": false
     },
     "com.unity.modules.accessibility@1.0.0": {

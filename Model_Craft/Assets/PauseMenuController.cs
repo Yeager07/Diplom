@@ -115,7 +115,7 @@ public class PauseMenuController : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.P) && player.typeGame != "MainMenu")
+        if(Input.GetKeyUp(KeyCode.Escape) && player.typeGame != "MainMenu")
         {
             if(isPaused)
             ResumeGame();
