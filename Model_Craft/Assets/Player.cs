@@ -167,7 +167,6 @@ public class Player : MonoBehaviour
                 inventoryManager.keys[selectedItem - 1] = "";
                 inventoryManager.values[selectedItem - 1] = "";
                 inventoryManager.UpdateInventoryView();
-                inventoryManager.cell[selectedItem - 1].GetComponent<Image>().sprite = null;
                 colorListPanel.GetComponent<InventoryCatalog>().RefreshCatalog();
                 colorListPanel.GetComponent<InventoryCatalog>().ClosePanel();
             }

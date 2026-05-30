@@ -195,9 +195,9 @@ GameObject:
   - component: {fileID: 7634873425558419936}
   - component: {fileID: 5958193227322164260}
   - component: {fileID: 7832673518540041951}
+  - component: {fileID: 6748362530908418099}
   - component: {fileID: 7218801287062644854}
   - component: {fileID: 3864194579816799651}
-  - component: {fileID: 6748362530908418099}
   m_Layer: 0
   m_Name: Brick 2x2x3
   m_TagString: Selectable
@@ -281,6 +281,45 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6748362530908418099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4152627420950079203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bde1ead9e0d071843ad2ee3c9d86dc3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0, z: 0}
+  curPosition: {x: 0, y: 0, z: 0}
+  previousPosition: {x: 0, y: 0, z: 0}
+  colorChoosePanel: {fileID: 0}
+  place: {fileID: 0}
+  blockHeight: 0
+  hollowChild: []
+  bulgeChild: []
+  hollowChildCoordinat: []
+  bulgeChildCoordinat: []
+  hollowChildRotation: []
+  bulgeChildRotation: []
+  nearestBulge: {fileID: 0}
+  nearestHollow: {fileID: 0}
+  previousBlock: []
+  isActive: 0
+  positionHistory: []
+  isFree: 1
+  isMagnetic: 0
+  countPoint: 0
+  moveVector: {x: 0, y: 0, z: 0}
+  bulgePosition: {x: 0, y: 0, z: 0}
+  localHollowPosition: {x: 0, y: 0, z: 0}
+  localBulgePosition: {x: 0, y: 0, z: 0}
+  placeHollowPosition: {x: 0, y: 0, z: 0}
+  blockData: {fileID: 0}
+  isInPickupZone: 1
 --- !u!54 &7218801287062644854
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -329,44 +368,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.01525, y: 0.0115, z: 0.01525}
   m_Center: {x: 0, y: -0.0039, z: 0}
---- !u!114 &6748362530908418099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4152627420950079203}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bde1ead9e0d071843ad2ee3c9d86dc3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0, z: 0}
-  curPosition: {x: 0, y: 0, z: 0}
-  previousPosition: {x: 0, y: 0, z: 0}
-  colorChoosePanel: {fileID: 0}
-  place: {fileID: 0}
-  blockHeight: 0
-  hollowChild: []
-  bulgeChild: []
-  hollowChildCoordinat: []
-  bulgeChildCoordinat: []
-  hollowChildRotation: []
-  bulgeChildRotation: []
-  nearestBulge: {fileID: 0}
-  nearestHollow: {fileID: 0}
-  previousBlock: []
-  isActive: 0
-  positionHistory: []
-  isFree: 1
-  isMagnetic: 0
-  countPoint: 0
-  moveVector: {x: 0, y: 0, z: 0}
-  bulgePosition: {x: 0, y: 0, z: 0}
-  localHollowPosition: {x: 0, y: 0, z: 0}
-  localBulgePosition: {x: 0, y: 0, z: 0}
-  placeHollowPosition: {x: 0, y: 0, z: 0}
-  blockData: {fileID: 0}
 --- !u!1 &5299424298639902919
 GameObject:
   m_ObjectHideFlags: 0

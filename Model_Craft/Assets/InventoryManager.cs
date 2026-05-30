@@ -181,9 +181,8 @@ public class InventoryManager : MonoBehaviour
                 if(keys[iterator].Split(" ").Length == 2)
                 cell[iterator].GetComponent<Image>().sprite = Resources.Load<Sprite>($"Icon/{keys[iterator].Split(" ")[0]}/{keys[iterator].Split(" ")[1]}");
 
-                else
+                else if(keys[iterator].Split(" ").Length == 1)
                 cell[iterator].GetComponent<Image>().sprite = Resources.Load<Sprite>($"Icon/{keys[iterator].Split(" ")[0]}/{keys[iterator].Split(" ")[1]} {keys[iterator].Split(" ")[2]}");
-
             }
             
             iterator += 1;
@@ -268,7 +267,7 @@ public class InventoryManager : MonoBehaviour
             countBlock += int.Parse(values[i]);
 
             if(values[i] == "")
-            cell[i].GetComponent<Image>().sprite = null;
+            cell[i].GetComponent<Image>().sprite = Resources.Load<Sprite>($"Icon/Inventory");
         }
         
         allCount.GetComponent<TMP_Text>().text = countBlock.ToString();

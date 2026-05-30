@@ -626,7 +626,8 @@ public class Block : MonoBehaviour
         return;
         
         if((playerScript.colorChoosePanel == null || !playerScript.colorChoosePanel.gameObject.activeInHierarchy) &&
-        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy &&
+        !playerScript.transform.Find("UI").Find("SaveModelDialog").gameObject.activeInHierarchy)
         {
             if(Input.GetMouseButton(0))
             playerScript.movedObject = FindMainParent(transform).gameObject;
@@ -875,7 +876,8 @@ public class Block : MonoBehaviour
         if(gameObject == playerScript.movedObject && Input.GetMouseButton(0) && offset != Vector3.zero)
         Move(playerScript.distance, gameObject);
 
-        if(Input.GetMouseButtonUp(0) && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        if(Input.GetMouseButtonUp(0) && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy
+        && !playerScript.transform.Find("UI").Find("SaveModelDialog").gameObject.activeInHierarchy)
         {
             hasStoredMousePos = false;
             offset = Vector3.zero;
@@ -1055,7 +1057,8 @@ public class Block : MonoBehaviour
             }
         }
         
-        else if(Input.GetKeyUp(KeyCode.R) && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        else if(Input.GetKeyUp(KeyCode.R) && !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy &&
+        !playerScript.transform.Find("UI").Find("SaveModelDialog").gameObject.activeInHierarchy)
         {
             SavePosition(previousRotate[previousRotate.Count - 1]);
             previousRotate.Add(new Vector3(rotateDirection.x % 360, rotateDirection.y % 360, rotateDirection.z));
@@ -1065,7 +1068,8 @@ public class Block : MonoBehaviour
         Rotation(FindMainParent(transform));
 
         else if(isActive && Input.GetKeyUp(KeyCode.E) && transform.parent == null &&
-        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy)
+        !playerScript.transform.Find("UI").Find("PauseMenu").gameObject.activeInHierarchy &&
+        !playerScript.transform.Find("UI").Find("SaveModelDialog").gameObject.activeInHierarchy)
         {
             Block[] allBlocksInHierarchy = GetComponentsInChildren<Block>();
             
